@@ -17,7 +17,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services;
 using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
-using SoftServe.BookingSectors.WebAPI.DAL.Interfaces;
+using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 
 namespace SoftServe.BookingSectors.WebAPI

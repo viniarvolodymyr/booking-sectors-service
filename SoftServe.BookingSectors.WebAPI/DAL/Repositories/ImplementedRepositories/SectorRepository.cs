@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.DAL.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
+namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories
 {
-    public class SectorRepository : IRepository<Sector>
+    public class SectorRepository : IBaseRepository<Sector>
     {
         private readonly BookingSectorContext db;
         private readonly DbSet<Sector> dbSet;

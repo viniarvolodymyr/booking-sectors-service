@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using SoftServe.BookingSectors.WebAPI.DAL.Interfaces;
-namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
+
+namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
     public class EFUnitOfWork : IUnitOfWork
     {
@@ -15,7 +17,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
         {
             db = context;
         }
-        public IRepository<Sector> Sectors
+        public IBaseRepository<Sector> Sectors
         {
             get
             {
