@@ -6,6 +6,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
@@ -26,6 +27,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 return sectorRepository;
             }
         }
+
+        public ISettingsRepository settings => throw new NotImplementedException();
+
         public void Save()
         {
             db.SaveChanges();
