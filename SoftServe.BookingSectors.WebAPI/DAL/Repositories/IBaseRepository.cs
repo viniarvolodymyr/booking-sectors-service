@@ -9,5 +9,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
     {
         Task<IEnumerable<T>> GetAllEntitiesAsync();
         Task<T> GetEntityAsync(int id);
+        Task InsertEntityAsync(T entity);
+        void UpdateEntity(T entity);
+        Task DeleteEntityAsync(int Id);
+        Task SaveEntityAsync();
     }
 }

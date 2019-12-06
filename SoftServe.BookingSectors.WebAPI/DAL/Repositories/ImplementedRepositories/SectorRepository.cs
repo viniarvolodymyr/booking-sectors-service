@@ -29,21 +29,24 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             return await dbSet.FindAsync(id);
         }
 
-        public void Create(Sector book)
+        public async Task InsertEntityAsync(Sector entity)
         {
-            db.Sector.Add(book);
+            await dbSet.AddAsync(entity);
         }
 
-        public void Update(Sector book)
+        public void UpdateEntity(Sector entity)
         {
-            db.Entry(book).State = EntityState.Modified;
+            dbSet.Attach(entity);
+            db.Entry(entity).State = EntityState.Modified;
         }
-
-        public void Delete(int id)
+        public async Task DeleteEntityAsync(int id)
         {
-            Sector book = db.Sector.Find(id);
-            if (book != null)
-                db.Sector.Remove(book);
+            Sector existing = await dbSet.FindAsync(id);
+            dbSet.Remove(existing);
+        }
+        public async Task SaveEntityAsync()
+        {
+            await db.SaveChangesAsync();
         }
     }
 }
