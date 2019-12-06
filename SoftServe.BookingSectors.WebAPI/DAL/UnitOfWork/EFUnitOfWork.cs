@@ -13,6 +13,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
     {
         private readonly BookingSectorContext db;
         private SectorRepository sectorRepository;
+        private UserRepository userRepository;
         public EFUnitOfWork(BookingSectorContext context)
         {
             db = context;
@@ -24,6 +25,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 if (sectorRepository == null)
                     sectorRepository = new SectorRepository(db);
                 return sectorRepository;
+            }
+        }
+        public IBaseRepository<User> Users
+        {
+            get
+            {
+                if (userRepository == null)
+                    userRepository = new UserRepository(db);
+                return userRepository;
             }
         }
         public void Save()
