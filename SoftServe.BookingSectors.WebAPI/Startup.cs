@@ -19,6 +19,8 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -40,7 +42,7 @@ namespace SoftServe.BookingSectors.WebAPI
             "Connection Timeout=30;"));
 
             services.AddControllers();
-
+            services.AddTransient<ISettingsRepository, SettingsRepository>();
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
