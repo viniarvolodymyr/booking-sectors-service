@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
@@ -13,6 +10,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
     {
         private readonly BookingSectorContext db;
         private SectorRepository sectorRepository;
+        private BookingSectorRepository bookingRepository;
         public EFUnitOfWork(BookingSectorContext context)
         {
             db = context;
@@ -26,6 +24,17 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 return sectorRepository;
             }
         }
+
+        public IBaseRepository<BookingSector> BookingSectors
+        {
+            get
+            {
+                if (bookingRepository == null)
+                    bookingRepository = new BookingSectorRepository(db);
+                return bookingRepository;
+            }
+        }
+
         public void Save()
         {
             db.SaveChanges();

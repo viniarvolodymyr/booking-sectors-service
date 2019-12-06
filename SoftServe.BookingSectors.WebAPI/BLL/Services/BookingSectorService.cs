@@ -21,7 +21,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         public void DeleteBookingById(int id)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void Dispose()
