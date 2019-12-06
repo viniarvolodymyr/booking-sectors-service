@@ -48,7 +48,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
 
         public void UpdateEntity(BookingSector entity)
         {
-            throw new NotImplementedException();
+            dbSet.Attach(entity); 
+            db.Entry(entity).State = EntityState.Modified;
         }
     }
 }
