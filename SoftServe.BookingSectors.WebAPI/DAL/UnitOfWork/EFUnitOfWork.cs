@@ -13,7 +13,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
     {
         private readonly BookingSectorContext db;
         private SectorRepository sectorRepository;
-        private TournamentRepository tournamentRepository;
+        private UserRepository userRepository;
+        private TournamentSectorRepository tournamentSectorRepository;
         public EFUnitOfWork(BookingSectorContext context)
         {
             db = context;
@@ -27,15 +28,26 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 return sectorRepository;
             }
         }
-        public IBaseRepository<Tournament> Tournament
+        public IBaseRepository<User> Users
         {
             get
             {
-                if (tournamentRepository == null)
-                    tournamentRepository = new TournamentRepository(db);
-                return tournamentRepository;
+                if (userRepository == null)
+                    userRepository = new UserRepository(db);
+                return userRepository;
             }
         }
+
+        public IBaseRepository<TournamentSector> TournamentSectors
+        {
+            get
+            {
+                if (tournamentSectorRepository == null)
+                    tournamentSectorRepository = new TournamentSectorRepository(db);
+                return tournamentSectorRepository;
+            }
+        }
+
         public void Save()
         {
             db.SaveChanges();
