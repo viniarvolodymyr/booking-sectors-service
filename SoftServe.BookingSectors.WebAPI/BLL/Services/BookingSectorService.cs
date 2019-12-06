@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
@@ -19,22 +20,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             _database = database;
             _mapper = mapper;
         }
-        public void DeleteBookingById(int id)
-        {
-            
-        }
 
-        public void Dispose()
+        public async Task<IEnumerable<BookingSectorDTO>> GetBookingSectorsAsync()
         {
-            throw new NotImplementedException();
+            var bookings = await _database.BookingSectors.GetAllEntitiesAsync();
+            var dtos = _mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(bookings);
+            return dtos;
         }
-
         public Task<BookingSectorDTO> GetBookingByIdAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<BookingSectorDTO>> GetBookingSectorsAsync()
         {
             throw new NotImplementedException();
         }
@@ -45,6 +38,15 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
 
         public void UpdateBookingApproved(int id, bool isApproved)
+        {
+            throw new NotImplementedException();
+        }
+        public void DeleteBookingById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
         {
             throw new NotImplementedException();
         }
