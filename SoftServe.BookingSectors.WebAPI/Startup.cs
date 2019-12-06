@@ -56,6 +56,7 @@ namespace SoftServe.BookingSectors.WebAPI
             services.AddTransient<IUnitOfWork, EFUnitOfWork>();
             services.AddTransient<ISectorService, SectorService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ITournamentSectorService, TournamentSectorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

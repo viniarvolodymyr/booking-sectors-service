@@ -10,29 +10,29 @@ using AutoMapper;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
-    public class UserService : IUserService
+    public class TournamentSectorService : ITournamentSectorService
     {
         private readonly IUnitOfWork Database;
         private readonly IMapper _mapper;
-        public UserService(IUnitOfWork uow, IMapper mapper)
+        public TournamentSectorService(IUnitOfWork uow, IMapper mapper)
         {
             Database = uow;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
+        public async Task<IEnumerable<TournamentSectorDTO>> GetAllTournamentSectorsAsync()
         {
-            var users = await Database.Users.GetAllEntitiesAsync();
-            var dtos = _mapper.Map<IEnumerable<User>, List<UserDTO>>(users);
+            var tournamentSectors = await Database.TournamentSectors.GetAllEntitiesAsync();
+            var dtos = _mapper.Map<IEnumerable<TournamentSector>, List<TournamentSectorDTO>>(tournamentSectors);
             return dtos;
         }
-        public async Task<UserDTO> GetUserByIdAsync(int id)
+        public async Task<TournamentSectorDTO> GetTournamentSectorByIdAsync(int id)
         {
-            var entity = await Database.Users.GetEntityAsync(id);
+            var entity = await Database.TournamentSectors.GetEntityAsync(id);
             if (entity == null)
             {
                 return null;
             }
-            var dto = _mapper.Map<User, UserDTO>(entity);
+            var dto = _mapper.Map<TournamentSector, TournamentSectorDTO>(entity);
             return dto;
         }
         public void Dispose()

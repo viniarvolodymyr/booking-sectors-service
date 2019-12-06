@@ -30,21 +30,25 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             return await dbSet.FindAsync(id);
         }
 
-        public void Create(User user)
+        public async Task InsertEntityAsync(User entity)
         {
-            db.User.Add(user);
+            await dbSet.AddAsync(entity);
         }
 
-        public void Update(User user)
+        public void UpdateEntity(User entity)
         {
-            db.Entry(user).State = EntityState.Modified;
+            dbSet.Attach(entity);
+            db.Entry(entity).State = EntityState.Modified;
+        }
+        public async Task DeleteEntityAsync(int id)
+        {
+            User existing = await dbSet.FindAsync(id);
+            dbSet.Remove(existing);
         }
 
-        public void Delete(int id)
+        public async Task SaveEntityAsync()
         {
-            User user = db.User.Find(id);
-            if (user != null)
-                db.User.Remove(user);
+            await db.SaveChangesAsync();
         }
     }
 }

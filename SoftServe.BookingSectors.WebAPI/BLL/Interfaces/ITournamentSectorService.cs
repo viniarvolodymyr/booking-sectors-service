@@ -6,10 +6,10 @@ using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Interfaces
 {
-    interface IUserService
+    interface ITournamentSectorService
     {
-        Task<IEnumerable<UserDTO>> GetAllUsersAsync();
-        Task<UserDTO> GetUserByIdAsync(int id);
+        Task<IEnumerable<TournamentSectorDTO>> GetAllTournamentSectorsAsync();
+        Task<TournamentSectorDTO> GetTournamentSectorByIdAsync(int id);
         void Dispose();
     }
 }
