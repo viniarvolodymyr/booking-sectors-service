@@ -34,9 +34,14 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         // GET: api/Booking/5
         [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        public async Task<ActionResult<BookingSectorDTO>> Get(int id)
         {
-            return "value";
+            var dtos = await _bookingService.GetBookingByIdAsync(id);
+            if(dtos == null)
+            {
+                return NotFound();
+            }
+            return Ok(dtos);
         }
 
         // POST: api/Booking
