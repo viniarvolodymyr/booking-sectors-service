@@ -28,22 +28,24 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
         {
             return await dbSet.FindAsync(id);
         }
-
-        public void Create(Tournament book)
+        public async Task InsertEntityAsync(Tournament entity)
         {
-            db.Tournament.Add(book);
+            await dbSet.AddAsync(entity);
         }
 
-        public void Update(Tournament book)
+        public void UpdateEntity(Tournament entity)
         {
-            db.Entry(book).State = EntityState.Modified;
+            dbSet.Attach(entity);
+            db.Entry(entity).State = EntityState.Modified;
         }
-
-        public void Delete(int id)
+        public async Task DeleteEntityAsync(int id)
         {
-            Tournament book = db.Tournament.Find(id);
-            if (book != null)
-                db.Tournament.Remove(book);
+            Tournament existing = await dbSet.FindAsync(id);
+            dbSet.Remove(existing);
+        }
+        public async Task SaveEntityAsync()
+        {
+            await db.SaveChangesAsync();
         }
 
     }

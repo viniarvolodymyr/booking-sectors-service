@@ -24,7 +24,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         public async Task<TournamentDTO> GetTournamentByIdAsync(int id) {
 
-            var entity =  await Database.Tournament.GetEntityAsync(id);
+            var entity =  await Database.Tournaments.GetEntityAsync(id);
             if (entity == null)
             {
                 return null;
