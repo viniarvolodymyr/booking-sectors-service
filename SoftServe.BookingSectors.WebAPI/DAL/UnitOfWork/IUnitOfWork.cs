@@ -1,6 +1,7 @@
 ﻿using System;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
@@ -8,6 +9,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
     {
         IBaseRepository<Sector> Sectors { get; }
         IBaseRepository<User> User { get; }
-        void Save();
+        Task<int> SaveAsync();
     }
 }

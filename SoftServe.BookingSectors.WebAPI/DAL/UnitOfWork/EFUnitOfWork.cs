@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
@@ -28,20 +26,21 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             }
         }
 
-    public IBaseRepository<User> User
-            {
-                get
-                {
-                    if (userRepository == null)
-                        userRepository = new UserRepository(db);
-                    return userRepository;
-                }
-            }
-
-        public void Save()
+        public IBaseRepository<User> User
         {
-            db.SaveChanges();
+            get
+            {
+                if (userRepository == null)
+                    userRepository = new UserRepository(db);
+                return userRepository;
+            }
         }
+
+        public Task<int> SaveAsync()
+        {
+            return db.SaveChangesAsync();
+        }
+
         private bool disposed = false;
         public virtual void Dispose(bool disposing)
         {
