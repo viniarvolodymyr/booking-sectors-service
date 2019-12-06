@@ -27,14 +27,27 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var dtos = _mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(bookings);
             return dtos;
         }
-        public Task<BookingSectorDTO> GetBookingByIdAsync()
+        public async Task<BookingSectorDTO> GetBookingByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var bookingById = await _database.BookingSectors.GetEntityAsync(id);
+            var dtos = _mapper.Map<BookingSector, BookingSectorDTO>(bookingById);
+            return dtos;
         }
 
-        public Task<IEnumerable<SectorDTO>> GetFreeSectorsAsync(DateTime fromDate, DateTime toDate)
+        public async Task<IEnumerable<SectorDTO>> GetFreeSectorsAsync(DateTime fromDate, DateTime toDate)
         {
-            throw new NotImplementedException();
+            var bookings = await _database.BookingSectors.GetAllEntitiesAsync();
+            var group = bookings.GroupBy(x => x.SectorId).OrderBy(x => x.Key);
+            var sectors = group.Select(temp =>
+                new
+                {
+                    Sector = _database.Sectors.GetEntityAsync(temp.Key),
+                    IsFree = temp.All(b => (!(b.BookingStart >= fromDate && b.BookingStart <= toDate)
+                                                    && !(b.BookingEnd >= fromDate && b.BookingEnd <= toDate)))
+                });
+            var freeSectors = sectors.Where(s => s.IsFree).Select(s => s.Sector);
+            var dtos = _mapper.Map<IEnumerable<Task<Sector>>, IEnumerable<SectorDTO>>(freeSectors);
+            return dtos;
         }
 
         public void UpdateBookingApproved(int id, bool isApproved)
