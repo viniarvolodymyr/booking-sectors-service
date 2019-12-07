@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
@@ -11,7 +9,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
         Task<T> GetEntityAsync(int id);
         Task InsertEntityAsync(T entity);
         void UpdateEntity(T entity);
-        Task DeleteEntityAsync(int Id);
-        Task SaveEntityAsync();
+        Task DeleteEntityAsync(int id);
     }
 }

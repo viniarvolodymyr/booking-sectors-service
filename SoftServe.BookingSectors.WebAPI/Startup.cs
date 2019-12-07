@@ -1,24 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 using SoftServe.BookingSectors.WebAPI.BLL.Services;
 using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
-using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
+using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
+
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -35,9 +29,7 @@ namespace SoftServe.BookingSectors.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BookingSectorContext>(options => options.UseSqlServer
-            ("Server=tcp:lv458net.database.windows.net,1433;Initial Catalog=BookingSector;Persist Security Info=False;" +
-            "User ID=student;Password=Lv-458.Net;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;" +
-            "Connection Timeout=30;"));
+            (@ConfigurationHelper.GetDatabaseConnectionString()));
 
             services.AddControllers();
 

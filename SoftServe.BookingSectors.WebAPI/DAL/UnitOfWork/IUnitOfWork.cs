@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 
@@ -11,6 +12,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         IBaseRepository<User> Users { get; }
 
         IBaseRepository<TournamentSector> TournamentSectors { get; }
-        void Save();
+   
+        Task<bool>  SaveAsync();
+
     }
 }
