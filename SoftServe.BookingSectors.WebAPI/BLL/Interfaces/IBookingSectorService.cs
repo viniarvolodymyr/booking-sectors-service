@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Interfaces
 {
-    public interface IBookingService
+    public interface IBookingSectorService
     {
         Task<IEnumerable<BookingSectorDTO>> GetBookingSectorsAsync();
         Task<BookingSectorDTO> GetBookingByIdAsync(int id);

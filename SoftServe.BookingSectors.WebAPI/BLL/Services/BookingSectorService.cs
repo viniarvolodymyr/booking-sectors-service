@@ -10,7 +10,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
-    public class BookingSectorService : IBookingService
+    public class BookingSectorService : IBookingSectorService
     {
         private readonly IUnitOfWork _database;
         private readonly IMapper _mapper;
