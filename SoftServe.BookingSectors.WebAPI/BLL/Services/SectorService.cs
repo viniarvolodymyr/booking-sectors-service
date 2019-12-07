@@ -11,22 +11,22 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
     public class SectorService : ISectorService
     {
-        private readonly IUnitOfWork Database;
+        private readonly IUnitOfWork _database;
         private readonly IMapper _mapper;
         public SectorService(IUnitOfWork uow, IMapper mapper)
         {
-            Database = uow;
+            _database = uow;
             _mapper = mapper;
         }
         public async Task<IEnumerable<SectorDTO>> GetAllSectorsAsync()
         {
-            var sectors = await Database.Sectors.GetAllEntitiesAsync();
+            var sectors = await _database.Sectors.GetAllEntitiesAsync();
             var dtos = _mapper.Map<IEnumerable<Sector>, List<SectorDTO>>(sectors);
             return dtos;
         }
         public async Task<SectorDTO> GetSectorByIdAsync(int id)
         {
-            var entity = await Database.Sectors.GetEntityAsync(id);
+            var entity = await _database.Sectors.GetEntityByIdAsync(id);
             if (entity == null)
             {
                 return null;
@@ -34,9 +34,15 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var dto = _mapper.Map<Sector, SectorDTO>(entity);
             return dto;
         }
+        public async Task InsertSector(SectorDTO sectorDTO)
+        {
+            var sector = _mapper.Map<SectorDTO, Sector>(sectorDTO);
+            await _database.Sectors.InsertEntityAsync(sector);
+            _database.Save();
+        }
         public void Dispose()
         {
-            Database.Dispose();
+            _database.Dispose();
         }
     }
 }

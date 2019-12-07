@@ -24,7 +24,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             return await dbSet.ToListAsync();
         }
 
-        public async Task<Sector> GetEntityAsync(int id)
+        public async Task<Sector> GetEntityByIdAsync(int id)
         {
             return await dbSet.FindAsync(id);
         }
