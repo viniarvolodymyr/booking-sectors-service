@@ -16,7 +16,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         {
             db = context;
         }
-        public IBaseRepository<Sector> Sectors
+        public IBaseRepository<Sector> SectorsRepository
         {
             get
             {

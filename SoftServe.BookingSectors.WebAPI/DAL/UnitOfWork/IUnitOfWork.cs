@@ -7,7 +7,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
-        IBaseRepository<Sector> Sectors { get; }
+        IBaseRepository<Sector> SectorsRepository { get; }
         IBaseRepository<User> User { get; }
         Task<int> SaveAsync();
     }

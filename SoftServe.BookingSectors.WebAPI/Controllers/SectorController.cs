@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
+
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/sector")]
@@ -38,6 +37,12 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
                 return NotFound();
             }
             return Ok(dto);
+        }
+
+        [HttpPost]
+        public async Task Post([FromBody] SectorDTO sectorDTO)
+        {
+            await sectorService.InsertSector(sectorDTO);
         }
     }
 }
