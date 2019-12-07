@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
@@ -28,6 +27,21 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
             var entity = await Database.Users.GetEntityAsync(id);
+            if (entity == null)
+            {
+                return null;
+            }
+            var dto = _mapper.Map<User, UserDTO>(entity);
+            return dto;
+        }
+
+        public async Task<UserDTO> GetUserByPhoneAsync(string phone)
+        {
+            var entities = await Database.Users.GetAllEntitiesAsync();
+            int entityId = entities.Where(u => u.Phone == phone)
+                                .Select(u => u.Id)
+                                    .FirstOrDefault();
+            var entity = await Database.Users.GetEntityAsync(entityId);
             if (entity == null)
             {
                 return null;

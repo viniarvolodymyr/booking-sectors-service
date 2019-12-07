@@ -7,11 +7,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
 {
     public class UserDTO
     {
+        public int Id { get; set; }
         public string Lastname { get; set; }
         public string Firstname { get; set; }
         public string Phone { get; set; }
         public byte[] Password { get; set; }
         public string Role { get; set; }
         public byte[] Photo { get; set; }
+        public DateTime ModDate { get; set; }
     }
 }
