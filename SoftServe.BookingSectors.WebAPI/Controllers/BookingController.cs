@@ -44,6 +44,18 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dtos);
         }
 
+        [HttpGet("FreeSectors/{fromDate}/{toDate}", Name = "GetFreeSectors")]
+        public async Task<ActionResult<IEnumerable<SectorDTO>>> Get(DateTime fromDate, DateTime toDate)
+        {
+            var freeSectors = await _bookingService.GetFreeSectorsAsync(fromDate, toDate);
+            if(!freeSectors.Any())
+            {
+                return NotFound();
+            }
+            return Ok(freeSectors);
+        }
+
+
         // POST: api/Booking
         [HttpPost]
         public void Post([FromBody] string value)
