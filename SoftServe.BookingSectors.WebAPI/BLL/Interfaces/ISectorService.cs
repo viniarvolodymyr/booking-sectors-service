@@ -9,8 +9,9 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Interfaces
     {
         Task<IEnumerable<SectorDTO>> GetAllSectorsAsync();
         Task<SectorDTO> GetSectorByIdAsync(int id);
-        Task InsertSector(SectorDTO sectorDTO);
-
+        Task InsertSectorAsync(SectorDTO sectorDTO);
+        Task UpdateSector(SectorDTO sectorDTO);
+        Task DeleteSectorByIdAsync(int id);
         void Dispose();
     }
 }

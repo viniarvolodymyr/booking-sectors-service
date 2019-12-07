@@ -37,9 +37,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             dbSet.Attach(entity);
             db.Entry(entity).State = EntityState.Modified;
         }
-        public async Task DeleteEntityAsync(int id)
+        public void DeleteEntityByIdAsync(int id)
         {
-            User existing = await dbSet.FindAsync(id);
+            User existing = dbSet.Find(id);
             dbSet.Remove(existing);
         }
         public async Task SaveEntityAsync()

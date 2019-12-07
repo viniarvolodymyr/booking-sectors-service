@@ -12,9 +12,11 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         private readonly BookingSectorContext db;
         private SectorRepository sectorRepository;
         private UserRepository userRepository;
+
         public EFUnitOfWork(BookingSectorContext context)
         {
             db = context;
+   
         }
         public IBaseRepository<Sector> SectorsRepository
         {

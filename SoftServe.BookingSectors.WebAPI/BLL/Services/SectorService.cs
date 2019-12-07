@@ -18,7 +18,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             _mapper = mapper;
         }
         public async Task<IEnumerable<SectorDTO>> GetAllSectorsAsync()
-        {
+        {  
             var sectors = await _database.SectorsRepository.GetAllEntitiesAsync();
             var dtos = _mapper.Map<IEnumerable<Sector>, List<SectorDTO>>(sectors);
             return dtos;
@@ -33,10 +33,23 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var dto = _mapper.Map<Sector, SectorDTO>(entity);
             return dto;
         }
-        public async Task InsertSector(SectorDTO sectorDTO)
+        public async Task InsertSectorAsync(SectorDTO sectorDTO)
         {
-            var sector = _mapper.Map<SectorDTO, Sector>(sectorDTO);
-            await _database.SectorsRepository.InsertEntityAsync(sector);
+            var sectorToInsert = _mapper.Map<SectorDTO, Sector>(sectorDTO);
+            sectorToInsert.ModUserId = null;
+            await _database.SectorsRepository.InsertEntityAsync(sectorToInsert);
+            await _database.SaveAsync();
+        }
+        public async Task UpdateSector(SectorDTO sectorDTO)
+        { 
+            var tempSector = _mapper.Map<SectorDTO, Sector>(sectorDTO);
+            tempSector.Id = sectorDTO.Id;
+            _database.SectorsRepository.UpdateEntity(tempSector);
+            await _database.SaveAsync();
+        }
+        public async Task DeleteSectorByIdAsync(int id)
+        {
+            _database.SectorsRepository.DeleteEntityByIdAsync(id);
             await _database.SaveAsync();
         }
         public void Dispose()

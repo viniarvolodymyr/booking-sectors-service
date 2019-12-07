@@ -11,16 +11,16 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     [ApiController]
     public class SectorController : ControllerBase
     {
-        readonly ISectorService sectorService;
+        private readonly ISectorService _sectorService;
         public SectorController(ISectorService service)
         {
-            sectorService = service;
+            _sectorService = service;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SectorDTO>>> Get()
         {
-            var dtos = await sectorService.GetAllSectorsAsync();
+            var dtos = await _sectorService.GetAllSectorsAsync();
             if (!dtos.Any())
             {
                 return NotFound();
@@ -31,7 +31,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SectorDTO>> GetById(int id)
         {
-            var dto = await sectorService.GetSectorByIdAsync(id);
+            var dto = await _sectorService.GetSectorByIdAsync(id);
             if (dto == null)
             {
                 return NotFound();
@@ -42,7 +42,18 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [HttpPost]
         public async Task Post([FromBody] SectorDTO sectorDTO)
         {
-            await sectorService.InsertSector(sectorDTO);
+            await _sectorService.InsertSectorAsync(sectorDTO);
+        }
+        
+        [HttpPut]
+        public async Task Put([FromBody] SectorDTO sectorDTO)
+        {
+            await _sectorService.UpdateSector(sectorDTO);
+        }
+        [HttpDelete("{id}")]
+        public async Task Delete(int id)
+        {
+            await _sectorService.DeleteSectorByIdAsync(id);
         }
     }
 }

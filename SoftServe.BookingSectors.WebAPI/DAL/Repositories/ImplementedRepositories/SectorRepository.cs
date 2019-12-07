@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories
 {
@@ -27,20 +29,24 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             return await dbSet.FindAsync(id);
         }
 
-        public async Task InsertEntityAsync(Sector entity)
+        public async Task InsertEntityAsync(Sector entityToInsert)
         {
-            await dbSet.AddAsync(entity);
+            await dbSet.AddAsync(entityToInsert);
         }
 
-        public void UpdateEntity(Sector entity)
+        public void UpdateEntity(Sector entityToUpdate)
         {
-            dbSet.Attach(entity);
-            db.Entry(entity).State = EntityState.Modified;
+            var x = dbSet.AsNoTracking().Where(e => e.Id == entityToUpdate.Id).FirstOrDefault();
+            entityToUpdate.CreateUserId = x.CreateUserId;
+            entityToUpdate.CreateDate = x.CreateDate;
+            entityToUpdate.ModDate = DateTime.Now.AddDays(3);
+            dbSet.Attach(entityToUpdate);
+            db.Entry(entityToUpdate).State = EntityState.Modified;
         }
-        public async Task DeleteEntityAsync(int id)
+        public void DeleteEntityByIdAsync(int id)
         {
-            Sector existing = await dbSet.FindAsync(id);
-            dbSet.Remove(existing);
+            Sector sectorToDelete = dbSet.Find(id);
+            dbSet.Remove(sectorToDelete);
         }
     }
 }
