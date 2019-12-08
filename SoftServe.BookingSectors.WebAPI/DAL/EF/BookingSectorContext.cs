@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.EF
@@ -337,6 +339,11 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
             });
 
             OnModelCreatingPartial(modelBuilder);
+        }
+
+        internal Task<Sector> FindAsync(int id)
+        {
+            throw new NotImplementedException();
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
