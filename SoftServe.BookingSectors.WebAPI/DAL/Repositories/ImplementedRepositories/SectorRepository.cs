@@ -10,13 +10,13 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
 {
     public class SectorRepository : IBaseRepository<Sector>
     {
-        private readonly BookingSectorContext db;
+        private readonly BookingSectorContext context;
         private readonly DbSet<Sector> dbSet;
 
         public SectorRepository(BookingSectorContext context)
         {
-            db = context;
-            dbSet = db.Set<Sector>();
+            this.context = context;
+            dbSet = context.Set<Sector>();
         }
 
         public async Task<IEnumerable<Sector>> GetAllEntitiesAsync()
@@ -39,9 +39,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             var x = dbSet.AsNoTracking().Where(e => e.Id == entityToUpdate.Id).FirstOrDefault();
             entityToUpdate.CreateUserId = x.CreateUserId;
             entityToUpdate.CreateDate = x.CreateDate;
-            entityToUpdate.ModDate = DateTime.Now.AddDays(3);
+            entityToUpdate.ModDate = DateTime.Now;
             dbSet.Attach(entityToUpdate);
-            db.Entry(entityToUpdate).State = EntityState.Modified;
+            context.Entry(entityToUpdate).State = EntityState.Modified;
         }
         public void DeleteEntityByIdAsync(int id)
         {
