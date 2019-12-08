@@ -20,13 +20,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
-            var users = await Database.Users.GetAllEntitiesAsync();
+            var users = await Database.UsersRepository.GetAllEntitiesAsync();
             var dtos = _mapper.Map<IEnumerable<User>, List<UserDTO>>(users);
             return dtos;
         }
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
-            var entity = await Database.Users.GetEntityAsync(id);
+            var entity = await Database.UsersRepository.GetEntityByIdAsync(id);
             if (entity == null)
             {
                 return null;
@@ -37,11 +37,11 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task<UserDTO> GetUserByPhoneAsync(string phone)
         {
-            var entities = await Database.Users.GetAllEntitiesAsync();
+            var entities = await Database.UsersRepository.GetAllEntitiesAsync();
             int entityId = entities.Where(u => u.Phone == phone)
                                 .Select(u => u.Id)
                                     .FirstOrDefault();
-            var entity = await Database.Users.GetEntityAsync(entityId);
+            var entity = await Database.UsersRepository.GetEntityByIdAsync(entityId);
             if (entity == null)
             {
                 return null;
@@ -52,13 +52,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task UpdateUserById(int id, UserDTO userDTO)
         {
-            var entity = await Database.Users.GetEntityAsync(id);
+            var entity = await Database.UsersRepository.GetEntityByIdAsync(id);
             var user = _mapper.Map<UserDTO, User>(userDTO);
             user.Id = id;
             user.CreateUserId = entity.CreateUserId;
             user.CreateDate = entity.CreateDate;
             user.ModDate = System.DateTime.Now;
-           Database.Users.UpdateEntity(user);
+           Database.UsersRepository.UpdateEntity(user);
       
             await Database.SaveAsync();
 

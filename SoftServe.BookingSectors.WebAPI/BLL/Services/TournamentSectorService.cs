@@ -21,7 +21,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         public async Task<IEnumerable<TournamentSectorDTO>> GetAllTournamentSectorsAsync(int tournId)
         {
-            var sectors = await Database.TournamentSectors.GetAllEntitiesAsync();
+            var sectors = await Database.TournamentSectorsRepository.GetAllEntitiesAsync();
             var tournamentSectors = sectors.Where(x => x.TournamentId == tournId);
 
             var dtos = _mapper.Map<IEnumerable<TournamentSector>, List<TournamentSectorDTO>>(tournamentSectors);
@@ -29,7 +29,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         public async Task<int> DeleteSectorFromTournamentAsync(int tournId, int sectorId)
         {
-            var sectors = await Database.TournamentSectors.GetAllEntitiesAsync();
+            var sectors = await Database.TournamentSectorsRepository.GetAllEntitiesAsync();
             var tournSectors = sectors.Where(x => x.TournamentId == tournId);
             int result = 0;
             if (tournSectors != null)
@@ -38,7 +38,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 {
                     if (sector.SectorsId == sectorId)
                     {
-                        await Database.TournamentSectors.DeleteEntityAsync(sector.Id);
+                        await Database.TournamentSectorsRepository.DeleteEntityByIdAsync(sector.Id);
                         result = 1;
                     }
                 }
@@ -49,7 +49,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task AddSectorToTournamentAsync(int sectId, int tournId)
         {
-            var sect =  await Database.Sectors.GetEntityAsync(sectId);
+            var sect =  await Database.SectorsRepository.GetEntityByIdAsync(sectId);
             //var tourn = await Database.Tournament.GetEntityAsync(tournId);
        
             if (sect != null)
@@ -57,7 +57,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 TournamentSector sector = new TournamentSector();
                 sector.SectorsId = sectId;
                 sector.TournamentId = tournId;
-                await Database.TournamentSectors.InsertEntityAsync(sector);
+                await Database.TournamentSectorsRepository.InsertEntityAsync(sector);
                 await Database.SaveAsync();
             }
 
