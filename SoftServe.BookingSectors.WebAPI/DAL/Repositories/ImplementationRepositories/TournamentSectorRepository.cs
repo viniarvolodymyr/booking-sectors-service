@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories
+namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
     public class TournamentSectorRepository : IBaseRepository<TournamentSector>
     {
@@ -19,19 +20,19 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             dbSet = db.Set<TournamentSector>();
         }
 
-        public async Task<IEnumerable<TournamentSector>> GetAllEntitiesAsync()
+        public async Task<List<TournamentSector>> GetAllEntitiesAsync()
         {
             return await dbSet.ToListAsync();
         }
 
-        public async Task<TournamentSector> GetEntityAsync(int id)
+        public async ValueTask<TournamentSector> GetEntityAsync(int id)
         {
             return await dbSet.FindAsync(id);
         }
       
-        public async Task InsertEntityAsync(TournamentSector entity)
+        public async ValueTask<EntityEntry<TournamentSector>> InsertEntityAsync(TournamentSector entity)
         {
-            await dbSet.AddAsync(entity);
+           return  await dbSet.AddAsync(entity);
         }
 
         public void UpdateEntity(TournamentSector entity)
@@ -44,9 +45,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             TournamentSector existing = await dbSet.FindAsync(id);
             dbSet.Remove(existing);
         }
-        public async Task SaveEntityAsync()
-        {
-            await db.SaveChangesAsync();
-        }
+
+
     }
 }

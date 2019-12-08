@@ -8,11 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 using SoftServe.BookingSectors.WebAPI.BLL.Services;
-using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
-
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -46,10 +45,8 @@ namespace SoftServe.BookingSectors.WebAPI
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
             services.AddTransient<IUnitOfWork, EFUnitOfWork>();
-            services.AddTransient<ISectorService, SectorService>();
-            services.AddTransient<IUserService, UserService>();
+           
             services.AddTransient<ITournamentService, TournamentService>();
-            services.AddTransient<ITournamentSectorService, TournamentSectorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

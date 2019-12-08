@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SoftServe.BookingSectors.WebAPI.BLL.Interfaces
+namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
 {
     public interface ITournamentService
     {
         Task<IEnumerable<TournamentDTO>> GetAllTournamentsAsync();
-  //      Task<TournamentDTO> GetTournamentByIdAsync(int id);
-   //     Task DeleteTournamentByIdAsync(int id);
+        Task<TournamentDTO> GetTournamentByIdAsync(int id);
+        Task InsertTournamentAsync(TournamentDTO tournamentDTO);
+        Task UpdateTournament(int tourId, TournamentDTO tournamentDTO);
+        Task DeleteTournamentByIdAsync(int id);
         void Dispose();
     }
 }

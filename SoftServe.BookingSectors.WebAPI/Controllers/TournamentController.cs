@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -20,7 +20,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<TournamentDTO>>> GetAll()
         {
             var dtos = await tournamentService.GetAllTournamentsAsync();
@@ -31,35 +31,26 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dtos);
 }
         
-        /*
-        [HttpGet("{tour_id}")]
+        
+        [HttpGet("{tourId}")]
         public async Task<TournamentDTO> GetTournament(int tourId)
         {
             return await tournamentService.GetTournamentByIdAsync(tourId);
         }
-        /*
-        [HttpPost("{name}/{start}/{end}/{prepTerm}")]
-        public void Post( string name, DateTime start, DateTime end, int prepTerm )
+        
+        [HttpPost]
+        public async Task Post([FromBody] TournamentDTO tournamentDTO)
         {
-            Tournament tour = new Tournament() {
-                Name = name,
-                DateStart=start,
-                DateEnd=end,
-                PreparationTerm=prepTerm
-            };
-
-            tournament.Insert(tour);
-            tournament.Save();
+            await tournamentService.InsertTournamentAsync(tournamentDTO);
 
         }
-                              *
-        // PUT: api/Tournament/5
-        [HttpPut("{id}")]
-        public async Task Put(int id, string name, DateTime start, DateTime end, int prepTerm)
+
+        [HttpPut("{tourId}")]
+        public async Task Put(int tourId, [FromBody] TournamentDTO tournamentDTO)
         {
-           
+            await tournamentService.UpdateTournament(tourId, tournamentDTO);
         }
-    
+
 
         [HttpDelete("{tourId}")]
         public async Task Delete(int tourId)
@@ -67,6 +58,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             await tournamentService.DeleteTournamentByIdAsync(tourId);
            
         }
-      */
+      
     }
 }
