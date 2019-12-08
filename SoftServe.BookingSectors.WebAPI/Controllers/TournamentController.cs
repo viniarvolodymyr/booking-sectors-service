@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
@@ -18,27 +19,25 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             tournamentService = service;
         }
 
-        // GET: api/Tournament
-        [HttpGet(Name = "GetTournamentsSectors")]
-        public IActionResult GetAll()
+        
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<TournamentDTO>>> GetAll()
         {
-            var allTour = tournament.GetAll();
-            var allSectors = sectors.GetAll();
-            var result = allTour.GroupJoin(allSectors,
-               p => p.Id,
-               t => t.IdTournament,
-               (p, t) => new { ID = p.Id, Name = p.Name, DateStart = p.DateStart, DateEnd = p.DateEnd, 
-                  PreparationTerm = p.PreparationTerm, Sectors = tournamentSectorController.GetSectors(p.Id).Select(x => x.IdSectors) }
-                );
-            return Ok(result);
-        }
-
-        [HttpGet("{tour_id}", Name = "GetTournament")]
-        public Tournament GetTournament(int tour_id)
+            var dtos = await tournamentService.GetAllTournamentsAsync();
+            if (!dtos.Any())
+            {
+                return NotFound();
+            }
+            return Ok(dtos);
+}
+        
+        /*
+        [HttpGet("{tour_id}")]
+        public async Task<TournamentDTO> GetTournament(int tourId)
         {
-            return tournament.GetById(tour_id);
+            return await tournamentService.GetTournamentByIdAsync(tourId);
         }
-   
+        /*
         [HttpPost("{name}/{start}/{end}/{prepTerm}")]
         public void Post( string name, DateTime start, DateTime end, int prepTerm )
         {
@@ -53,43 +52,21 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             tournament.Save();
 
         }
-
+                              *
         // PUT: api/Tournament/5
         [HttpPut("{id}")]
-        public void Put(int id, string name, DateTime start, DateTime end, int prepTerm)
+        public async Task Put(int id, string name, DateTime start, DateTime end, int prepTerm)
         {
-            Tournament tour = GetTournament(id);
-            tour.Name = name;
-            tour.DateStart = start;
-            tour.DateEnd = end;
-            tour.PreparationTerm = prepTerm;
-
-            tournament.Update(tour);
-            tournament.Save();
+           
         }
-
+    
 
         [HttpDelete("{tourId}")]
-        public void Delete(int tourId)
+        public async Task Delete(int tourId)
         {
-            var tourSectors = tournamentSectorController.GetSectors(tourId);
-            if (tourSectors != null)
-            {
-                foreach (TournamentSector sector in tourSectors)
-                {
-                    sectors.Delete(sector.Id);
-                }
-                sectors.Save();
-                tournament.Delete(tourId);
-                tournament.Save();
-            }
+            await tournamentService.DeleteTournamentByIdAsync(tourId);
+           
         }
-
-      
-      
-
-      
-
-       
+      */
     }
 }

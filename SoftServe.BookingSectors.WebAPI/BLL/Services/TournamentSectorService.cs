@@ -35,6 +35,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var dto = _mapper.Map<TournamentSector, TournamentSectorDTO>(entity);
             return dto;
         }
+
         public void Dispose()
         {
             Database.Dispose();

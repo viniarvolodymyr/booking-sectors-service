@@ -18,6 +18,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
             CreateMap<User, UserDTO>()
                .ReverseMap();
 
+            CreateMap<Tournament, TournamentDTO>()
+                .ReverseMap();
+
+        /*    CreateMap<IEnumerable<Tournament>, IEnumerable<TournamentDTO>>()
+                .ReverseMap();
+
+    */
+
             CreateMap<TournamentSector, TournamentSectorDTO>()
                .ReverseMap();
         }

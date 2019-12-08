@@ -29,6 +29,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             return await dbSet.FindAsync(id);
         }
 
+
+      
         public async Task InsertEntityAsync(TournamentSector entity)
         {
             await dbSet.AddAsync(entity);

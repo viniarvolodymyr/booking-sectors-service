@@ -56,6 +56,7 @@ namespace SoftServe.BookingSectors.WebAPI
             services.AddTransient<IUnitOfWork, EFUnitOfWork>();
             services.AddTransient<ISectorService, SectorService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ITournamentService, TournamentService>();
             services.AddTransient<ITournamentSectorService, TournamentSectorService>();
         }
 
