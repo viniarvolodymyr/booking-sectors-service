@@ -5,6 +5,8 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
@@ -19,19 +21,19 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             dbSet = context.Set<Sector>();
         }
 
-        public async Task<IEnumerable<Sector>> GetAllEntitiesAsync()
+        public Task<List<Sector>> GetAllEntitiesAsync()
         {
-            return await dbSet.ToListAsync();
+            return dbSet.AsNoTracking().ToListAsync();
         }
 
-        public async Task<Sector> GetEntityByIdAsync(int id)
+        public  Task<Sector> GetEntityByIdAsync(int id)
         {
-            return await dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            return dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task InsertEntityAsync(Sector entityToInsert)
+        public  ValueTask<EntityEntry<Sector>> InsertEntityAsync(Sector entityToInsert)
         {
-            await dbSet.AddAsync(entityToInsert);
+             return dbSet.AddAsync(entityToInsert);
         }
 
         public void UpdateEntity(Sector entityToUpdate)
@@ -39,9 +41,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             dbSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
-        public void DeleteEntityByIdAsync(int id)
+        public async Task DeleteEntityByIdAsync(int id)
         {
-            Sector sectorToDelete = dbSet.Find(id);
+            Sector sectorToDelete =  await dbSet.FindAsync(id);
             dbSet.Remove(sectorToDelete);
         }
     }

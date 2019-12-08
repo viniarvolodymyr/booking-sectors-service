@@ -56,7 +56,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         public async Task DeleteSectorByIdAsync(int id)
         {
-            database.SectorsRepository.DeleteEntityByIdAsync(id);
+            await database.SectorsRepository.DeleteEntityByIdAsync(id);
             await database.SaveAsync();
         }
         public void Dispose()
