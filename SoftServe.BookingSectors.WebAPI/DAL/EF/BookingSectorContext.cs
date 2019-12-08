@@ -226,9 +226,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
 
                 entity.Property(e => e.CreateUserId).HasColumnName("CREATE_USER_ID");
 
-                entity.Property(e => e.IdSectors).HasColumnName("ID_SECTORS");
+                entity.Property(e => e.SectorsId).HasColumnName("SECTORS_ID");
 
-                entity.Property(e => e.IdTournament).HasColumnName("ID_TOURNAMENT");
+                entity.Property(e => e.TournamentId).HasColumnName("TOURNAMENT_ID");
 
                 entity.Property(e => e.ModDate)
                     .HasColumnName("MOD_DATE")
@@ -239,15 +239,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
 
                 entity.HasOne(d => d.IdSectorsNavigation)
                     .WithMany(p => p.TournamentSector)
-                    .HasForeignKey(d => d.IdSectors)
+                    .HasForeignKey(d => d.SectorsId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ID_SECTORS");
+                    .HasConstraintName("FK_SECTORS_ID");
 
                 entity.HasOne(d => d.IdTournamentNavigation)
                     .WithMany(p => p.TournamentSector)
-                    .HasForeignKey(d => d.IdTournament)
+                    .HasForeignKey(d => d.TournamentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ID_TOURNAMENT");
+                    .HasConstraintName("FK_TOURNAMENT_ID");
             });
 
             modelBuilder.Entity<User>(entity =>

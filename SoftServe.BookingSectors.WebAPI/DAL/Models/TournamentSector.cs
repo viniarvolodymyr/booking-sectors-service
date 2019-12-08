@@ -6,8 +6,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
     public partial class TournamentSector
     {
         public int Id { get; set; }
-        public int IdTournament { get; set; }
-        public int IdSectors { get; set; }
+        public int TournamentId { get; set; }
+        public int SectorsId { get; set; }
         public DateTime CreateDate { get; set; }
         public int CreateUserId { get; set; }
         public DateTime ModDate { get; set; }

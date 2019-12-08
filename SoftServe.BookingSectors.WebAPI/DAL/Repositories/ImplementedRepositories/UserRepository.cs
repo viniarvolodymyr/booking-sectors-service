@@ -46,9 +46,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             dbSet.Remove(existing);
         }
 
-        public async Task SaveEntityAsync()
-        {
-            await db.SaveChangesAsync();
-        }
+     
     }
 }

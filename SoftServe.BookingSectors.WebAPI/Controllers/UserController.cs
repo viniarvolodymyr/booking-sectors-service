@@ -39,7 +39,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             }
             return Ok(dto);
         }
-       
+
 
         //GET: api/User/Phone/3212321
         [HttpGet("Phone/{phone}", Name = "GetUserByPhone")]
@@ -52,19 +52,13 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             }
             return Ok(dto);
 
-         }
+        }
 
         // PUT: api/User/5
-        //[HttpPut("{id}")]
-        //public async void PutUser(int id, string firstName, string lastName, string phone, string password)
-        //{
-        //    User user = repository.GetById(id);
-        //    user.Firstname = firstName;
-        //    user.Lastname = lastName;
-        //    user.Phone = phone;
-        //    user.Password = Encoding.ASCII.GetBytes(password);
-        //    repository.Update(user);
-        //    repository.Save();
-        //}
+        [HttpPut("{id}")]
+        public void UpdateUser(int id, [FromBody] UserDTO userDTO)
+        {
+            userService.UpdateUserById(id, userDTO);
+        }
     }
 }

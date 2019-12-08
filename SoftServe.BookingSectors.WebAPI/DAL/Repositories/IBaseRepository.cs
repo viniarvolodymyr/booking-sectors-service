@@ -1,5 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query;
+using System;
+
+using System.Linq;
+using System.Linq.Expressions;
+
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
 {
@@ -10,5 +16,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
         Task InsertEntityAsync(T entity);
         void UpdateEntity(T entity);
         Task DeleteEntityAsync(int id);
+       
     }
 }

@@ -42,5 +42,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             Sector existing = await dbSet.FindAsync(id);
             dbSet.Remove(existing);
         }
+
+        
     }
 }

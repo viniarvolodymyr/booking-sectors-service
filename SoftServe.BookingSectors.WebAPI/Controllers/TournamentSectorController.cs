@@ -1,58 +1,53 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Mvc;
-//using SoftServe.BookingSectors.WebAPI.Repositories;
-//using SoftServe.BookingSectors.WebAPI.Models;
-
-//namespace SoftServe.BookingSectors.WebAPI.Controllers
-//{
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class TournamentSectorController : ControllerBase
-//    {
-
-//        GenericRepository<TournamentSector> sectors = null;
-//        public TournamentSectorController()
-//        {
-//            sectors = new GenericRepository<TournamentSector>();
-//        }
-
-//        [HttpGet("{tourId}", Name = "GetSectors")]
-//        public IEnumerable<TournamentSector> GetSectors(int tourId)
-//        {
-//            return sectors.GetAll().Where(x => x.IdTournament == tourId);
-//        }
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
 
 
-//        [HttpDelete("{tourId}/{sectorId}")]
-//        public void Delete(int tourId, int sectorId)
-//        {
-//            var tourSectors = GetSectors(tourId);
-//            if (tourSectors != null)
-//            {
-//                foreach (TournamentSector sector in tourSectors)
-//                {
-//                    if (sector.IdSectors == sectorId)
-//                        sectors.Delete(sector.Id);
-//                }
-//                sectors.Save();
+namespace SoftServe.BookingSectors.WebAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TournamentSectorController : ControllerBase
+    {
+        readonly ITournamentSectorService tournamentSectorService;
+        public TournamentSectorController(ITournamentSectorService service)
+        {
+            tournamentSectorService = service;
+        }
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<TournamentSectorDTO>>> Get(int tournId)
+        {
+            var dtos = await tournamentSectorService.GetAllTournamentSectorsAsync(tournId);
+            if (!dtos.Any())
+            {
+                return NotFound();
+            }
+   
+            return Ok(dtos);
+        }
 
-//            }
-//        }
+        
+        [HttpDelete("{tourId}/{sectorId}")]
+        public async Task<IActionResult> Delete(int tourId, int sectorId)
+        {
+            var result = await tournamentSectorService.DeleteSectorFromTournamentAsync(tourId, sectorId);
+            if (result == 0)
+            {
+                return NotFound();
+            }
+            return Ok();
+        }
 
 
-//        [HttpPost(Name = "AddSectorToTournaments")]
-//        public void AddSectorToTournament(int tournId, int sectId)
-//        {
-//            TournamentSector tournamentSector = new TournamentSector();
-//            tournamentSector.IdSectors = sectId;
-//            tournamentSector.IdTournament = tournId;
-//            sectors.Insert(tournamentSector);
-//            sectors.Save();
-//        }
+        [HttpPost(Name = "AddSectorToTournament")]
+        public async Task AddSector(int tourId, int sectorId)
+        {
+             await tournamentSectorService.AddSectorToTournamentAsync(sectorId, tourId);
+        }
+        
 
-//    }
-//}
+    }
+}

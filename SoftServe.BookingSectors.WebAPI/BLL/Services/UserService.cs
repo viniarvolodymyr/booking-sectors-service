@@ -49,6 +49,35 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var dto = _mapper.Map<User, UserDTO>(entity);
             return dto;
         }
+
+        public async Task UpdateUserById(int id, UserDTO userDTO)
+        {
+            var entity = await Database.Users.GetEntityAsync(id);
+            var user = _mapper.Map<UserDTO, User>(userDTO);
+            user.Id = id;
+            user.CreateUserId = entity.CreateUserId;
+            user.CreateDate = entity.CreateDate;
+            user.ModDate = System.DateTime.Now;
+           Database.Users.UpdateEntity(user);
+      
+            await Database.SaveAsync();
+
+          //  var entity = await Database.Users.GetEntityAsync(id);
+          ////  byte[] pass =System.Text.Encoding.ASCII.GetBytes( userDTO.Password);
+          //  User user = _mapper.Map<UserDTO, User>(userDTO);
+          //  // entity.Id = id;
+          //  //  entity.Firstname = user.Firstname;
+          //  //entity.Lastname = user.Lastname;
+          //  entity.Firstname = "dkdkd";
+          //      //user.Firstname = entity.Firstname;
+          //      //user.Lastname = entity.Lastname;
+          //      //user.Phone = entity.Phone;
+          //      //user.Password = pass;
+          //      //user.ModDate = System.DateTime.Now;
+          //      Database.Users.UpdateEntity(entity);
+          //      await Database.SaveAsync();
+            
+        }
         public void Dispose()
         {
             Database.Dispose();

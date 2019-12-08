@@ -19,21 +19,48 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             Database = uow;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<TournamentSectorDTO>> GetAllTournamentSectorsAsync()
+        public async Task<IEnumerable<TournamentSectorDTO>> GetAllTournamentSectorsAsync(int tournId)
         {
-            var tournamentSectors = await Database.TournamentSectors.GetAllEntitiesAsync();
+            var sectors = await Database.TournamentSectors.GetAllEntitiesAsync();
+            var tournamentSectors = sectors.Where(x => x.TournamentId == tournId);
+
             var dtos = _mapper.Map<IEnumerable<TournamentSector>, List<TournamentSectorDTO>>(tournamentSectors);
             return dtos;
         }
-        public async Task<TournamentSectorDTO> GetTournamentSectorByIdAsync(int id)
+        public async Task<int> DeleteSectorFromTournamentAsync(int tournId, int sectorId)
         {
-            var entity = await Database.TournamentSectors.GetEntityAsync(id);
-            if (entity == null)
+            var sectors = await Database.TournamentSectors.GetAllEntitiesAsync();
+            var tournSectors = sectors.Where(x => x.TournamentId == tournId);
+            int result = 0;
+            if (tournSectors != null)
             {
-                return null;
+                foreach (TournamentSector sector in tournSectors)
+                {
+                    if (sector.SectorsId == sectorId)
+                    {
+                        await Database.TournamentSectors.DeleteEntityAsync(sector.Id);
+                        result = 1;
+                    }
+                }
+                await Database.SaveAsync();
             }
-            var dto = _mapper.Map<TournamentSector, TournamentSectorDTO>(entity);
-            return dto;
+            return result;
+        }
+
+        public async Task AddSectorToTournamentAsync(int sectId, int tournId)
+        {
+            var sect =  await Database.Sectors.GetEntityAsync(sectId);
+            //var tourn = await Database.Tournament.GetEntityAsync(tournId);
+       
+            if (sect != null)
+            {
+                TournamentSector sector = new TournamentSector();
+                sector.SectorsId = sectId;
+                sector.TournamentId = tournId;
+                await Database.TournamentSectors.InsertEntityAsync(sector);
+                await Database.SaveAsync();
+            }
+
         }
         public void Dispose()
         {

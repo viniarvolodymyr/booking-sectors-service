@@ -44,9 +44,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             TournamentSector existing = await dbSet.FindAsync(id);
             dbSet.Remove(existing);
         }
-        public async Task SaveEntityAsync()
-        {
-            await db.SaveChangesAsync();
-        }
+       
     }
 }

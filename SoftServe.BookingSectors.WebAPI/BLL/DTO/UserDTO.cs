@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
 {
@@ -11,9 +8,9 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
         public string Lastname { get; set; }
         public string Firstname { get; set; }
         public string Phone { get; set; }
-        public byte[] Password { get; set; }
-        public string Role { get; set; }
-        public byte[] Photo { get; set; }
+        public string Password { get; set; }
+        public int IdRole { get; set; }
+        //public byte[] Photo { get; set; }
         public DateTime ModDate { get; set; }
     }
 }
