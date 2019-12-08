@@ -25,7 +25,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return await dbSet.ToListAsync();
         }
 
-        public async ValueTask<TournamentSector> GetEntityAsync(int id)
+        public async Task<TournamentSector> GetEntityByIdAsync(int id)
         {
             return await dbSet.FindAsync(id);
         }
@@ -40,7 +40,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             dbSet.Attach(entity);
             db.Entry(entity).State = EntityState.Modified;
         }
-        public async Task DeleteEntityAsync(int id)
+        public async Task DeleteEntityByIdAsync(int id)
         {
             TournamentSector existing = await dbSet.FindAsync(id);
             dbSet.Remove(existing);

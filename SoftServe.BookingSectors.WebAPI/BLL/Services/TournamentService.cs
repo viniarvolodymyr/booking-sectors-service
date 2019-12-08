@@ -51,7 +51,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task<TournamentDTO> GetTournamentByIdAsync(int id)
         {
-            var tour = await _database.tournamentRepositoty.GetEntityAsync(id);
+            var tour = await _database.tournamentRepositoty.GetEntityByIdAsync(id);
             var sectors = await _database.TournamentSectors.GetAllEntitiesAsync();
             if (tour == null || sectors == null)
             {
@@ -79,7 +79,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         //modify
         public async Task UpdateTournament(int id, TournamentDTO tournamentDTO)
         {
-            var entity = await _database.tournamentRepositoty.GetEntityAsync(id);
+            var entity = await _database.tournamentRepositoty.GetEntityByIdAsync(id);
             var tournament = _mapper.Map<TournamentDTO, Tournament>(tournamentDTO);
             tournament.Id = id;
             tournament.CreateUserId = entity.CreateUserId;
@@ -94,7 +94,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
        
             public async Task DeleteTournamentByIdAsync(int id)
         {
-            var tour = await _database.tournamentRepositoty.GetEntityAsync(id);
+            var tour = await _database.tournamentRepositoty.GetEntityByIdAsync(id);
             if (tour == null)
             {
                 return;
@@ -105,10 +105,10 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             {
                 foreach (var sector in sectors)
                 {
-                    await _database.TournamentSectors.DeleteEntityAsync(sector.Id);
+                    await _database.TournamentSectors.DeleteEntityByIdAsync(sector.Id);
                 }
             }
-            await _database.tournamentRepositoty.DeleteEntityAsync(id);
+            await _database.tournamentRepositoty.DeleteEntityByIdAsync(id);
             await _database.SaveAsync();
         }
 

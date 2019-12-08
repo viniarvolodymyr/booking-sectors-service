@@ -12,7 +12,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
     public class EFUnitOfWork : IUnitOfWork
     {
         private readonly BookingSectorContext context;
-        private SectorRepository sectorsRepository;
+        private TournamentRepository tournamentRepository;
+        private TournamentSectorRepository tournamentSectorRepository;
         private bool disposed = false;
         public EFUnitOfWork(BookingSectorContext context)
         {
@@ -21,11 +22,11 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
      
         public IBaseRepository<Tournament> tournamentRepositoty
         {
-            get { return tournamentRepository ??= new TournamentRepository(db); }
+            get { return tournamentRepository ??= new TournamentRepository(context); }
         }
         public IBaseRepository<TournamentSector> TournamentSectors
         {
-            get { return tournamentSectorsRepository ??= new TournamentSectorRepository(db); }
+            get { return tournamentSectorRepository ??= new TournamentSectorRepository(context); }
         }
         public async Task<bool> SaveAsync()
         {
