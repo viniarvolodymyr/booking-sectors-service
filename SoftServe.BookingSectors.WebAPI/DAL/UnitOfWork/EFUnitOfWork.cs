@@ -1,28 +1,21 @@
 ﻿using System;
-<<<<<<< HEAD
-=======
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
->>>>>>> master
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
     public class EFUnitOfWork : IUnitOfWork
     {
-<<<<<<< HEAD
-        private readonly BookingSectorContext db;
-        private SectorRepository sectorRepository;
-        private BookingSectorRepository bookingRepository;
-=======
         private readonly BookingSectorContext context;
         private SectorRepository sectorsRepository;
+        private BookingSectorRepository bookingRepository;
         private bool disposed = false;
->>>>>>> master
         public EFUnitOfWork(BookingSectorContext context)
         {
             this.context = context;
@@ -31,22 +24,18 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         {
             get { return sectorsRepository ??= new SectorRepository(context); }
         }
-<<<<<<< HEAD
 
         public IBaseRepository<BookingSector> BookingSectors
         {
             get
             {
                 if (bookingRepository == null)
-                    bookingRepository = new BookingSectorRepository(db);
+                    bookingRepository = new BookingSectorRepository(context);
                 return bookingRepository;
             }
         }
 
-        public void Save()
-=======
         public async Task<bool> SaveAsync()
->>>>>>> master
         {
             try
             {
