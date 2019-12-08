@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using AutoMapper;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services

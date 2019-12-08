@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 
-namespace SoftServe.BookingSectors.WebAPI.BLL.Interfaces
+namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
 {
     public interface ISectorService
     {
