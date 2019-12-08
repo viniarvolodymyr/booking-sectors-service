@@ -11,27 +11,27 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
     public class EFUnitOfWork : IUnitOfWork
     {
-        private readonly BookingSectorContext db;
+        private readonly BookingSectorContext context;
         private SectorRepository sectorRepository;
         private bool disposed = false;
         public EFUnitOfWork(BookingSectorContext context)
         {
-            db = context;
+            this.context = context;
         }
         public IBaseRepository<Sector> Sectors
         {
-            get { return sectorRepository ??= new SectorRepository(db); }
+            get { return sectorRepository ??= new SectorRepository(context); }
         }
         public async Task<bool> SaveAsync()
         {
             try
             {
-                var changes = db.ChangeTracker.Entries().Count(
+                var changes = context.ChangeTracker.Entries().Count(
                     p => p.State == EntityState.Modified || p.State == EntityState.Deleted
                                                          || p.State == EntityState.Added);
                 if (changes == 0) return true;
 
-                return await db.SaveChangesAsync() > 0;
+                return await context.SaveChangesAsync() > 0;
             }
             catch
             {
@@ -47,7 +47,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             {
                 if (disposing)
                 {
-                    db.Dispose();
+                    context.Dispose();
                 }
 
                 disposed = true;
