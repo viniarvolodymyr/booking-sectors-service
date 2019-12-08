@@ -6,7 +6,8 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories
+namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
+
 {
     public class SectorRepository : IBaseRepository<Sector>
     {
