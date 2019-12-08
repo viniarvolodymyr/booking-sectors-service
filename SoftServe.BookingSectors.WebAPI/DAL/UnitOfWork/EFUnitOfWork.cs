@@ -5,74 +5,46 @@ using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
     public class EFUnitOfWork : IUnitOfWork
     {
-        private readonly BookingSectorContext db;
-        private SectorRepository sectorRepository;
-        private UserRepository userRepository;
-        private TournamentSectorRepository tournamentSectorRepository;
+        private readonly BookingSectorContext context;
+        private SectorRepository sectorsRepository;
         private bool disposed = false;
-
         public EFUnitOfWork(BookingSectorContext context)
         {
-            db = context;
+            this.context = context;
         }
-        public IBaseRepository<Sector> Sectors
+        public IBaseRepository<Sector> SectorsRepository
         {
-            get { return sectorRepository ??= new SectorRepository(db); }
+            get { return sectorsRepository ??= new SectorRepository(context); }
         }
-
-        public IBaseRepository<User> Users
-        {
-            get
-            {
-                if (userRepository == null)
-                    userRepository = new UserRepository(db);
-                return userRepository;
-            }
-        }
-
-        public IBaseRepository<TournamentSector> TournamentSectors
-        {
-            get
-            {
-                if (tournamentSectorRepository == null)
-                    tournamentSectorRepository = new TournamentSectorRepository(db);
-                return tournamentSectorRepository;
-            }
-        }
-
-       
         public async Task<bool> SaveAsync()
         {
             try
             {
-                var changes = db.ChangeTracker.Entries().Count(
+                var changes = context.ChangeTracker.Entries().Count(
                     p => p.State == EntityState.Modified || p.State == EntityState.Deleted
                                                          || p.State == EntityState.Added);
                 if (changes == 0) return true;
 
-                return await db.SaveChangesAsync() > 0;
+                return await context.SaveChangesAsync() > 0;
             }
             catch
             {
-                // Logger = ex.Message
                 return false;
             }
         }
-
-       
         public virtual void Dispose(bool disposing)
         {
             if (!disposed)
             {
                 if (disposing)
                 {
-                    db.Dispose();
+                    context.Dispose();
                 }
 
                 disposed = true;
