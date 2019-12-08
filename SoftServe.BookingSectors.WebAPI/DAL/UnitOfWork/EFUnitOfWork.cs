@@ -6,6 +6,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
@@ -13,7 +14,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
     {
         private readonly BookingSectorContext db;
         private SectorRepository sectorRepository;
-        private UserRepository userRepository;
         private TournamentSectorRepository tournamentSectorRepository;
         private TournamentRepository tournamentRepository;
         private bool disposed = false;
@@ -23,45 +23,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         }
         public IBaseRepository<Sector> Sectors
         {
-            get
-            {
-                if (sectorRepository == null)
-                    sectorRepository = new SectorRepository(db);
-                return sectorRepository;
-            }
-        }
-        public IBaseRepository<User> Users
-        {
-            get
-            {
-                if (userRepository == null)
-                    userRepository = new UserRepository(db);
-                return userRepository;
-            }
-        }
-
-        public IBaseRepository<TournamentSector> TournamentSectors
-        {
-            get
-            {
-                if (tournamentSectorRepository == null)
-                    tournamentSectorRepository = new TournamentSectorRepository(db);
-                return tournamentSectorRepository;
-            }
+            get { return sectorRepository ??= new SectorRepository(db); }
         }
         public IBaseRepository<Tournament> Tournaments
         {
-            get
-            {
-                if (tournamentRepository == null)
-                    tournamentRepository = new TournamentRepository(db);
-                return tournamentRepository;
-            }
+            get { return tournamentRepository ??= new TournamentRepository(db); }
         }
-        public void Save()
+        public IBaseRepository<TournamentSector> TournamentSectors
         {
-            db.SaveChanges();
-            get { return sectorRepository ??= new SectorRepository(db); }
+            get { return tournamentSectorRepository ??= new TournamentSectorRepository(db); }
         }
         public async Task<bool> SaveAsync()
         {
@@ -81,7 +51,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             }
         }
 
-       
         public virtual void Dispose(bool disposing)
         {
             if (!disposed)
