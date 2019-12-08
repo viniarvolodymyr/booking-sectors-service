@@ -35,12 +35,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             }
             catch
             {
-                // Logger = ex.Message
                 return false;
             }
         }
-
-       
         public virtual void Dispose(bool disposing)
         {
             if (!disposed)

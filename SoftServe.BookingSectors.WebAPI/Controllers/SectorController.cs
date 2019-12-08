@@ -7,7 +7,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/sector")]
+    [Route("api/sectors")]
     [ApiController]
     public class SectorController : ControllerBase
     {
@@ -45,10 +45,10 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             await sectorService.InsertSectorAsync(sectorDTO);
         }
         
-        [HttpPut]
-        public async Task Put([FromBody] SectorDTO sectorDTO)
+        [HttpPut("{id}")]
+        public async Task Put(int id, [FromBody] SectorDTO sectorDTO)
         {
-            await sectorService.UpdateSector(sectorDTO);
+            await sectorService.UpdateSector(id, sectorDTO);
         }
         [HttpDelete("{id}")]
         public async Task Delete(int id)

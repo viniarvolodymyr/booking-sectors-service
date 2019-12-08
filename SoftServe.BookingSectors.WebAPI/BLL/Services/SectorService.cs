@@ -40,11 +40,11 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             await database.SectorsRepository.InsertEntityAsync(sectorToInsert);
             await database.SaveAsync();
         }
-        public async Task UpdateSector(SectorDTO sectorDTO)
+        public async Task UpdateSector(int id, SectorDTO sectorDTO)
         { 
-            var tempSector = mapper.Map<SectorDTO, Sector>(sectorDTO);
-            tempSector.Id = sectorDTO.Id;
-            database.SectorsRepository.UpdateEntity(tempSector);
+            var sector = mapper.Map<SectorDTO, Sector>(sectorDTO);
+            sector.Id = id;
+            database.SectorsRepository.UpdateEntity(sector);
             await database.SaveAsync();
         }
         public async Task DeleteSectorByIdAsync(int id)

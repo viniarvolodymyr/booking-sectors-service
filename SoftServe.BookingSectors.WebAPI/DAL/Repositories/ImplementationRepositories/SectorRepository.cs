@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
-
 {
     public class SectorRepository : IBaseRepository<Sector>
     {
@@ -37,9 +36,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
 
         public void UpdateEntity(Sector entityToUpdate)
         {
-            var x = dbSet.AsNoTracking().Where(e => e.Id == entityToUpdate.Id).FirstOrDefault();
-            entityToUpdate.CreateUserId = x.CreateUserId;
-            entityToUpdate.CreateDate = x.CreateDate;
+            var tempSector = dbSet.AsNoTracking().Where(e => e.Id == entityToUpdate.Id).FirstOrDefault();
+            entityToUpdate.CreateUserId = tempSector.CreateUserId;
+            entityToUpdate.CreateDate = tempSector.CreateDate;
             entityToUpdate.ModDate = DateTime.Now;
             dbSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
