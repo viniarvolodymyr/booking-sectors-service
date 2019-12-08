@@ -5,6 +5,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using AutoMapper;
+using System;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -41,9 +42,15 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             await database.SaveAsync();
         }
         public async Task UpdateSector(int id, SectorDTO sectorDTO)
-        { 
+        {
+            var entity = await database.SectorsRepository.GetEntityByIdAsync(id);
+
             var sector = mapper.Map<SectorDTO, Sector>(sectorDTO);
             sector.Id = id;
+            sector.CreateUserId = entity.CreateUserId;
+            sector.CreateDate = entity.CreateDate;
+            sector.ModDate = DateTime.Now;
+
             database.SectorsRepository.UpdateEntity(sector);
             await database.SaveAsync();
         }

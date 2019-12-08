@@ -26,7 +26,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
 
         public async Task<Sector> GetEntityByIdAsync(int id)
         {
-            return await dbSet.FindAsync(id);
+            return await dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task InsertEntityAsync(Sector entityToInsert)
@@ -36,10 +36,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
 
         public void UpdateEntity(Sector entityToUpdate)
         {
-            var tempSector = dbSet.AsNoTracking().Where(e => e.Id == entityToUpdate.Id).FirstOrDefault();
-            entityToUpdate.CreateUserId = tempSector.CreateUserId;
-            entityToUpdate.CreateDate = tempSector.CreateDate;
-            entityToUpdate.ModDate = DateTime.Now;
             dbSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
