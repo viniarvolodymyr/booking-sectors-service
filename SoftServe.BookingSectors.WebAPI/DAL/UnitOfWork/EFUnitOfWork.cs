@@ -1,29 +1,37 @@
 ﻿using System;
+<<<<<<< HEAD
+=======
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+>>>>>>> master
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
     public class EFUnitOfWork : IUnitOfWork
     {
+<<<<<<< HEAD
         private readonly BookingSectorContext db;
         private SectorRepository sectorRepository;
         private BookingSectorRepository bookingRepository;
+=======
+        private readonly BookingSectorContext context;
+        private SectorRepository sectorsRepository;
+        private bool disposed = false;
+>>>>>>> master
         public EFUnitOfWork(BookingSectorContext context)
         {
-            db = context;
+            this.context = context;
         }
-        public IBaseRepository<Sector> Sectors
+        public IBaseRepository<Sector> SectorsRepository
         {
-            get
-            {
-                if (sectorRepository == null)
-                    sectorRepository = new SectorRepository(db);
-                return sectorRepository;
-            }
+            get { return sectorsRepository ??= new SectorRepository(context); }
         }
+<<<<<<< HEAD
 
         public IBaseRepository<BookingSector> BookingSectors
         {
@@ -36,19 +44,34 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         }
 
         public void Save()
+=======
+        public async Task<bool> SaveAsync()
+>>>>>>> master
         {
-            db.SaveChanges();
+            try
+            {
+                var changes = context.ChangeTracker.Entries().Count(
+                    p => p.State == EntityState.Modified || p.State == EntityState.Deleted
+                                                         || p.State == EntityState.Added);
+                if (changes == 0) return true;
+
+                return await context.SaveChangesAsync() > 0;
+            }
+            catch
+            {
+                return false;
+            }
         }
-        private bool disposed = false;
         public virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!disposed)
             {
                 if (disposing)
                 {
-                    db.Dispose();
+                    context.Dispose();
                 }
-                this.disposed = true;
+
+                disposed = true;
             }
         }
         public void Dispose()
@@ -56,5 +79,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
     }
 }
