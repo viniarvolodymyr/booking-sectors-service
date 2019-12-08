@@ -58,7 +58,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             user.CreateUserId = entity.CreateUserId;
             user.CreateDate = entity.CreateDate;
             user.ModDate = System.DateTime.Now;
-           Database.UsersRepository.UpdateEntity(user);
+            Database.UsersRepository.UpdateEntity(user);
       
             await Database.SaveAsync();
 

@@ -7,7 +7,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories
+namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
     public class UserRepository : IBaseRepository<User>
     {
@@ -20,31 +20,30 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             db = context;
             dbSet = db.Set<User>();
         }
-
-        public async Task<List<User>> GetAllEntitiesAsync()
+        public Task<List<User>> GetAllEntitiesAsync()
         {
-            return await dbSet.ToListAsync();
+            return dbSet.AsNoTracking().ToListAsync();
+        }
+        public Task<User> GetEntityByIdAsync(int id)
+
+        {
+            return dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+        }
+      
+        public async ValueTask<EntityEntry<User>> InsertEntityAsync(User entityToInsert)
+        {
+           return await dbSet.AddAsync(entityToInsert);
         }
 
-        public async Task<User> GetEntityByIdAsync(int id)
+        public void UpdateEntity(User entityToUpdate)
         {
-            return await dbSet.FindAsync(id);
-        }
-
-        public async ValueTask<EntityEntry<User>> InsertEntityAsync(User entity)
-        {
-           return await dbSet.AddAsync(entity);
-        }
-
-        public void UpdateEntity(User entity)
-        {
-            dbSet.Attach(entity);
-            db.Entry(entity).State = EntityState.Modified;
+            dbSet.Attach(entityToUpdate);
+            db.Entry(entityToUpdate).State = EntityState.Modified;
         }
         public async Task DeleteEntityByIdAsync(int id)
         {
-            User existing = await dbSet.FindAsync(id);
-            dbSet.Remove(existing);
+            User userToDelete = await dbSet.FindAsync(id);
+            dbSet.Remove(userToDelete);
         }
 
      
