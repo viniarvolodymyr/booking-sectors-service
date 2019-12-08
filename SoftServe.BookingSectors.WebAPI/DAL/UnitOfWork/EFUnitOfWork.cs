@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
@@ -16,6 +16,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         private UserRepository userRepository;
         private TournamentSectorRepository tournamentSectorRepository;
         private TournamentRepository tournamentRepository;
+        private bool disposed = false;
         public EFUnitOfWork(BookingSectorContext context)
         {
             db = context;
@@ -60,17 +61,37 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         public void Save()
         {
             db.SaveChanges();
+            get { return sectorRepository ??= new SectorRepository(db); }
         }
-        private bool disposed = false;
+        public async Task<bool> SaveAsync()
+        {
+            try
+            {
+                var changes = db.ChangeTracker.Entries().Count(
+                    p => p.State == EntityState.Modified || p.State == EntityState.Deleted
+                                                         || p.State == EntityState.Added);
+                if (changes == 0) return true;
+
+                return await db.SaveChangesAsync() > 0;
+            }
+            catch
+            {
+                // Logger = ex.Message
+                return false;
+            }
+        }
+
+       
         public virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!disposed)
             {
                 if (disposing)
                 {
                     db.Dispose();
                 }
-                this.disposed = true;
+
+                disposed = true;
             }
         }
         public void Dispose()
@@ -78,5 +99,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
     }
 }

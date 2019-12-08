@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 
-namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories
+namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
+
 {
     public class SectorRepository : IBaseRepository<Sector>
     {
@@ -43,10 +42,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
         {
             Sector existing = await dbSet.FindAsync(id);
             dbSet.Remove(existing);
-        }
-        public async Task SaveEntityAsync()
-        {
-            await db.SaveChangesAsync();
         }
     }
 }
