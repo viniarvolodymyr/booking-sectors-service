@@ -1,21 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
-
 {
     public class SectorRepository : IBaseRepository<Sector>
     {
-        private readonly BookingSectorContext db;
+        private readonly BookingSectorContext context;
         private readonly DbSet<Sector> dbSet;
 
         public SectorRepository(BookingSectorContext context)
         {
-            db = context;
-            dbSet = db.Set<Sector>();
+            this.context = context;
+            dbSet = context.Set<Sector>();
         }
 
         public async Task<IEnumerable<Sector>> GetAllEntitiesAsync()
@@ -23,25 +24,25 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return await dbSet.ToListAsync();
         }
 
-        public async Task<Sector> GetEntityAsync(int id)
+        public async Task<Sector> GetEntityByIdAsync(int id)
         {
-            return await dbSet.FindAsync(id);
+            return await dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task InsertEntityAsync(Sector entity)
+        public async Task InsertEntityAsync(Sector entityToInsert)
         {
-            await dbSet.AddAsync(entity);
+            await dbSet.AddAsync(entityToInsert);
         }
 
-        public void UpdateEntity(Sector entity)
+        public void UpdateEntity(Sector entityToUpdate)
         {
-            dbSet.Attach(entity);
-            db.Entry(entity).State = EntityState.Modified;
+            dbSet.Attach(entityToUpdate);
+            context.Entry(entityToUpdate).State = EntityState.Modified;
         }
-        public async Task DeleteEntityAsync(int id)
+        public void DeleteEntityByIdAsync(int id)
         {
-            Sector existing = await dbSet.FindAsync(id);
-            dbSet.Remove(existing);
+            Sector sectorToDelete = dbSet.Find(id);
+            dbSet.Remove(sectorToDelete);
         }
     }
 }

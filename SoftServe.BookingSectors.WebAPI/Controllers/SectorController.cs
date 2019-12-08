@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/sector")]
+    [Route("api/sectors")]
     [ApiController]
     public class SectorController : ControllerBase
     {
-        readonly ISectorService sectorService;
+        private readonly ISectorService sectorService;
         public SectorController(ISectorService service)
         {
             sectorService = service;
@@ -37,6 +37,23 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
                 return NotFound();
             }
             return Ok(dto);
+        }
+
+        [HttpPost]
+        public async Task Post([FromBody] SectorDTO sectorDTO)
+        {
+            await sectorService.InsertSectorAsync(sectorDTO);
+        }
+        
+        [HttpPut("{id}")]
+        public async Task Put(int id, [FromBody] SectorDTO sectorDTO)
+        {
+            await sectorService.UpdateSector(id, sectorDTO);
+        }
+        [HttpDelete("{id}")]
+        public async Task Delete(int id)
+        {
+            await sectorService.DeleteSectorByIdAsync(id);
         }
     }
 }
