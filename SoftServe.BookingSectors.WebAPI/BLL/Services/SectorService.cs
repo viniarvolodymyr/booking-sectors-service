@@ -20,14 +20,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         public async Task<IEnumerable<SectorDTO>> GetAllSectorsAsync()
         {
-            var sectors = await database.Sectors.GetAllEntitiesAsync();
+            var sectors = await database.SectorsRepository.GetAllEntitiesAsync();
             var dtos = mapper.Map<IEnumerable<Sector>, List<SectorDTO>>(sectors);
 
             return dtos;
         }
         public async Task<SectorDTO> GetSectorByIdAsync(int id)
         {
-            var entity = await database.Sectors.GetEntityAsync(id);
+            var entity = await database.SectorsRepository.GetEntityAsync(id);
             if (entity == null)
             {
                 return null;
