@@ -42,7 +42,7 @@ namespace SoftServe.BookingSectors.WebAPI
             "Connection Timeout=30;"));
 
             services.AddControllers();
-            services.AddTransient<ISettingsRepository, SettingsRepository>();
+            services.AddTransient<ISettingsService, SettingsRepository>();
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
