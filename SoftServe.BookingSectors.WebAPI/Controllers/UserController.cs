@@ -57,9 +57,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         // PUT: api/User/5
         [HttpPut("{id}")]
-        public void UpdateUser(int id, [FromBody] UserDTO userDTO)
+        public async Task UpdateUser(int id, [FromBody] UserDTO userDTO)
         {
-            userService.UpdateUserById(id,userDTO);
+           await userService.UpdateUserById(id,userDTO);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
@@ -60,8 +59,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task AddSectorToTournamentAsync(int sectId, int tournId)
         {
             var sect =  await Database.SectorsRepository.GetEntityByIdAsync(sectId);
-            //var tourn = await Database.Tournament.GetEntityAsync(tournId);
-       
+                  
             if (sect != null)
             {
                 TournamentSector sector = new TournamentSector();

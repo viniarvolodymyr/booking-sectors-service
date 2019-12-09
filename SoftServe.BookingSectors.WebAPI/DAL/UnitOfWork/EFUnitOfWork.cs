@@ -48,8 +48,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                     p => p.State == EntityState.Modified || p.State == EntityState.Deleted
                                                          || p.State == EntityState.Added);
                 if (changes == 0) return true;
+                await context.SaveChangesAsync();
 
-                return await context.SaveChangesAsync() > 0;
+                return true;
             }
             catch
             {
