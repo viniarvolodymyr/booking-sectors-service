@@ -8,7 +8,10 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
         public MappingProfile()
         {
             // Add as many of these lines as you need to map your objects
-            CreateMap<Sector, SectorDTO>();
+            CreateMap<Sector, SectorDTO>()
+                .ReverseMap();
+            CreateMap<BookingSector, BookingSectorDTO>()
+                .ReverseMap();
             CreateMap<SectorDTO, Sector>()
                 .ForMember(m => m.Id, opt => opt.Ignore());
 

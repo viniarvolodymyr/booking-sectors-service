@@ -1,12 +1,10 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using SoftServe.BookingSectors.WebAPI.DAL.EF;
-using Microsoft.EntityFrameworkCore;
-using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SoftServe.BookingSectors.WebAPI.DAL.EF;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
@@ -28,7 +26,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
 
         public  Task<Sector> GetEntityByIdAsync(int id)
         {
-            return dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+             return dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
         public  ValueTask<EntityEntry<Sector>> InsertEntityAsync(Sector entityToInsert)
