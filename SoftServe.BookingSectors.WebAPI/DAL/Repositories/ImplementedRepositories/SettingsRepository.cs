@@ -41,9 +41,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             throw new NotImplementedException();
         }
 
-        public Task<Setting> GetEntityAsync(int id)
+        public async Task<Setting> GetEntityAsync(int id)
         {
-            throw new NotImplementedException();
+            return await dbSet.FindAsync(id);
         }
     }
 }
