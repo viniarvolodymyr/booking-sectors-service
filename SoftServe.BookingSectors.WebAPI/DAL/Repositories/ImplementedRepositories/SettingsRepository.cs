@@ -45,7 +45,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
         {
             return await dbSet.FindAsync(id);
         }
-        public async void UpdateEntityAsync(Setting entity)
+        public void UpdateEntityAsync(Setting entity)
         {
             dbSet.Attach(entity);
             db.Entry(entity).State = EntityState.Modified;
