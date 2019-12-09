@@ -8,17 +8,31 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
     public class EFUnitOfWork : IUnitOfWork
     {
         private readonly BookingSectorContext context;
+        private TournamentSectorRepository tournamentSectorsRepository;
+        private TournamentRepository tournamentRepository;
         private SectorRepository sectorsRepository;
         private BookingSectorRepository bookingRepository;
         private bool disposed = false;
         public EFUnitOfWork(BookingSectorContext context)
         {
             this.context = context;
+        }
+      
+        public IBaseRepository<TournamentSector> TournamentSectorsRepository
+        {
+            get { return tournamentSectorsRepository ??= new TournamentSectorRepository(context); }
+        }
+
+
+        public IBaseRepository<Tournament> TournamentRepository
+        {
+            get { return tournamentRepository ??= new TournamentRepository(context); }
         }
         public IBaseRepository<Sector> SectorsRepository
         {
@@ -46,6 +60,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 return false;
             }
         }
+
         public virtual void Dispose(bool disposing)
         {
             if (!disposed)
