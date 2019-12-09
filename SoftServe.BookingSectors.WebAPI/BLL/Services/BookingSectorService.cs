@@ -53,11 +53,11 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task UpdateBookingApprovedAsync(int id, bool isApproved)
         {
             var booking = await database.BookingSectorsRepository.GetEntityByIdAsync(id);
-            booking.IsApproved = isApproved;
             if (booking == null)
             {
                 throw new NullReferenceException();
             }
+            booking.IsApproved = isApproved;
             database.BookingSectorsRepository.UpdateEntity(booking);
             await database.SaveAsync();
         }
