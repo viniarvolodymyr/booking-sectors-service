@@ -6,6 +6,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories
 {
@@ -43,7 +44,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
         }
         public void UpdateEntity(Setting entity)
         {
-            db.Entry(entity).State = EntityState.Modified;
+            throw new NotImplementedException();
         }
     }
 }
