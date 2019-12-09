@@ -43,6 +43,22 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         {
             db.SaveChanges();
         }
+        public async Task<bool> SaveAsync()
+        {
+            try
+            {
+                var changes = db.ChangeTracker.Entries().Count(
+                    p => p.State == EntityState.Modified || p.State == EntityState.Deleted
+                                                         || p.State == EntityState.Added);
+                if (changes == 0) return true;
+
+                return await db.SaveChangesAsync() > 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         private bool disposed = false;
         public virtual void Dispose(bool disposing)
         {
