@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
@@ -29,8 +30,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         public async Task<BookingSectorDTO> GetBookingByIdAsync(int id)
         {
-            var bookingById = await database.BookingSectorsRepository.GetEntityByIdAsync(id);
-            var dtos = mapper.Map<BookingSector, BookingSectorDTO>(bookingById);
+            var booking = await database.BookingSectorsRepository.GetEntityByIdAsync(id);
+            var dtos = mapper.Map<BookingSector, BookingSectorDTO>(booking);
             return dtos;
         }
 
@@ -53,11 +54,11 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task UpdateBookingApprovedAsync(int id, bool isApproved)
         {
             var booking = await database.BookingSectorsRepository.GetEntityByIdAsync(id);
-            booking.IsApproved = isApproved;
             if (booking == null)
             {
                 throw new NullReferenceException();
             }
+            booking.IsApproved = isApproved;
             database.BookingSectorsRepository.UpdateEntity(booking);
             await database.SaveAsync();
         }
@@ -65,11 +66,26 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             await database.BookingSectorsRepository.DeleteEntityByIdAsync(id);
             await database.SaveAsync();
-        }
+        }    
+        public async ValueTask<EntityEntry<BookingSector>> BookSector(int sectorId, DateTime fromDate, DateTime toDate, int userId)
+        {
+            BookingSector booking = new BookingSector()
+            {
+                SectorId = sectorId,
+                BookingStart = fromDate,
+                BookingEnd = toDate,
+                UserId = userId,
+                CreateUserId = new Random().Next(1, 100)
+            };
+            EntityEntry<BookingSector> bookingsSector = await database.BookingSectorsRepository.InsertEntityAsync(booking);
+            await database.SaveAsync();
 
+            return bookingsSector;
+        }
         public void Dispose()
         {
             database.Dispose();
         }
+
     }
 }

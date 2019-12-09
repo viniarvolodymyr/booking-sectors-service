@@ -6,7 +6,6 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
     public class UserRepository : IBaseRepository<User>
@@ -44,7 +43,5 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             User userToDelete = await dbSet.FindAsync(id);
             dbSet.Remove(userToDelete);
         }
-
-
     }
 }
