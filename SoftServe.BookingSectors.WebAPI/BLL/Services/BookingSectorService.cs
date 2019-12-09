@@ -38,13 +38,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var bookings = await database.BookingSectorsRepository.GetAllEntitiesAsync();
             var group = bookings.GroupBy(x => x.SectorId).OrderBy(x => x.Key);
-            var sectors = group.Select(temp =>
+            var sectorsTasks = group.Select(async(temp) =>
                 new
                 {
-                    Sector = database.SectorsRepository.GetEntityByIdAsync(temp.Key).Result,
+                    Sector = await database.SectorsRepository.GetEntityByIdAsync(temp.Key),
                     IsFree = temp.All(b => (!(b.BookingStart >= fromDate && b.BookingStart <= toDate)
                                                     && !(b.BookingEnd >= fromDate && b.BookingEnd <= toDate)))
                 });
+            var sectors = await Task.WhenAll(sectorsTasks);
             var freeSectors = sectors.Where(s => s.IsFree).Select(s => s.Sector);
             var dtos = mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(freeSectors);
             return dtos;
