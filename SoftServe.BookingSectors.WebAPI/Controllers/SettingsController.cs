@@ -27,7 +27,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [HttpPut("{name1}, {name2}, {value1}, {value2}", Name = "Update setting")]
         public void Update(string name1, string name2, int value1, int value2)
         {
-            _settings.UpdateSettings(name1, name2, value1, value2);
+            _settings.UpdateSettingsAsync(name1, name2, value1, value2);
         }
 
     }
