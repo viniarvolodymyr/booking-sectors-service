@@ -6,55 +6,42 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using AttributeRouting.Web.Http;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/bookings/")]
     [ApiController]
     public class BookingController : ControllerBase
     {
-        private IBookingSectorService _bookingService;
+        private IBookingSectorService bookingService;
         public BookingController(IBookingSectorService bookingService)
         {
-            _bookingService = bookingService;
-                
+            this.bookingService = bookingService;
         }
 
-        // GET: api/Booking
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookingSectorDTO>>> Get()
         {
-            var dtos = await _bookingService.GetBookingSectorsAsync();
-            if(!dtos.Any())
+            var dtos = await bookingService.GetBookingSectorsAsync();
+            if (!dtos.Any())
             {
                 return NoContent();
             }
             return Ok(dtos);
         }
 
-        // GET: api/Booking/5
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet]
+        [Route("{id}")]
         public async Task<ActionResult<BookingSectorDTO>> Get(int id)
         {
-            var dtos = await _bookingService.GetBookingByIdAsync(id);
-            if(dtos == null)
+            var dtos = await bookingService.GetBookingByIdAsync(id);
+            if (dtos == null)
             {
                 return NotFound();
             }
             return Ok(dtos);
         }
-
-        [HttpGet("FreeSectors/{fromDate}/{toDate}", Name = "GetFreeSectors")]
-        public async Task<ActionResult<IEnumerable<SectorDTO>>> Get(DateTime fromDate, DateTime toDate)
-        {
-            var freeSectors = await _bookingService.GetFreeSectorsAsync(fromDate, toDate);
-            if(!freeSectors.Any())
-            {
-                return NotFound();
-            }
-            return Ok(freeSectors);
-        }
-
 
         // POST: api/Booking
         [HttpPost]
@@ -63,15 +50,26 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         // PUT: api/Booking/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+        //[HttpPut("{id}")]
+        //public IActionResult Put(int id, [FromBody] bool isApproved)
+        //{
+        //    try
+        //    {
+        //        bookingService.UpdateBookingApproved(id, isApproved);
+        //    }
+        //    catch(ArgumentNullException e)
+        //    {
+
+        //    }
+        //    return Ok();
+        //}
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            await bookingService.DeleteBookingByIdAsync(id);
+            return Ok();
         }
     }
 }

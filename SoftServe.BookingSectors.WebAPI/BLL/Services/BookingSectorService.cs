@@ -12,51 +12,59 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
     public class BookingSectorService : IBookingSectorService
     {
-        private readonly IUnitOfWork _database;
-        private readonly IMapper _mapper;
+        private readonly IUnitOfWork database;
+        private readonly IMapper mapper;
 
         public BookingSectorService(IUnitOfWork database, IMapper mapper)
         {
-            _database = database;
-            _mapper = mapper;
+            this.database = database;
+            this.mapper = mapper;
         }
 
         public async Task<IEnumerable<BookingSectorDTO>> GetBookingSectorsAsync()
         {
-            var bookings = await _database.BookingSectors.GetAllEntitiesAsync();
-            var dtos = _mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(bookings);
+            var bookings = await database.BookingSectorsRepository.GetAllEntitiesAsync();
+            var dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(bookings);
             return dtos;
         }
         public async Task<BookingSectorDTO> GetBookingByIdAsync(int id)
         {
-            var bookingById = await _database.BookingSectors.GetEntityAsync(id);
-            var dtos = _mapper.Map<BookingSector, BookingSectorDTO>(bookingById);
+            var bookingById = await database.BookingSectorsRepository.GetEntityByIdAsync(id);
+            var dtos = mapper.Map<BookingSector, BookingSectorDTO>(bookingById);
             return dtos;
         }
 
         public async Task<IEnumerable<SectorDTO>> GetFreeSectorsAsync(DateTime fromDate, DateTime toDate)
         {
-            var bookings = await _database.BookingSectors.GetAllEntitiesAsync();
+            var bookings = await database.BookingSectorsRepository.GetAllEntitiesAsync();
             var group = bookings.GroupBy(x => x.SectorId).OrderBy(x => x.Key);
             var sectors = group.Select(temp =>
                 new
                 {
-                    Sector = _database.Sectors.GetEntityAsync(temp.Key).Result,
+                    Sector = database.SectorsRepository.GetEntityByIdAsync(temp.Key).Result,
                     IsFree = temp.All(b => (!(b.BookingStart >= fromDate && b.BookingStart <= toDate)
                                                     && !(b.BookingEnd >= fromDate && b.BookingEnd <= toDate)))
                 });
             var freeSectors = sectors.Where(s => s.IsFree).Select(s => s.Sector);
-            var dtos = _mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(freeSectors);
+            var dtos = mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(freeSectors);
             return dtos;
         }
 
-        public void UpdateBookingApproved(int id, bool isApproved)
+        public async void UpdateBookingApproved(int id, bool isApproved)
         {
-            throw new NotImplementedException();
+            var booking = await database.BookingSectorsRepository.GetEntityByIdAsync(id);
+            booking.IsApproved = isApproved;
+            if (booking == null)
+            {
+                throw new NullReferenceException();
+            }
+            database.BookingSectorsRepository.UpdateEntity(booking);
+            await database.SaveAsync();
         }
-        public void DeleteBookingById(int id)
+        public async Task DeleteBookingByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            await database.BookingSectorsRepository.DeleteEntityByIdAsync(id);
+            await database.SaveAsync();
         }
 
         public void Dispose()
