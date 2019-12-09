@@ -8,42 +8,43 @@ using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
-    public class TournamentSectorRepository : IBaseRepository<TournamentSector>
+    public class TournamentRepository: IBaseRepository<Tournament>
     {
         private readonly BookingSectorContext db;
-        private readonly DbSet<TournamentSector> dbSet;
+        private readonly DbSet<Tournament> dbSet;
 
-        public TournamentSectorRepository(BookingSectorContext context)
+        public TournamentRepository(BookingSectorContext context)
         {
             db = context;
-            dbSet = db.Set<TournamentSector>();
+            dbSet = db.Set<Tournament>();
         }
 
-        public Task<List<TournamentSector>> GetAllEntitiesAsync()
+        public  Task<List<Tournament>> GetAllEntitiesAsync()
         {
             return dbSet.AsNoTracking().ToListAsync();
         }
 
-        public async Task<TournamentSector> GetEntityByIdAsync(int id)
+        public async Task<Tournament>  GetEntityByIdAsync(int id)
         {
             return await dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
-        public async ValueTask<EntityEntry<TournamentSector>> InsertEntityAsync(TournamentSector entity)
+        public  ValueTask<EntityEntry<Tournament>> InsertEntityAsync(Tournament entity)
         {
-           return  await dbSet.AddAsync(entity);
+            return  dbSet.AddAsync(entity);
+          
         }
 
-        public void UpdateEntity(TournamentSector entity)
+        public void UpdateEntity(Tournament entity)
         {
             dbSet.Attach(entity);
             db.Entry(entity).State = EntityState.Modified;
         }
+
         public async Task DeleteEntityByIdAsync(int id)
         {
-            TournamentSector existing = await dbSet.FindAsync(id);
+            Tournament existing = await dbSet.FindAsync(id);
             dbSet.Remove(existing);
         }
-
 
     }
 }

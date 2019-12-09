@@ -49,50 +49,17 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var dto = _mapper.Map<User, UserDTO>(entity);
             return dto;
         }
-        public async Task UpdateUserById1(int id, UserDTO userDTO)
+
+        public async Task UpdateUserById(int id, UserDTO userDTO)
         {
             var entity = await Database.UsersRepository.GetEntityByIdAsync(id);
-            var user = _mapper.Map<UserDTO, User>(userDTO);
-            user.Id = id;
-            user.CreateUserId = entity.CreateUserId;
-            user.CreateDate = entity.CreateDate;
-            user.ModDate = System.DateTime.Now;
-            user.Password = System.Text.Encoding.ASCII.GetBytes("dfssdf");
-
-            user.Photo = System.Text.Encoding.ASCII.GetBytes("dfssdf");
-            Database.UsersRepository.UpdateEntity(user);
-
+            entity.Firstname = userDTO.Firstname;
+            entity.Lastname = userDTO.Lastname;
+            entity.Phone = userDTO.Phone;
+            entity.Password = System.Text.Encoding.ASCII.GetBytes(userDTO.Password);
+            entity.ModDate = System.DateTime.Now;
+            Database.UsersRepository.UpdateEntity(entity);
             await Database.SaveAsync();
-        }
-            public async Task UpdateUserById(int id, UserDTO userDTO)
-        {
-            var entity = await Database.UsersRepository.GetEntityByIdAsync(id);
-            var user = _mapper.Map<UserDTO, User>(userDTO);
-            user.Id = id;
-            user.CreateUserId = entity.CreateUserId;
-            user.CreateDate = entity.CreateDate;
-            user.ModDate = System.DateTime.Now;
-            user.Password = System.Text.Encoding.ASCII.GetBytes(userDTO.Password);
-            user.Photo = System.Text.Encoding.ASCII.GetBytes(userDTO.Photo);
-            Database.UsersRepository.UpdateEntity(user);
-      
-            await Database.SaveAsync();
-
-          //  var entity = await Database.Users.GetEntityAsync(id);
-          ////  byte[] pass =System.Text.Encoding.ASCII.GetBytes( userDTO.Password);
-          //  User user = _mapper.Map<UserDTO, User>(userDTO);
-          //  // entity.Id = id;
-          //  //  entity.Firstname = user.Firstname;
-          //  //entity.Lastname = user.Lastname;
-          //  entity.Firstname = "dkdkd";
-          //      //user.Firstname = entity.Firstname;
-          //      //user.Lastname = entity.Lastname;
-          //      //user.Phone = entity.Phone;
-          //      //user.Password = pass;
-          //      //user.ModDate = System.DateTime.Now;
-          //      Database.Users.UpdateEntity(entity);
-          //      await Database.SaveAsync();
-            
         }
         public void Dispose()
         {

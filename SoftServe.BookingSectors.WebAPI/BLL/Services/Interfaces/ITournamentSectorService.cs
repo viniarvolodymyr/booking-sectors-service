@@ -1,11 +1,8 @@
-﻿using System;
+﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
 
-namespace SoftServe.BookingSectors.WebAPI.BLL.Interfaces
+namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
 {
     public interface ITournamentSectorService
     {

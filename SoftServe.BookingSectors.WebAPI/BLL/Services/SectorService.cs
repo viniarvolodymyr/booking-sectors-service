@@ -6,6 +6,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using AutoMapper;
 using System;
+using System.Linq;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -33,6 +34,11 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             var dto = mapper.Map<Sector, SectorDTO>(entity);
             return dto;
+        }
+        public async Task<int> GetSectorIdByNumberAsync(int number)
+        {
+            var entity = await database.SectorsRepository.GetAllEntitiesAsync();
+            return entity.Where(x => (x.Number == number)).Select(x => x.Id).FirstOrDefault();
         }
         public async Task InsertSectorAsync(SectorDTO sectorDTO)
         {
