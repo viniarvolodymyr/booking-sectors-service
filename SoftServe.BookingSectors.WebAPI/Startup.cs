@@ -12,6 +12,8 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+using Microsoft.Extensions.Logging;
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -56,11 +58,20 @@ namespace SoftServe.BookingSectors.WebAPI
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+        {   
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseHttpStatusCodeExceptionMiddleware();
+                
+
             }
+            else
+            {
+                app.UseHttpStatusCodeExceptionMiddleware();
+                app.UseExceptionHandler();
+            }
+
 
             app.UseSwagger();
 
