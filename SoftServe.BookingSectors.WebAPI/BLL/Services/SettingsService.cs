@@ -41,6 +41,9 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var entity = await _database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name));
             var setting = _mapper.Map<SettingsDTO, Setting>(settingsDTO);
             setting.Id = (int)Enum.Parse(typeof(settings), name);
+            setting.CreateDate = entity.CreateDate;
+            setting.CreateUserId = entity.CreateUserId;
+            setting.ModDate = DateTime.Now;
             _database.Settings.UpdateEntity(setting);
             await _database.SaveAsync();
         }
