@@ -43,8 +43,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             setting1.value = value1;
             var entity2 = await _database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name1));
             var setting2 = _mapper.Map<Setting, SettingsDTO>(entity2);
-            setting2.value = value2;        
-            _database.Save();
+            setting2.value = value2;
+            await _database.SaveAsync();
         }
         public void Dispose()
         {
