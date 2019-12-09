@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.EF
 {

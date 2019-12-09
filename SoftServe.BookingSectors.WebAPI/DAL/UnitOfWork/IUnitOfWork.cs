@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
+﻿using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
+using System;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
