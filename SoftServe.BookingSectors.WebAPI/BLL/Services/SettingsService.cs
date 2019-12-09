@@ -41,9 +41,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dto;
         }
 
-        public void UpdateSettings(string name1, string name2, int value1, int value2)
+        public async void UpdateSettingsAsync(string name1, string name2, int value1, int value2)
         {
-            throw new NotImplementedException();
+            Setting setting1 = await Database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name1));
+            setting1.Value = value1;
+            Setting setting2 = await Database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name1));
+            setting2.Value = value2;
+
         }
     }
 }
