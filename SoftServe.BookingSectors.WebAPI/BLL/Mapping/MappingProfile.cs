@@ -8,6 +8,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
         public MappingProfile()
         {
 
+
             CreateMap<BookingSector, BookingSectorDTO>()
                 .ReverseMap();
             CreateMap<SectorDTO, Sector>()
@@ -31,6 +32,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
                 .ForMember(m => m.Id, opt => opt.Ignore());
             CreateMap<Sector, SectorDTO>()
                 .ReverseMap();
+
         }
     }
 }
