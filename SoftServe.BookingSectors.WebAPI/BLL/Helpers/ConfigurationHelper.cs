@@ -9,7 +9,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
     /// </summary>
     public static class ConfigurationHelper
     {
-        private static string _connection;
+        private static string connection;
 
         /// <summary>
         /// Get database connection string
@@ -17,16 +17,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
         /// <returns></returns>
         public static string GetDatabaseConnectionString()
         {
-            if (string.IsNullOrWhiteSpace(_connection))
+            if (string.IsNullOrWhiteSpace(connection))
             {
-                _connection = GetAppSettingsValue();
+                connection = GetAppSettingsValue();
             }
 
 
-            return _connection;
+            return connection;
         }
-
-
 
         private static string GetAppSettingsValue()
         {
@@ -36,8 +34,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
 
             var config = builder.Build();
             var value = config.GetValue<string>("AzureConnectionString");
-
-
             return value;
         }
     }
