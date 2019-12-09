@@ -69,7 +69,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            database.Dispose();
         }
     }
 }
