@@ -7,11 +7,15 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
 
+
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
     public class EFUnitOfWork : IUnitOfWork
     {
         private readonly BookingSectorContext context;
+        private SectorRepository sectorsRepository;
+        private UserRepository usersRepository;
+        private TournamentSectorRepository tournamentSectorsRepository;
         private TournamentRepository tournamentRepository;
         private TournamentSectorRepository tournamentSectorRepository;
         private bool disposed = false;
@@ -19,14 +23,19 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         {
             this.context = context;
         }
+        public IBaseRepository<Sector> SectorsRepository
+        {
+            get { return sectorsRepository ??= new SectorRepository(context); }
+        }
+        public IBaseRepository<User> UsersRepository
      
         public IBaseRepository<Tournament> tournamentRepositoty
         {
-            get { return tournamentRepository ??= new TournamentRepository(context); }
+            get { return usersRepository ??= new UserRepository(context); }
         }
-        public IBaseRepository<TournamentSector> TournamentSectors
+        public IBaseRepository<TournamentSector> TournamentSectorsRepository
         {
-            get { return tournamentSectorRepository ??= new TournamentSectorRepository(context); }
+            get { return tournamentSectorsRepository ??= new TournamentSectorRepository(context); }
         }
         public async Task<bool> SaveAsync()
         {

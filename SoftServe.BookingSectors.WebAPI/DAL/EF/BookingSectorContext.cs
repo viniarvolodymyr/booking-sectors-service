@@ -241,15 +241,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
 
                 entity.HasOne(d => d.IdSectorsNavigation)
                     .WithMany(p => p.TournamentSector)
-                    .HasForeignKey(d => d.IdSectors)
+                    .HasForeignKey(d => d.SectorsId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ID_SECTORS");
+                    .HasConstraintName("FK_SECTORS_ID");
 
                 entity.HasOne(d => d.IdTournamentNavigation)
                     .WithMany(p => p.TournamentSector)
-                    .HasForeignKey(d => d.IdTournament)
+                    .HasForeignKey(d => d.TournamentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ID_TOURNAMENT");
+                    .HasConstraintName("FK_TOURNAMENT_ID");
             });
 
             modelBuilder.Entity<User>(entity =>
