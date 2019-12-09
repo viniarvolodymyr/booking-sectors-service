@@ -25,13 +25,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             MAX_BOOKING_SECTORS = 1,
             MAX_BOOKING_DAYS = 2
         };
-        public void UpdateSettings(string name1, string name2, int value1, int value2)
-        {
-            Setting maxBookingDays = dbSet.Find((int)Enum.Parse(typeof(settings), name1));
-            maxBookingDays.Value = value1;
-            Setting maxBookingSectors = dbSet.Find((int)Enum.Parse(typeof(settings), name2));
-            maxBookingSectors.Value = value2;
-        }
 
         public Task<IEnumerable<Setting>> GetAllEntitiesAsync()
         {
@@ -40,11 +33,11 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
 
         public async Task<Setting> GetEntityAsync(int id)
         {
-            return await dbSet.FindAsync(id);
+            return await dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
         public void UpdateEntity(Setting entity)
         {
-            throw new NotImplementedException();
+            db.Entry(entity).State = EntityState.Modified;
         }
     }
 }
