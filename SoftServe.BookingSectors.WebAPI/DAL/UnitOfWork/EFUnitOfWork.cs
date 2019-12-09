@@ -14,6 +14,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
     {
         private readonly BookingSectorContext db;
         private SectorRepository sectorRepository;
+        private SettingsRepository settingsRepository;
         public EFUnitOfWork(BookingSectorContext context)
         {
             db = context;
@@ -28,7 +29,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             }
         }
 
-        public ISettingsRepository settings => throw new NotImplementedException();
+        public IBaseRepository<Setting> Settings
+        {
+            get
+            {
+                if (settingsRepository == null)
+                    settingsRepository = new SettingsRepository(db);
+                return settingsRepository;
+            }
+        }
 
         public void Save()
         {
