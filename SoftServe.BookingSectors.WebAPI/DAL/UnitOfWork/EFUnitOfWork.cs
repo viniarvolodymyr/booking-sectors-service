@@ -1,12 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
@@ -14,19 +13,30 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
     public class EFUnitOfWork : IUnitOfWork
     {
         private readonly BookingSectorContext context;
+
+        private SectorRepository sectorsRepository;
+        private UserRepository usersRepository;
         private TournamentSectorRepository tournamentSectorsRepository;
         private TournamentRepository tournamentRepository;
-        private SectorRepository sectorsRepository;
         private BookingSectorRepository bookingRepository;
         private bool disposed = false;
         public EFUnitOfWork(BookingSectorContext context)
         {
             this.context = context;
         }
-      
+
         public IBaseRepository<TournamentSector> TournamentSectorsRepository
         {
             get { return tournamentSectorsRepository ??= new TournamentSectorRepository(context); }
+        }
+
+        public IBaseRepository<BookingSector> BookingSectorsRepository
+        {
+            get { return bookingRepository ??= new BookingSectorRepository(context); }
+        }
+        public IBaseRepository<User> UsersRepository
+        {
+            get { return usersRepository ??= new UserRepository(context); }
         }
 
 
@@ -39,12 +49,14 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             get { return sectorsRepository ??= new SectorRepository(context); }
         }
 
-        public IBaseRepository<BookingSector> BookingSectorsRepository
+
+        public IBaseRepository<BookingSector> BookingSectorRepository
         {
             get { return bookingRepository ??= new BookingSectorRepository(context); }
         }
 
         public async Task<bool> SaveAsync()
+
         {
             try
             {
@@ -52,8 +64,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                     p => p.State == EntityState.Modified || p.State == EntityState.Deleted
                                                          || p.State == EntityState.Added);
                 if (changes == 0) return true;
+                await context.SaveChangesAsync();
 
-                return await context.SaveChangesAsync() > 0;
+                return true;
             }
             catch
             {

@@ -1,12 +1,11 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
+using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 using SoftServe.BookingSectors.WebAPI.BLL.Services;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
@@ -45,9 +44,11 @@ namespace SoftServe.BookingSectors.WebAPI
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
             services.AddTransient<IUnitOfWork, EFUnitOfWork>();
+
+            services.AddTransient<ISectorService, SectorService>();
+            services.AddTransient<IUserService, UserService>();
             services.AddTransient<ITournamentSectorService, TournamentSectorService>();
             services.AddTransient<ITournamentService, TournamentService>();
-            services.AddTransient<ISectorService, SectorService>();
             services.AddTransient<IBookingSectorService, BookingSectorService>();
         }
 
