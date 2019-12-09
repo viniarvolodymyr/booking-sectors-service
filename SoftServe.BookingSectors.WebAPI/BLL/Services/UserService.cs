@@ -24,15 +24,17 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var dtos = _mapper.Map<IEnumerable<User>, List<UserDTO>>(users);
             return dtos;
         }
-        public async Task<UserDTO> GetUserByIdAsync(int id)
+        public async Task<User> GetUserByIdAsync(int id)
         {
             var entity = await Database.UsersRepository.GetEntityByIdAsync(id);
+            
             if (entity == null)
             {
                 return null;
             }
             var dto = _mapper.Map<User, UserDTO>(entity);
-            return dto;
+           // dto.Role = entity.Role.Role;
+            return entity;
         }
 
         public async Task<UserDTO> GetUserByPhoneAsync(string phone)
@@ -49,8 +51,22 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var dto = _mapper.Map<User, UserDTO>(entity);
             return dto;
         }
+        public async Task UpdateUserById1(int id, User user)
+        {
+            var entity = await Database.UsersRepository.GetEntityByIdAsync(id);
+            //var user = _mapper.Map<UserDTO, User>(userDTO);
+            user.Id = id;
+            user.CreateUserId = entity.CreateUserId;
+            user.CreateDate = entity.CreateDate;
+            user.ModDate = System.DateTime.Now;
+            user.Password = System.Text.Encoding.ASCII.GetBytes("dfssdf");
 
-        public async Task UpdateUserById(int id, UserDTO userDTO)
+            user.Photo = System.Text.Encoding.ASCII.GetBytes("dfssdf");
+            Database.UsersRepository.UpdateEntity(user);
+
+            await Database.SaveAsync();
+        }
+            public async Task UpdateUserById(int id, UserDTO userDTO)
         {
             var entity = await Database.UsersRepository.GetEntityByIdAsync(id);
             var user = _mapper.Map<UserDTO, User>(userDTO);
@@ -58,6 +74,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             user.CreateUserId = entity.CreateUserId;
             user.CreateDate = entity.CreateDate;
             user.ModDate = System.DateTime.Now;
+            user.Password = System.Text.Encoding.ASCII.GetBytes(userDTO.Password);
+            user.Photo = System.Text.Encoding.ASCII.GetBytes(userDTO.Photo);
             Database.UsersRepository.UpdateEntity(user);
       
             await Database.SaveAsync();
