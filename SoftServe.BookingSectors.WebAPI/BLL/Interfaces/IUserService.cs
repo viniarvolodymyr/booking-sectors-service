@@ -8,13 +8,11 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Interfaces
     public interface IUserService
     {
         Task<IEnumerable<UserDTO>> GetAllUsersAsync();
-        Task<User> GetUserByIdAsync(int id);
+        Task<UserDTO> GetUserByIdAsync(int id);
 
         Task<UserDTO> GetUserByPhoneAsync(string phone);
 
         Task UpdateUserById(int id, UserDTO userDTO);
-
-        Task UpdateUserById1(int id, User user);
         void Dispose();
     }
 }

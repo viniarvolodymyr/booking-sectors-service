@@ -22,12 +22,11 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
         }
         public Task<List<User>> GetAllEntitiesAsync()
         {
-            return dbSet.AsNoTracking().ToListAsync();
+            return dbSet.Include(x => x.Role).AsNoTracking().ToListAsync();
         }
         public Task<User> GetEntityByIdAsync(int id)
-
         {
-            return dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            return dbSet.Include(x => x.Role).AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
       
         public async ValueTask<EntityEntry<User>> InsertEntityAsync(User entityToInsert)

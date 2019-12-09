@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SoftServe.BookingSectors.WebAPI.DAL.Models;
+using System;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
 {
@@ -9,11 +10,10 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
         public string Firstname { get; set; }
         public string Phone { get; set; }
         public string Password { get; set; }
-        public string Role { get; set; }
+        public int RoleId { get; set; }
+        public string RoleName { get; set; }
         public int CreateUserId { get; set; }
         public int? ModUserId { get; set; }
-        
         public string Photo { get; set; }
-        //public DateTime ModDate { get; set; }
     }
 }

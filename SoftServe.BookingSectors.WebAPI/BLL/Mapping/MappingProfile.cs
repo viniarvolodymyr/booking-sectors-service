@@ -11,10 +11,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
             CreateMap<Sector, SectorDTO>();
             CreateMap<SectorDTO, Sector>()
                 .ForMember(m => m.Id, opt => opt.Ignore());
-            
-            CreateMap<User, UserDTO>();
+
+            CreateMap<User, UserDTO>()
+                .ForMember(m => m.RoleName, x => x.MapFrom(src => src.Role.Role));
             CreateMap<UserDTO, User>()
-                .ForMember(m => m.Id, opt => opt.Ignore());
+                .ForMember(m => m.Id, opt => opt.Ignore())
+                .ForMember(m => m.Role, opt => opt.Ignore());
            
             CreateMap<TournamentSector, TournamentSectorDTO>();
             CreateMap<TournamentSectorDTO, TournamentSector>()

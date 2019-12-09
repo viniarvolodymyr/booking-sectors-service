@@ -30,9 +30,10 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetById(int id)
+        public async Task<ActionResult<UserDTO>> GetById(int id)
         {
             var dto = await userService.GetUserByIdAsync(id);
+            
             if (dto == null)
             {
                 return NotFound();

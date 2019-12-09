@@ -24,17 +24,15 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var dtos = _mapper.Map<IEnumerable<User>, List<UserDTO>>(users);
             return dtos;
         }
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<UserDTO> GetUserByIdAsync(int id)
         {
             var entity = await Database.UsersRepository.GetEntityByIdAsync(id);
-            
             if (entity == null)
             {
                 return null;
             }
             var dto = _mapper.Map<User, UserDTO>(entity);
-           // dto.Role = entity.Role.Role;
-            return entity;
+            return dto;
         }
 
         public async Task<UserDTO> GetUserByPhoneAsync(string phone)
@@ -51,10 +49,10 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var dto = _mapper.Map<User, UserDTO>(entity);
             return dto;
         }
-        public async Task UpdateUserById1(int id, User user)
+        public async Task UpdateUserById1(int id, UserDTO userDTO)
         {
             var entity = await Database.UsersRepository.GetEntityByIdAsync(id);
-            //var user = _mapper.Map<UserDTO, User>(userDTO);
+            var user = _mapper.Map<UserDTO, User>(userDTO);
             user.Id = id;
             user.CreateUserId = entity.CreateUserId;
             user.CreateDate = entity.CreateDate;
