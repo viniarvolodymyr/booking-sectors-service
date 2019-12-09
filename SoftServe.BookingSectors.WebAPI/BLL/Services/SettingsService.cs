@@ -36,7 +36,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dto;
         }
 
-        public async void UpdateSettingsAsync(string name1, string name2, int value1, int value2)
+        public async Task UpdateSettingsAsync(string name1, string name2, int value1, int value2)
         {
             var entity1 = await _database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name1));
             var setting1 = _mapper.Map<Setting, SettingsDTO>(entity1);
