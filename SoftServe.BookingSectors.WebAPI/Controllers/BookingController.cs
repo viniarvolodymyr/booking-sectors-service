@@ -8,6 +8,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using AttributeRouting.Web.Http;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -55,9 +56,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         // POST: api/Booking
         [HttpPost]
-        public async Task<IActionResult> Post(int sectorId, DateTime fromDate, DateTime toDate, int userId)
+        public async Task<IActionResult> Post([FromBody]BookingSectorInfo bookingInfo)
         {
-            await bookingService.BookSector(sectorId, fromDate, toDate, userId);
+            await bookingService.BookSector(bookingInfo.SectorId, bookingInfo.From, bookingInfo.To, bookingInfo.UserId);
             return Ok();
         }
 
