@@ -9,7 +9,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
         {
 
 
-            CreateMap<Tournament, TournamentDTO>().ReverseMap();
+            CreateMap<Tournament, TournamentDTO>();
             CreateMap<TournamentDTO, Tournament>()
                 .ForMember(m => m.Id, opt => opt.Ignore());
 

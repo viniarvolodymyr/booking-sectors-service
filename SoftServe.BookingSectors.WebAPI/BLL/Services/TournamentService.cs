@@ -22,43 +22,24 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task<IEnumerable<TournamentDTO>> GetAllTournamentsAsync()
         {
-            var tours = await _database.tournamentRepositoty.GetAllEntitiesAsync();
-            var sectors = await _database.TournamentSectors.GetAllEntitiesAsync();
-            if (tours == null || sectors == null)
+            var entities = await _database.TournamentRepository.GetAllEntitiesAsync();
+            if (entities == null)
             {
                 return null;
             }
-
-            var entity = tours.GroupJoin(
-                sectors,
-               p => p.Id,
-               t => t.IdTournament,
-                (p, t) => new Tournament()
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    DateStart = p.DateStart,
-                    DateEnd = p.DateEnd,
-                    PreparationTerm = p.PreparationTerm,
-                    TournamentSector = t.Where(x => x.IdTournament == p.Id).ToList()
-                }
-
-            );
-            var dtos = _mapper.Map<IEnumerable<Tournament>, IEnumerable<TournamentDTO>>(entity);
+            var dtos = _mapper.Map<IEnumerable<Tournament>, IEnumerable<TournamentDTO>>(entities);
             return dtos;
 
         }
 
         public async Task<TournamentDTO> GetTournamentByIdAsync(int id)
         {
-            var tour = await _database.tournamentRepositoty.GetEntityByIdAsync(id);
-            var sectors = await _database.TournamentSectors.GetAllEntitiesAsync();
-            if (tour == null || sectors == null)
+            var enity = await _database.TournamentRepository.GetEntityByIdAsync(id);
+            if (enity == null)
             {
                 return null;
             };
-            tour.TournamentSector = sectors.Where(x => x.IdTournament == id).Select(x => x).ToList();
-            var dto = _mapper.Map<Tournament, TournamentDTO>(tour);
+            var dto = _mapper.Map<Tournament, TournamentDTO>(enity);
             return dto;
 
         }
@@ -68,47 +49,31 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var tournamentToInsert = _mapper.Map<TournamentDTO, Tournament>(tournamentDTO);
             tournamentToInsert.ModUserId = null;
-            await _database.tournamentRepositoty.InsertEntityAsync(tournamentToInsert);
-
-            foreach (var sector in tournamentToInsert.TournamentSector)
-            {
-                await _database.TournamentSectors.InsertEntityAsync(sector);
-            }
+            await _database.TournamentRepository.InsertEntityAsync(tournamentToInsert);
             await _database.SaveAsync();
         }
         //modify
         public async Task UpdateTournament(int id, TournamentDTO tournamentDTO)
         {
-            var entity = await _database.tournamentRepositoty.GetEntityByIdAsync(id);
+            var entity = await _database.TournamentRepository.GetEntityByIdAsync(id);
             var tournament = _mapper.Map<TournamentDTO, Tournament>(tournamentDTO);
             tournament.Id = id;
             tournament.CreateUserId = entity.CreateUserId;
             tournament.CreateDate = entity.CreateDate;
             tournament.ModDate = DateTime.Now;
-            _database.tournamentRepositoty.UpdateEntity(tournament);
-           
-          //    _database.TournamentSectors.UpdateEntity();        
+            _database.TournamentRepository.UpdateEntity(tournament);
             await _database.SaveAsync();
         }
 
        
             public async Task DeleteTournamentByIdAsync(int id)
         {
-            var tour = await _database.tournamentRepositoty.GetEntityByIdAsync(id);
-            if (tour == null)
+            var entity = await _database.TournamentRepository.GetEntityByIdAsync(id);
+            if (entity == null)
             {
                 return;
             };
-            var tempSectors = await _database.TournamentSectors.GetAllEntitiesAsync();
-            var sectors = tempSectors.Where(x => x.IdTournament == id);
-            if (sectors != null)
-            {
-                foreach (var sector in sectors)
-                {
-                    await _database.TournamentSectors.DeleteEntityByIdAsync(sector.Id);
-                }
-            }
-            await _database.tournamentRepositoty.DeleteEntityByIdAsync(id);
+            await _database.TournamentRepository.DeleteEntityByIdAsync(id);
             await _database.SaveAsync();
         }
 

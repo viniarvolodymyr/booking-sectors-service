@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
 using AutoMapper;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -26,6 +26,16 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             var dtos = _mapper.Map<IEnumerable<TournamentSector>, List<TournamentSectorDTO>>(tournamentSectors);
             return dtos;
+        }
+        public async Task DeleteAllTournamentSectorsAsync(int tournId)
+        {
+            var sectors = await Database.TournamentSectorsRepository.GetAllEntitiesAsync();
+            var tournamentSectors = sectors.Where(x => x.TournamentId == tournId);
+            foreach (TournamentSector sector in tournamentSectors)
+            {
+                await Database.TournamentSectorsRepository.DeleteEntityByIdAsync(sector.Id);
+            }
+            await Database.SaveAsync();
         }
         public async Task<int> DeleteSectorFromTournamentAsync(int tournId, int sectorId)
         {
@@ -49,9 +59,9 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task AddSectorToTournamentAsync(int sectId, int tournId)
         {
-            var sect =  await Database.SectorsRepository.GetEntityByIdAsync(sectId);
+            var sect = await Database.TournamentSectorsRepository.GetEntityByIdAsync(sectId);
             //var tourn = await Database.Tournament.GetEntityAsync(tournId);
-       
+
             if (sect != null)
             {
                 TournamentSector sector = new TournamentSector();

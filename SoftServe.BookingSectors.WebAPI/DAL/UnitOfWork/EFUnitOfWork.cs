@@ -13,30 +13,24 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
     public class EFUnitOfWork : IUnitOfWork
     {
         private readonly BookingSectorContext context;
-        private SectorRepository sectorsRepository;
-        private UserRepository usersRepository;
         private TournamentSectorRepository tournamentSectorsRepository;
         private TournamentRepository tournamentRepository;
-        private TournamentSectorRepository tournamentSectorRepository;
         private bool disposed = false;
         public EFUnitOfWork(BookingSectorContext context)
         {
             this.context = context;
         }
-        public IBaseRepository<Sector> SectorsRepository
-        {
-            get { return sectorsRepository ??= new SectorRepository(context); }
-        }
-        public IBaseRepository<User> UsersRepository
-     
-        public IBaseRepository<Tournament> tournamentRepositoty
-        {
-            get { return usersRepository ??= new UserRepository(context); }
-        }
+      
         public IBaseRepository<TournamentSector> TournamentSectorsRepository
         {
             get { return tournamentSectorsRepository ??= new TournamentSectorRepository(context); }
         }
+
+
+        public IBaseRepository<Tournament> TournamentRepository
+        {
+            get { return tournamentRepository ??= new TournamentRepository(context); }
+        }   
         public async Task<bool> SaveAsync()
         {
             try

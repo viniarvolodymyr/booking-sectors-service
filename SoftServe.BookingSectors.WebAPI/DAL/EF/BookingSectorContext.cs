@@ -228,9 +228,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
 
                 entity.Property(e => e.CreateUserId).HasColumnName("CREATE_USER_ID");
 
-                entity.Property(e => e.IdSectors).HasColumnName("SECTORS_ID");
+                entity.Property(e => e.SectorsId).HasColumnName("SECTORS_ID");
 
-                entity.Property(e => e.IdTournament).HasColumnName("TOURNAMENT_ID");
+                entity.Property(e => e.TournamentId).HasColumnName("TOURNAMENT_ID");
 
                 entity.Property(e => e.ModDate)
                     .HasColumnName("MOD_DATE")

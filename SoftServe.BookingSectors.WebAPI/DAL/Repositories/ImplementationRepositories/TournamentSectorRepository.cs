@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SoftServe.BookingSectors.WebAPI.DAL.EF;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using SoftServe.BookingSectors.WebAPI.DAL.EF;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
@@ -20,16 +19,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             dbSet = db.Set<TournamentSector>();
         }
 
-        public async Task<List<TournamentSector>> GetAllEntitiesAsync()
+        public Task<List<TournamentSector>> GetAllEntitiesAsync()
         {
-            return await dbSet.ToListAsync();
+            return dbSet.AsNoTracking().ToListAsync();
         }
 
         public async Task<TournamentSector> GetEntityByIdAsync(int id)
         {
-            return await dbSet.FindAsync(id);
+            return await dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
-      
         public async ValueTask<EntityEntry<TournamentSector>> InsertEntityAsync(TournamentSector entity)
         {
            return  await dbSet.AddAsync(entity);

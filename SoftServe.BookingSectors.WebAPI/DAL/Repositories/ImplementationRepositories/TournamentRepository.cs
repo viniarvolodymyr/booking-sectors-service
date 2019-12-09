@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SoftServe.BookingSectors.WebAPI.DAL.EF;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using SoftServe.BookingSectors.WebAPI.DAL.EF;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
@@ -22,7 +21,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
 
         public  Task<List<Tournament>> GetAllEntitiesAsync()
         {
-            return  dbSet.ToListAsync();
+            return dbSet.AsNoTracking().ToListAsync();
         }
 
         public async Task<Tournament>  GetEntityByIdAsync(int id)

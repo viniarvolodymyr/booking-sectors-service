@@ -13,8 +13,6 @@ using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 
-using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
-
 namespace SoftServe.BookingSectors.WebAPI
 {
     public class Startup
@@ -47,7 +45,7 @@ namespace SoftServe.BookingSectors.WebAPI
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
             services.AddTransient<IUnitOfWork, EFUnitOfWork>();
-           
+            services.AddTransient<ITournamentSectorService, TournamentSectorService>();
             services.AddTransient<ITournamentService, TournamentService>();
         }
 

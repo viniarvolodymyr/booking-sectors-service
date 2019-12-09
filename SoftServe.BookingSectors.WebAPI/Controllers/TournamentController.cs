@@ -14,9 +14,12 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     public class TournamentController : ControllerBase
     {
         readonly ITournamentService tournamentService;
-        public TournamentController(ITournamentService service)
+        readonly ITournamentSectorService tournamentSectorService;
+        public TournamentController(ITournamentService tournamentService, ITournamentSectorService tournamentSectorService)
         {
-            tournamentService = service;
+            this.tournamentService = tournamentService;
+            this.tournamentSectorService = tournamentSectorService;
+
         }
 
         
@@ -42,22 +45,17 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task Post([FromBody] TournamentDTO tournamentDTO)
         {
             await tournamentService.InsertTournamentAsync(tournamentDTO);
-
         }
-
         [HttpPut("{tourId}")]
         public async Task Put(int tourId, [FromBody] TournamentDTO tournamentDTO)
         {
             await tournamentService.UpdateTournament(tourId, tournamentDTO);
         }
-
-
         [HttpDelete("{tourId}")]
         public async Task Delete(int tourId)
         {
+            await tournamentSectorService.DeleteAllTournamentSectorsAsync(tourId);
             await tournamentService.DeleteTournamentByIdAsync(tourId);
-           
         }
-      
     }
 }
