@@ -4,9 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using AttributeRouting.Web.Http;
+
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -15,9 +16,12 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     public class BookingController : ControllerBase
     {
         private IBookingSectorService bookingService;
-        public BookingController(IBookingSectorService bookingService)
+        private ISectorService sectorService;
+
+        public BookingController(IBookingSectorService bookingService, ISectorService sectorService)
         {
             this.bookingService = bookingService;
+            this.sectorService = sectorService;
         }
 
         [HttpGet]
@@ -45,8 +49,10 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         // POST: api/Booking
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] int sectorNumber, DateTime fromDate, DateTime toDate, int userId)
         {
+
+
         }
 
         // PUT: api/Booking/5
