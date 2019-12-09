@@ -9,9 +9,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Interfaces
     {
         Task<IEnumerable<UserDTO>> GetAllUsersAsync();
         Task<UserDTO> GetUserByIdAsync(int id);
-
         Task<UserDTO> GetUserByPhoneAsync(string phone);
-
         Task UpdateUserById(int id, UserDTO userDTO);
         void Dispose();
     }

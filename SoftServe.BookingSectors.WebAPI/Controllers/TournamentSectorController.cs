@@ -28,8 +28,13 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
    
             return Ok(dtos);
         }
+        [HttpDelete("{tourId}")]
+        public async Task<IActionResult> DeleteAllSectors(int tourId)
+        {
+            await tournamentSectorService.DeleteAllTournamentSectorsAsync(tourId);
+            return Ok();
+        }
 
-        
         [HttpDelete("{tourId}/{sectorId}")]
         public async Task<IActionResult> Delete(int tourId, int sectorId)
         {

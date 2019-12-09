@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories
+namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
     public class BookingSectorRepository : IBaseRepository<BookingSector>
     {

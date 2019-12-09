@@ -16,6 +16,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         private SectorRepository sectorsRepository;
         private UserRepository usersRepository;
         private TournamentSectorRepository tournamentSectorsRepository;
+        private BookingSectorRepository bookingRepository;
         private bool disposed = false;
 
         public EFUnitOfWork(BookingSectorContext context)
@@ -25,6 +26,10 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         public IBaseRepository<Sector> SectorsRepository
         {
             get { return sectorsRepository ??= new SectorRepository(context); }
+        }
+        public IBaseRepository<BookingSector> BookingSectorsRepository
+        {
+            get { return bookingRepository ??= new BookingSectorRepository(context); }
         }
         public IBaseRepository<User> UsersRepository
         {

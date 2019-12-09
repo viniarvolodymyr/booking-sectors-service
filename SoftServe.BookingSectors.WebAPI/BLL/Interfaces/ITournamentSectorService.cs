@@ -10,9 +10,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Interfaces
     public interface ITournamentSectorService
     {
         Task<IEnumerable<TournamentSectorDTO>> GetAllTournamentSectorsAsync(int tournId);
-      //  Task<TournamentSectorDTO> GetTournamentSectorByIdAsync(int id);
+        Task DeleteAllTournamentSectorsAsync(int tournId);
         Task<int> DeleteSectorFromTournamentAsync(int sectId, int tournId);
-
         Task AddSectorToTournamentAsync(int sectId, int tournId);
         void Dispose();
     }

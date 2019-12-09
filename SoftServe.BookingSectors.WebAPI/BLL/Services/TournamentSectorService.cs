@@ -27,6 +27,16 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var dtos = _mapper.Map<IEnumerable<TournamentSector>, List<TournamentSectorDTO>>(tournamentSectors);
             return dtos;
         }
+        public async Task DeleteAllTournamentSectorsAsync(int tournId)
+        {
+            var sectors = await Database.TournamentSectorsRepository.GetAllEntitiesAsync();
+            var tournamentSectors = sectors.Where(x => x.TournamentId == tournId);
+            foreach(TournamentSector sector in tournamentSectors)
+            {
+                await Database.TournamentSectorsRepository.DeleteEntityByIdAsync(sector.Id);
+            }
+            await Database.SaveAsync();
+        }
         public async Task<int> DeleteSectorFromTournamentAsync(int tournId, int sectorId)
         {
             var sectors = await Database.TournamentSectorsRepository.GetAllEntitiesAsync();
