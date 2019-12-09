@@ -9,5 +9,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
     {
         public string name { get; set; }
         public int value { get; set; }
+        public int CreateUserId { get; set; }
+        public int? ModUserId { get; set; }
     }
 }
