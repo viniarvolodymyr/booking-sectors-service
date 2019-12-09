@@ -17,12 +17,11 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     public class BookingController : ControllerBase
     {
         private readonly IBookingSectorService bookingService;
-        private readonly ISectorService sectorService;
+
 
         public BookingController(IBookingSectorService bookingService, ISectorService sectorService)
         {
             this.bookingService = bookingService;
-            this.sectorService = sectorService;
         }
 
         [HttpGet]
