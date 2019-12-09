@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using AttributeRouting.Web.Http;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -13,44 +16,49 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     [ApiController]
     public class BookingController : ControllerBase
     {
-        private IBookingSectorService bookingService;
-        private ISectorService sectorService;
+        private readonly IBookingSectorService bookingService;
+
 
         public BookingController(IBookingSectorService bookingService, ISectorService sectorService)
         {
             this.bookingService = bookingService;
-            this.sectorService = sectorService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookingSectorDTO>>> Get()
+        public async Task<IActionResult> Get()
         {
             var dtos = await bookingService.GetBookingSectorsAsync();
-            if (!dtos.Any())
+            if (dtos.Any())
+            {
+                return Ok(dtos);
+            }
+            else
             {
                 return NoContent();
             }
-            return Ok(dtos);
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<BookingSectorDTO>> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var dtos = await bookingService.GetBookingByIdAsync(id);
             if (dtos == null)
             {
                 return NotFound();
             }
-            return Ok(dtos);
+            else
+            {
+                return Ok(dtos);
+            }
         }
 
         // POST: api/Booking
         [HttpPost]
-        public void Post([FromBody] int sectorNumber, DateTime fromDate, DateTime toDate, int userId)
+        public async Task<IActionResult> Post([FromBody]BookingSectorInfo bookingInfo)
         {
-
-
+            await bookingService.BookSector(bookingInfo.SectorId, bookingInfo.From, bookingInfo.To, bookingInfo.UserId);
+            return Ok();
         }
 
         // PUT: api/Booking/5

@@ -8,17 +8,22 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
         public MappingProfile()
         {
             CreateMap<Tournament, TournamentDTO>();
+
             CreateMap<TournamentDTO, Tournament>()
                 .ForMember(m => m.Id, opt => opt.Ignore());
 
-
             CreateMap<TournamentSector, TournamentSectorDTO>();
+
             CreateMap<TournamentSectorDTO, TournamentSector>()
                  .ForMember(m => m.Id, opt => opt.Ignore());
 
             CreateMap<SectorDTO, Sector>()
                 .ForMember(m => m.Id, opt => opt.Ignore());
+
             CreateMap<Sector, SectorDTO>();
+
+            CreateMap<BookingSector, BookingSectorDTO>()
+                .ReverseMap();
         }
     }
 }
