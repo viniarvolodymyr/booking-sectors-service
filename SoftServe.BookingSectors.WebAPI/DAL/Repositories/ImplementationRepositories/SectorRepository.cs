@@ -24,12 +24,12 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return dbSet.AsNoTracking().ToListAsync();
         }
 
-        public  Task<Sector> GetEntityByIdAsync(int id)
+        public Task<Sector> GetEntityByIdAsync(int id)
         {
              return dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
-        public  ValueTask<EntityEntry<Sector>> InsertEntityAsync(Sector entityToInsert)
+        public ValueTask<EntityEntry<Sector>> InsertEntityAsync(Sector entityToInsert)
         {
              return dbSet.AddAsync(entityToInsert);
         }

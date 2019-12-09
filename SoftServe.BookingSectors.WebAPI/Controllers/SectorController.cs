@@ -26,7 +26,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             var dtos = await sectorService.GetAllSectorsAsync();
             if (!dtos.Any())
             {
-                return NotFound();
+                return NoContent();
             }
             return Ok(dtos);
         }
@@ -37,18 +37,18 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             var dto = await sectorService.GetSectorByIdAsync(id);
             if (dto == null)
             {
-                return NotFound();
+                return NoContent();
             }
             return Ok(dto);
         }
 
-        [HttpGet("free", Name = "GetFreeSectors")]
+        [HttpGet("freeSectors", Name = "GetFreeSectors")]
         public async Task<ActionResult<IEnumerable<SectorDTO>>> Get([FromQuery]DateTime fromDate, [FromQuery]DateTime toDate)
         {
             var freeSectors = await bookingSectorService.GetFreeSectorsAsync(fromDate, toDate);
             if (!freeSectors.Any())
             {
-                return NotFound();
+                return NoContent();
             }
             return Ok(freeSectors);
         }
