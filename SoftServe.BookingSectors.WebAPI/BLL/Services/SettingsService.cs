@@ -38,8 +38,10 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task UpdateSettingsAsync(string name, SettingsDTO settingsDTO)
         {
-            var entity1 = await _database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name));
-            var setting1 = _mapper.Map<Setting, SettingsDTO>(entity1);
+            var entity = await _database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name));
+            var setting = _mapper.Map<SettingsDTO, Setting>(settingsDTO);
+            setting.Id = (int)Enum.Parse(typeof(settings), name);
+            _database.Settings.UpdateEntity(setting);
             await _database.SaveAsync();
         }
         public void Dispose()
