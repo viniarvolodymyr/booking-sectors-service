@@ -14,20 +14,20 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     [ApiController]
     public class SettingsController : ControllerBase
     {
-        private readonly ISettingsService _settings;
+        private readonly ISettingsService settings;
         public SettingsController(ISettingsService settings)
         {
-            _settings = settings;
+            this.settings = settings;
         }
         [HttpGet("{name}", Name = "GetSetting")]
         public Task<SettingsDTO> Get(string name)
         {
-            return _settings.GetSettingByIdAsync(name);
+            return settings.GetSettingByIdAsync(name);
         }
         [HttpPut("{name1}", Name = "Update setting")]
-        public void Update(string name1, [FromBody] SettingsDTO settingsDTO)
+        public async Task Update(string name1, [FromBody] SettingsDTO settingsDTO)
         {
-            _settings.UpdateSettingsAsync(name1, settingsDTO);
+           await settings.UpdateSettingsAsync(name1, settingsDTO);
         }
 
     }
