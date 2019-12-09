@@ -50,19 +50,11 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         // PUT: api/Booking/5
-        //[HttpPut("{id}")]
-        //public IActionResult Put(int id, [FromBody] bool isApproved)
-        //{
-        //    try
-        //    {
-        //        bookingService.UpdateBookingApproved(id, isApproved);
-        //    }
-        //    catch(ArgumentNullException e)
-        //    {
-
-        //    }
-        //    return Ok();
-        //}
+        [HttpPut("{id}")]
+        public Task Put(int id, [FromBody] bool isApproved)
+        {
+            return bookingService.UpdateBookingApprovedAsync(id, isApproved); 
+        }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]

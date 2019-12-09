@@ -50,7 +50,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dtos;
         }
 
-        public async void UpdateBookingApproved(int id, bool isApproved)
+        public async Task UpdateBookingApprovedAsync(int id, bool isApproved)
         {
             var booking = await database.BookingSectorsRepository.GetEntityByIdAsync(id);
             booking.IsApproved = isApproved;
