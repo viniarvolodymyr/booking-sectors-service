@@ -25,7 +25,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return _settings.GetSettingByIdAsync(name);
         }
         [HttpPut("{name1}", Name = "Update setting")]
-        public void Update(string name1, SettingsDTO settingsDTO)
+        public void Update(string name1, [FromBody] SettingsDTO settingsDTO)
         {
             _settings.UpdateSettingsAsync(name1, settingsDTO);
         }
