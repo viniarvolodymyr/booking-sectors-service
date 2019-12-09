@@ -12,12 +12,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
     public class SettingsService : ISettingsService
     {
-        private readonly IUnitOfWork Database;
+        private readonly IUnitOfWork _database;
         private readonly IMapper _mapper;
 
         public SettingsService(IUnitOfWork uow, IMapper mapper)
         {
-            Database = uow;
+            _database = uow;
             _mapper = mapper;
         }
         enum settings
@@ -32,7 +32,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task<SettingsDTO> GetSettingByIdAsync(string name)
         {
-            var entity = await Database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name));
+            var entity = await _database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name));
             if (entity == null)
             {
                 return null;
@@ -43,11 +43,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async void UpdateSettingsAsync(string name1, string name2, int value1, int value2)
         {
-            Setting setting1 = await Database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name1));
-            setting1.Value = value1;
-            Setting setting2 = await Database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name1));
-            setting2.Value = value2;
-
+            var entity1 = await _database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name1));
+            var setting1 = _mapper.Map<Setting, SettingsDTO>(entity);
+            setting1.value = value1;
+            var entity2 = await _database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name1));
+            var setting2 = _mapper.Map<Setting, SettingsDTO>(entity);
+            setting2.value = value2;
+            //    _database.TournamentSectors.UpdateEntity();        
+            _database.Save();
         }
     }
 }
