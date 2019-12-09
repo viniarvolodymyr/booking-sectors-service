@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
+﻿using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
-using AutoMapper;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
+using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -19,7 +20,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             this.mapper = mapper;
         }
         public async Task<IEnumerable<SectorDTO>> GetAllSectorsAsync()
-        {  
+        {
             var sectors = await database.SectorsRepository.GetAllEntitiesAsync();
             var dtos = mapper.Map<IEnumerable<Sector>, List<SectorDTO>>(sectors);
             return dtos;
@@ -33,6 +34,11 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             var dto = mapper.Map<Sector, SectorDTO>(entity);
             return dto;
+        }
+        public async Task<int> GetSectorIdByNumberAsync(int number)
+        {
+            var entity = await database.SectorsRepository.GetAllEntitiesAsync();
+            return entity.Where(x => (x.Number == number)).Select(x => x.Id).FirstOrDefault();
         }
         public async Task InsertSectorAsync(SectorDTO sectorDTO)
         {
