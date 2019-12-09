@@ -9,7 +9,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories
 {
-    public class SettingsRepository : ISettingsRepository
+    public class SettingsRepository : IBaseRepository<Setting>
     {
         private readonly BookingSectorContext db;
         private readonly DbSet<Setting> dbSet;
@@ -34,6 +34,16 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             maxBookingDays.Value = value1;
             Setting maxBookingSectors = dbSet.Find((int)Enum.Parse(typeof(settings), name2));
             maxBookingSectors.Value = value2;
+        }
+
+        public Task<IEnumerable<Setting>> GetAllEntitiesAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Setting> GetEntityAsync(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
