@@ -21,16 +21,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
                 .ForMember(m => m.Role, opt => opt.Ignore())
                 .ForMember(m => m.Password, opt => opt.Ignore())
                 .ForMember(m => m.Photo, opt => opt.Ignore());
-
-<<<<<<< HEAD
-            CreateMap<User, UserDTO>()
-                .ForMember(m => m.RoleName, x => x.MapFrom(src => src.Role.Role));
-
-            CreateMap<UserDTO, User>()
-                .ForMember(m => m.Id, opt => opt.Ignore())
-                .ForMember(m => m.Role, opt => opt.Ignore())
-                .ForMember(m => m.Password, opt => opt.Ignore())
-                .ForMember(m => m.Photo, opt => opt.Ignore());
             
             CreateMap<SectorDTO, Sector>()
                 .ForMember(m => m.Id, opt => opt.Ignore());
@@ -41,19 +31,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
                  .ForMember(m => m.Id, opt => opt.Ignore());
 
         
-=======
-            CreateMap<Tournament, TournamentDTO>();
-            CreateMap<TournamentDTO, Tournament>()
-                .ForMember(m => m.Id, opt => opt.Ignore());
-            CreateMap<TournamentSector, TournamentSectorDTO>();
-            CreateMap<TournamentSectorDTO, TournamentSector>()
-                 .ForMember(m => m.Id, opt => opt.Ignore());
-            CreateMap<SectorDTO, Sector>()
-                .ForMember(m => m.Id, opt => opt.Ignore());
-            CreateMap<Sector, SectorDTO>()
-                .ReverseMap();
-
->>>>>>> fc276554ca443064ef705e8b5f275a2fe7d63122
         }
     }
 }
