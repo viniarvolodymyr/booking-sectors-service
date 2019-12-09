@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
+
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
 {
     public interface IBaseRepository<T> where T : class

@@ -12,7 +12,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
-
+using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -47,6 +47,8 @@ namespace SoftServe.BookingSectors.WebAPI
             services.AddSingleton(mapper);
             services.AddTransient<IUnitOfWork, EFUnitOfWork>();
             services.AddTransient<ISectorService, SectorService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ITournamentSectorService, TournamentSectorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
