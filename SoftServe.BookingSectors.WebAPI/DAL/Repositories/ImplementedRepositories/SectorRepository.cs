@@ -34,7 +34,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             db.Sector.Add(book);
         }
 
-        public void Update(Sector book)
+        public void UpdateEntity(Sector book)
         {
             db.Entry(book).State = EntityState.Modified;
         }
