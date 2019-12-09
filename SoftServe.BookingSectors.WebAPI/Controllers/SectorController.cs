@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,11 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     public class SectorController : ControllerBase
     {
         private readonly ISectorService sectorService;
-        public SectorController(ISectorService service)
+        private readonly IBookingSectorService bookingSectorService;
+        public SectorController(ISectorService sectorService, IBookingSectorService bookingSectorService)
         {
-            sectorService = service;
+            this.sectorService = sectorService;
+            this.bookingSectorService = bookingSectorService;
         }
 
         [HttpGet]
@@ -37,6 +40,17 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
                 return NotFound();
             }
             return Ok(dto);
+        }
+
+        [HttpGet("free", Name = "GetFreeSectors")]
+        public async Task<ActionResult<IEnumerable<SectorDTO>>> Get([FromQuery]DateTime fromDate, [FromQuery]DateTime toDate)
+        {
+            var freeSectors = await bookingSectorService.GetFreeSectorsAsync(fromDate, toDate);
+            if (!freeSectors.Any())
+            {
+                return NotFound();
+            }
+            return Ok(freeSectors);
         }
 
         [HttpPost]
