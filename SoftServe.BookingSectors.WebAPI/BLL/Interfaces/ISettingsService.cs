@@ -10,7 +10,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces
     public interface ISettingsService
     {
         Task<SettingsDTO> GetSettingByIdAsync(string name);
-        public Task UpdateSettingsAsync(string name1, string name2, int value1, int value2);
+        public Task UpdateSettingsAsync(string name1, SettingsDTO settingsDTO);
         void Dispose();
     }
 }
