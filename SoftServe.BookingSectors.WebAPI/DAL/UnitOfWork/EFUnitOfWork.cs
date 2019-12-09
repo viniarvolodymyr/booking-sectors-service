@@ -13,6 +13,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
     {
         private readonly BookingSectorContext context;
         private SectorRepository sectorsRepository;
+        private AuthenticationRepository authenticationRepository;
         private bool disposed = false;
         public EFUnitOfWork(BookingSectorContext context)
         {
@@ -22,6 +23,11 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         {
             get { return sectorsRepository ??= new SectorRepository(context); }
         }
+        public IBaseRepository<User> AuthenticationRepository
+        {
+            get { return authenticationRepository ??= new AuthenticationRepository(context); }
+        }
+
         public async Task<bool> SaveAsync()
         {
             try
