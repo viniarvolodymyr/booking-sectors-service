@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using AttributeRouting.Web.Http;
-
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -15,8 +15,8 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     [ApiController]
     public class BookingController : ControllerBase
     {
-        private IBookingSectorService bookingService;
-        private ISectorService sectorService;
+        private readonly IBookingSectorService bookingService;
+        private readonly ISectorService sectorService;
 
         public BookingController(IBookingSectorService bookingService, ISectorService sectorService)
         {
@@ -25,34 +25,40 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookingSectorDTO>>> Get()
+        public async Task<IActionResult> Get()
         {
             var dtos = await bookingService.GetBookingSectorsAsync();
-            if (!dtos.Any())
+            if (dtos.Any())
+            {
+                return Ok(dtos);
+            }
+            else
             {
                 return NoContent();
             }
-            return Ok(dtos);
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<BookingSectorDTO>> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var dtos = await bookingService.GetBookingByIdAsync(id);
             if (dtos == null)
             {
                 return NotFound();
             }
-            return Ok(dtos);
+            else
+            {
+                return Ok(dtos);
+            }
         }
 
         // POST: api/Booking
         [HttpPost]
-        public void Post([FromBody] int sectorNumber, DateTime fromDate, DateTime toDate, int userId)
+        public async Task<IActionResult> Post(int sectorId, DateTime fromDate, DateTime toDate, int userId)
         {
-
-
+            await bookingService.BookSector(sectorId, fromDate, toDate, userId);
+            return Ok();
         }
 
         // PUT: api/Booking/5
