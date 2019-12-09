@@ -24,10 +24,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             MAX_BOOKING_SECTORS = 1,
             MAX_BOOKING_DAYS = 2
         };
-        public Setting GetSetting(string name)
-        {
-            return dbSet.Find((int)Enum.Parse(typeof(settings), name));
-        }
         public void UpdateSettings(string name1, string name2, int value1, int value2)
         {
             Setting maxBookingDays = dbSet.Find((int)Enum.Parse(typeof(settings), name1));
@@ -47,7 +43,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
         }
         public void UpdateEntityAsync(Setting entity)
         {
-            dbSet.Attach(entity);
             db.Entry(entity).State = EntityState.Modified;
 
         }
