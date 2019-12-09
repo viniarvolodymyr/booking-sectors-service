@@ -12,7 +12,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
         /// </summary>
         /// <param name="length">Length of random number</param>
         /// <returns>string Random numbers</returns>
-        public static string Generate(int length)
+        public static string Generate(int length = 6)
         {
             Random generator = new Random();
 

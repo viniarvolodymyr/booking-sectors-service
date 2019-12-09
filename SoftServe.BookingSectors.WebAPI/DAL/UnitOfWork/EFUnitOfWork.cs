@@ -14,6 +14,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
     public class EFUnitOfWork : IUnitOfWork
     {
         private readonly BookingSectorContext context;
+        private UserRepository usersRepository;
         private TournamentSectorRepository tournamentSectorsRepository;
         private TournamentRepository tournamentRepository;
         private SectorRepository sectorsRepository;
@@ -29,6 +30,10 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             get { return tournamentSectorsRepository ??= new TournamentSectorRepository(context); }
         }
 
+        public IBaseRepository<User> UsersRepository
+        {
+            get { return usersRepository ??= new UserRepository(context); }
+        }
 
         public IBaseRepository<Tournament> TournamentRepository
         {
@@ -43,6 +48,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         {
             get { return bookingRepository ??= new BookingSectorRepository(context); }
         }
+
 
         public async Task<bool> SaveAsync()
         {
