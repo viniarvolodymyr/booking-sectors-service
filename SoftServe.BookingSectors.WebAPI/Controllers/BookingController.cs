@@ -44,7 +44,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpPut]
-        [HttpRoute("{id}")]
+        [Route("{id}")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromQuery]bool isApproved)
         {
             var booking = await bookingService.UpdateBookingApprovedAsync(id, isApproved);
@@ -54,7 +54,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpDelete]
-        [HttpRoute("{id}")]
+        [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
             await bookingService.DeleteBookingByIdAsync(id);
