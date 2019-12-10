@@ -36,15 +36,19 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<IEnumerable<SectorDTO>> GetFreeSectorsAsync(DateTime fromDate, DateTime toDate)
         {
             var bookings = await database.BookingSectorsRepository.GetAllEntitiesAsync();
+            List<Sector> freeSectors = new List<Sector>();
             var group = bookings.GroupBy(x => x.SectorId).OrderBy(x => x.Key);
-            var sectors = group.Select(temp =>
-                new
-                {
-                    Sector = database.SectorsRepository.GetEntityByIdAsync(temp.Key).Result,
-                    IsFree = temp.All(b => (!(b.BookingStart >= fromDate && b.BookingStart <= toDate)
-                                                    && !(b.BookingEnd >= fromDate && b.BookingEnd <= toDate)))
-                });
-            var freeSectors = sectors.Where(s => s.IsFree).Select(s => s.Sector);
+            Sector sector = null;
+            bool isFree;
+            foreach(var item in group)
+            {
+                sector = await database.SectorsRepository.GetEntityByIdAsync(item.Key);
+                isFree = item.All(b => (!(b.BookingStart >= fromDate && b.BookingStart <= toDate)
+                                                    && !(b.BookingEnd >= fromDate && b.BookingEnd <= toDate)));
+                if (isFree)
+                    freeSectors.Add(sector);
+            }
+
             return mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(freeSectors);
         }
 
@@ -64,6 +68,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             await database.BookingSectorsRepository.DeleteEntityByIdAsync(id);
             await database.SaveAsync();
         }
+
         public async Task<BookingSectorDTO> BookSector(BookingSectorInfo bookingSectorInfo)
         {
             BookingSector booking = new BookingSector()
