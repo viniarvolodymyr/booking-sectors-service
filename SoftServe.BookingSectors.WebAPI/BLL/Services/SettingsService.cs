@@ -27,7 +27,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         };
         public async Task<SettingsDTO> GetSettingByIdAsync(string name)
         {
-            var entity = await _database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name));
+            var entity = await _database.Settings.GetEntityByIdAsync((int)Enum.Parse(typeof(settings), name));
             if (entity == null)
             {
                 return null;
@@ -38,7 +38,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task UpdateSettingsAsync(string name, SettingsDTO settingsDTO)
         {
-            var entity = await _database.Settings.GetEntityAsync((int)Enum.Parse(typeof(settings), name));
+            var entity = await _database.Settings.GetEntityByIdAsync((int)Enum.Parse(typeof(settings), name));
             var setting = _mapper.Map<SettingsDTO, Setting>(settingsDTO);
             setting.Id = (int)Enum.Parse(typeof(settings), name);
             setting.CreateDate = entity.CreateDate;
