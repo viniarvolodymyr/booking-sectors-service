@@ -7,6 +7,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories
 {
@@ -20,6 +21,12 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             db = context;
             dbSet = db.Set<Setting>();
         }
+
+        public Task DeleteEntityByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IEnumerable<Setting>> GetAllEntitiesAsync()
         {
             throw new NotImplementedException();
@@ -29,9 +36,25 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
         {
             return await dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
+
+        public Task<Setting> GetEntityByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ValueTask<EntityEntry<Setting>> InsertEntityAsync(Setting entity)
+        {
+            throw new NotImplementedException();
+        }
+
         public void UpdateEntity(Setting entity)
         {
             db.Entry(entity).State = EntityState.Modified;
+        }
+
+        Task<List<Setting>> IBaseRepository<Setting>.GetAllEntitiesAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }
