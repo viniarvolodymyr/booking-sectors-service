@@ -20,6 +20,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         private TournamentSectorRepository tournamentSectorsRepository;
         private TournamentRepository tournamentRepository;
         private BookingSectorRepository bookingRepository;
+
+        private bool disposed = false;
         public EFUnitOfWork(BookingSectorContext context)
         {
             this.context = context;
@@ -38,6 +40,27 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 return settingsRepository;
             }
         }
+
+        public IBaseRepository<User> UsersRepository
+        {
+            get { return usersRepository ??= new UserRepository(context); }
+        }
+
+        public IBaseRepository<Tournament> TournamentRepository
+        {
+            get { return tournamentRepository ??= new TournamentRepository(context); }
+        }
+        public IBaseRepository<Sector> SectorsRepository
+        {
+            get { return sectorsRepository ??= new SectorRepository(context); }
+        }
+
+        public IBaseRepository<BookingSector> BookingSectorsRepository
+        {
+            get { return bookingRepository ??= new BookingSectorRepository(context); }
+        }
+
+
         public async Task<bool> SaveAsync()
         {
             try
@@ -47,7 +70,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                                                          || p.State == EntityState.Added);
                 if (changes == 0) return true;
 
-                return await db.SaveChangesAsync() > 0;
+           
+                return await context.SaveChangesAsync()>0;
             }
             catch
             {
@@ -64,28 +88,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         {
             throw new NotImplementedException();
         }
-
-        public IBaseRepository<User> UsersRepository
-        {
-            get { return usersRepository ??= new UserRepository(context); }
-        }
-
-
-        public IBaseRepository<Tournament> TournamentRepository
-        {
-            get { return tournamentRepository ??= new TournamentRepository(context); }
-        }
-        public IBaseRepository<Sector> SectorsRepository
-        {
-            get { return sectorsRepository ??= new SectorRepository(context); }
-        }
-
-
-        public IBaseRepository<BookingSector> BookingSectorsRepository
-        {
-            get { return bookingRepository ??= new BookingSectorRepository(context); }
-        }
-
         public IBaseRepository<Sector> Sectors => throw new NotImplementedException();
     }
 }

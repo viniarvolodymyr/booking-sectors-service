@@ -3,17 +3,16 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using SoftServe.BookingSectors.WebAPI.DAL.EF;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
+using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
+using SoftServe.BookingSectors.WebAPI.Extensions;
+using SoftServe.BookingSectors.WebAPI.BLL.Services;
+using Microsoft.OpenApi.Models;
 using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
-using SoftServe.BookingSectors.WebAPI.BLL.Services;
-using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
-using SoftServe.BookingSectors.WebAPI.DAL.EF;
-using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
-using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
-using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
+
 namespace SoftServe.BookingSectors.WebAPI
 {
     public class Startup
@@ -43,15 +42,12 @@ namespace SoftServe.BookingSectors.WebAPI
                 mc.AddProfile(new MappingProfile());
             });
 
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
-            services.AddTransient<IUnitOfWork, EFUnitOfWork>();
+            services.ConfigureSwagger();
 
-            services.AddTransient<ISectorService, SectorService>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ITournamentSectorService, TournamentSectorService>();
-            services.AddTransient<ITournamentService, TournamentService>();
-            services.AddTransient<IBookingSectorService, BookingSectorService>();
+            services.ConfigureAutoMapper();
+            services.ConfigureModelRepositories();
+            services.ConfigureDataAccessServices();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,7 +56,14 @@ namespace SoftServe.BookingSectors.WebAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseHttpStatusCodeExceptionMiddleware();
             }
+            else
+            {
+                app.UseHttpStatusCodeExceptionMiddleware();
+                app.UseExceptionHandler();
+            }
+
 
             app.UseSwagger();
 

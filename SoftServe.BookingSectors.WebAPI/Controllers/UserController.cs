@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+using System.Net;
+
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -33,7 +35,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<ActionResult<UserDTO>> GetById(int id)
         {
             var dto = await userService.GetUserByIdAsync(id);
-            
+
             if (dto == null)
             {
                 return NotFound();
@@ -55,11 +57,17 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         }
 
+        [HttpPost]
+        public async Task Post([FromBody] UserDTO userDTO)
+        {
+            await userService.InsertUserAsync(userDTO);
+        }
+
         // PUT: api/User/5
         [HttpPut("{id}")]
         public async Task UpdateUser(int id, [FromBody] UserDTO userDTO)
         {
-           await userService.UpdateUserById(id,userDTO);
+            await userService.UpdateUserById(id, userDTO);
         }
     }
 }

@@ -1,5 +1,3 @@
-﻿using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using System;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
 {
