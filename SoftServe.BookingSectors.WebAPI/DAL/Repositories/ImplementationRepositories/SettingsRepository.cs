@@ -37,9 +37,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             return await dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
-        public Task<Setting> GetEntityByIdAsync(int id)
+        public async Task<Setting> GetEntityByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
         public ValueTask<EntityEntry<Setting>> InsertEntityAsync(Setting entity)
