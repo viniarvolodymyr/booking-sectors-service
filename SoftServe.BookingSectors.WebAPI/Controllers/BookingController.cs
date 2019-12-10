@@ -13,7 +13,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     {
         private readonly IBookingSectorService bookingService;
 
-        public BookingController(IBookingSectorService bookingService, ISectorService sectorService)
+        public BookingController(IBookingSectorService bookingService)
         {
             this.bookingService = bookingService;
         }
@@ -30,28 +30,32 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get([FromRoute]int id)
         {
             var dtos = await bookingService.GetBookingByIdAsync(id);
             return Ok(dtos);
         }
 
         [HttpPost]
-        [HttpRoute("book")]
         public async Task<IActionResult> Post([FromBody]BookingSectorInfo bookingInfo)
         {
-            await bookingService.BookSector(bookingInfo.SectorId, bookingInfo.From, bookingInfo.To, bookingInfo.UserId);
+            await bookingService.BookSector(bookingInfo);
             return Ok();
         }
 
-        [HttpPut("{id}")]
-        public Task Put(int id, bool isApproved)
+        [HttpPut]
+        [HttpRoute("{id}")]
+        public async Task<IActionResult> Put([FromRoute]int id, [FromQuery]bool isApproved)
         {
-            return bookingService.UpdateBookingApprovedAsync(id, isApproved); 
+            var booking = await bookingService.UpdateBookingApprovedAsync(id, isApproved);
+            if (booking == null)
+                return NotFound();
+            return Ok(booking);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete]
+        [HttpRoute("{id}")]
+        public async Task<IActionResult> Delete([FromRoute]int id)
         {
             await bookingService.DeleteBookingByIdAsync(id);
             return Ok();

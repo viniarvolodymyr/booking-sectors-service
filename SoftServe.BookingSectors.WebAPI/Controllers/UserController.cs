@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -33,7 +32,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<ActionResult<UserDTO>> GetById(int id)
         {
             var dto = await userService.GetUserByIdAsync(id);
-            
+
             if (dto == null)
             {
                 return NotFound();
@@ -59,7 +58,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [HttpPut("{id}")]
         public async Task UpdateUser(int id, [FromBody] UserDTO userDTO)
         {
-           await userService.UpdateUserById(id,userDTO);
+            await userService.UpdateUserById(id, userDTO);
         }
     }
 }

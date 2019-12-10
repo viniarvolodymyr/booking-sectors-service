@@ -24,7 +24,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             {
                 return NotFound();
             }
-   
+
             return Ok(dtos);
         }
         [HttpDelete("{tourId}")]
@@ -49,9 +49,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [HttpPost(Name = "AddSectorToTournament")]
         public async Task AddSector(int tourId, int sectorId)
         {
-             await tournamentSectorService.AddSectorToTournamentAsync(sectorId, tourId);
+            await tournamentSectorService.AddSectorToTournamentAsync(sectorId, tourId);
         }
-        
+
 
     }
 }

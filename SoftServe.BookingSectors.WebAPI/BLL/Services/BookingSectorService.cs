@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -15,7 +14,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
     {
         private readonly IUnitOfWork database;
         private readonly IMapper mapper;
-
         public BookingSectorService(IUnitOfWork database, IMapper mapper)
         {
             this.database = database;
@@ -47,45 +45,43 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                                                     && !(b.BookingEnd >= fromDate && b.BookingEnd <= toDate)))
                 });
             var freeSectors = sectors.Where(s => s.IsFree).Select(s => s.Sector);
-            var dtos = mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(freeSectors);
-            return dtos;
+            return mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(freeSectors);
         }
 
-        public async Task UpdateBookingApprovedAsync(int id, bool isApproved)
+        public async Task<BookingSector> UpdateBookingApprovedAsync(int id, bool isApproved)
         {
             var booking = await database.BookingSectorsRepository.GetEntityByIdAsync(id);
             if (booking == null)
-            {
-                throw new NullReferenceException();
-            }
+                return null;
+
             booking.IsApproved = isApproved;
             database.BookingSectorsRepository.UpdateEntity(booking);
             await database.SaveAsync();
+            return booking;
         }
         public async Task DeleteBookingByIdAsync(int id)
         {
             await database.BookingSectorsRepository.DeleteEntityByIdAsync(id);
             await database.SaveAsync();
-        }    
-        public async ValueTask<EntityEntry<BookingSector>> BookSector(int sectorId, DateTime fromDate, DateTime toDate, int userId)
+        }
+        public async Task<BookingSectorDTO> BookSector(BookingSectorInfo bookingSectorInfo)
         {
             BookingSector booking = new BookingSector()
             {
-                SectorId = sectorId,
-                BookingStart = fromDate,
-                BookingEnd = toDate,
-                UserId = userId,
+                SectorId = bookingSectorInfo.SectorId,
+                BookingStart = bookingSectorInfo.From,
+                BookingEnd = bookingSectorInfo.To,
+                UserId = bookingSectorInfo.UserId,
                 CreateUserId = new Random().Next(1, 100)
             };
-            EntityEntry<BookingSector> bookingsSector = await database.BookingSectorsRepository.InsertEntityAsync(booking);
+            var bookingsSector = await database.BookingSectorsRepository.InsertEntityAsync(booking);
             await database.SaveAsync();
 
-            return bookingsSector;
+            return mapper.Map<BookingSector, BookingSectorDTO>(bookingsSector.Entity);
         }
         public void Dispose()
         {
             database.Dispose();
         }
-
     }
 }

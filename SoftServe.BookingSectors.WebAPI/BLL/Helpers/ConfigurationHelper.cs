@@ -21,8 +21,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
             {
                 connection = GetAppSettingsValue();
             }
-
-
             return connection;
         }
 
