@@ -1,21 +1,23 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
+
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/sector")]
+    [Route("api/sectors")]
     [ApiController]
     public class SectorController : ControllerBase
     {
-        readonly ISectorService sectorService;
-        public SectorController(ISectorService service)
+        private readonly ISectorService sectorService;
+        private readonly IBookingSectorService bookingSectorService;
+        public SectorController(ISectorService sectorService, IBookingSectorService bookingSectorService)
         {
-            sectorService = service;
+            this.sectorService = sectorService;
+            this.bookingSectorService = bookingSectorService;
         }
 
         [HttpGet]
@@ -24,7 +26,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             var dtos = await sectorService.GetAllSectorsAsync();
             if (!dtos.Any())
             {
-                return NotFound();
+                return NoContent();
             }
             return Ok(dtos);
         }
@@ -35,9 +37,37 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             var dto = await sectorService.GetSectorByIdAsync(id);
             if (dto == null)
             {
-                return NotFound();
+                return NoContent();
             }
             return Ok(dto);
+        }
+
+        [HttpGet("freeSectors", Name = "GetFreeSectors")]
+        public async Task<ActionResult<IEnumerable<SectorDTO>>> Get([FromQuery]DateTime fromDate, [FromQuery]DateTime toDate)
+        {
+            var freeSectors = await bookingSectorService.GetFreeSectorsAsync(fromDate, toDate);
+            if (!freeSectors.Any())
+            {
+                return NoContent();
+            }
+            return Ok(freeSectors);
+        }
+
+        [HttpPost]
+        public async Task Post([FromBody] SectorDTO sectorDTO)
+        {
+            await sectorService.InsertSectorAsync(sectorDTO);
+        }
+        
+        [HttpPut("{id}")]
+        public async Task Put(int id, [FromBody] SectorDTO sectorDTO)
+        {
+            await sectorService.UpdateSector(id, sectorDTO);
+        }
+        [HttpDelete("{id}")]
+        public async Task Delete(int id)
+        {
+            await sectorService.DeleteSectorByIdAsync(id);
         }
     }
 }

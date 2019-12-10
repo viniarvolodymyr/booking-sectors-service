@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
 {
     public interface IBaseRepository<T> where T : class
     {
-        Task<IEnumerable<T>> GetAllEntitiesAsync();
-        Task<T> GetEntityAsync(int id);
+        Task<List<T>> GetAllEntitiesAsync();
+        Task<T> GetEntityByIdAsync(int id);
+        ValueTask<EntityEntry<T>> InsertEntityAsync(T entity);
         void UpdateEntity(T entity);
+        Task DeleteEntityByIdAsync(int id);
+
     }
 }

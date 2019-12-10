@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
@@ -11,10 +7,33 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
     {
         public MappingProfile()
         {
-            // Add as many of these lines as you need to map your objects
+
+
+            CreateMap<BookingSector, BookingSectorDTO>()
+                .ReverseMap();
+            CreateMap<SectorDTO, Sector>()
+                .ForMember(m => m.Id, opt => opt.Ignore());
+
+            CreateMap<User, UserDTO>()
+                .ForMember(m => m.RoleName, x => x.MapFrom(src => src.Role.Role));
+            CreateMap<UserDTO, User>()
+                .ForMember(m => m.Id, opt => opt.Ignore())
+                .ForMember(m => m.Role, opt => opt.Ignore())
+                .ForMember(m => m.Password, opt => opt.Ignore())
+                .ForMember(m => m.Photo, opt => opt.Ignore());
+
+            CreateMap<Tournament, TournamentDTO>();
+            CreateMap<TournamentDTO, Tournament>()
+                .ForMember(m => m.Id, opt => opt.Ignore());
+            CreateMap<TournamentSector, TournamentSectorDTO>();
+            CreateMap<TournamentSectorDTO, TournamentSector>()
+                 .ForMember(m => m.Id, opt => opt.Ignore());
+            CreateMap<SectorDTO, Sector>()
+                .ForMember(m => m.Id, opt => opt.Ignore());
             CreateMap<Sector, SectorDTO>()
                 .ReverseMap();
-            CreateMap<Setting, SettingsDTO>().ReverseMap();
+            CreateMap<Setting, SettingsDTO>()
+                .ReverseMap();
         }
     }
 }

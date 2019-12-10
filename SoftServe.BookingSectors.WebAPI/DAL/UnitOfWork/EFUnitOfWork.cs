@@ -1,35 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
     public class EFUnitOfWork : IUnitOfWork
     {
         private readonly BookingSectorContext db;
-        private SectorRepository sectorRepository;
+        private readonly BookingSectorContext context;
         private SettingsRepository settingsRepository;
+        private SectorRepository sectorsRepository;
+        private UserRepository usersRepository;
+        private TournamentSectorRepository tournamentSectorsRepository;
+        private TournamentRepository tournamentRepository;
+        private BookingSectorRepository bookingRepository;
         public EFUnitOfWork(BookingSectorContext context)
         {
-            db = context;
-        }
-        public IBaseRepository<Sector> Sectors
-        {
-            get
-            {
-                if (sectorRepository == null)
-                    sectorRepository = new SectorRepository(db);
-                return sectorRepository;
-            }
+            this.context = context;
         }
 
+        public IBaseRepository<TournamentSector> TournamentSectorsRepository
+        {
+            get { return tournamentSectorsRepository ??= new TournamentSectorRepository(context); }
+        }
         public IBaseRepository<Setting> Settings
         {
             get
@@ -38,11 +37,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                     settingsRepository = new SettingsRepository(db);
                 return settingsRepository;
             }
-        }
-
-        public void Save()
-        {
-            db.SaveChanges();
         }
         public async Task<bool> SaveAsync()
         {
@@ -60,22 +54,38 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 return false;
             }
         }
-        private bool disposed = false;
-        public virtual void Dispose(bool disposing)
+
+        public void Save()
         {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                    db.Dispose();
-                }
-                this.disposed = true;
-            }
+            throw new NotImplementedException();
         }
+
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            throw new NotImplementedException();
         }
+
+        public IBaseRepository<User> UsersRepository
+        {
+            get { return usersRepository ??= new UserRepository(context); }
+        }
+
+
+        public IBaseRepository<Tournament> TournamentRepository
+        {
+            get { return tournamentRepository ??= new TournamentRepository(context); }
+        }
+        public IBaseRepository<Sector> SectorsRepository
+        {
+            get { return sectorsRepository ??= new SectorRepository(context); }
+        }
+
+
+        public IBaseRepository<BookingSector> BookingSectorsRepository
+        {
+            get { return bookingRepository ??= new BookingSectorRepository(context); }
+        }
+
+        public IBaseRepository<Sector> Sectors => throw new NotImplementedException();
     }
 }
