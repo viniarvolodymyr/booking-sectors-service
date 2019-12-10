@@ -59,11 +59,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task AddSectorToTournamentAsync(int sectId, int tournId)
         {
-           // var sect = await Database.TournamentSectorsRepository.GetEntityByIdAsync(sectId);
-            //var tourn = await Database.Tournament.GetEntityAsync(tournId);
-
-          //  if (sect != null)
-            {
                 TournamentSector sector = new TournamentSector();
                 sector.SectorsId = sectId;
                 sector.TournamentId = tournId;
@@ -72,8 +67,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 sector.CreateUserId = 5;
                 await Database.TournamentSectorsRepository.InsertEntityAsync(sector);
                 await Database.SaveAsync();
-            }
-
         }
         public void Dispose()
         {
