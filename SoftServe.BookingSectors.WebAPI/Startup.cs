@@ -5,15 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
-using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
-using SoftServe.BookingSectors.WebAPI.BLL.Services;
-using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
-using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
 using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
-using Microsoft.Extensions.Logging;
+using SoftServe.BookingSectors.WebAPI.Extensions;
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -39,21 +34,10 @@ namespace SoftServe.BookingSectors.WebAPI
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
             });
 
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
+           services.ConfigureAutoMapper();
+           services.ConfigureModelRepositories();
+           services.ConfigureDataAccessServices();
 
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
-            services.AddTransient<IUnitOfWork, EFUnitOfWork>();
-
-            services.AddTransient<ISectorService, SectorService>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ITournamentSectorService, TournamentSectorService>();
-            services.AddTransient<ITournamentService, TournamentService>();
-            services.AddTransient<IBookingSectorService, BookingSectorService>();
-            services.AddTransient<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
