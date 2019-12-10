@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
 {
-    public interface IBookingSectorService
+    public interface IBookingSectorService : IDisposable
     {
         Task<IEnumerable<BookingSectorDTO>> GetBookingSectorsAsync();
         Task<BookingSectorDTO> GetBookingByIdAsync(int id);
         Task<IEnumerable<SectorDTO>> GetFreeSectorsAsync(DateTime fromDate, DateTime toDate);
-        ValueTask<EntityEntry<BookingSector>> BookSector(int sectorId, DateTime fromDate, DateTime toDate, int userId);
-        Task UpdateBookingApprovedAsync(int id, bool isApproved);
+        Task<BookingSectorDTO> BookSector(BookingSectorInfo bookingSectorInfo);
+        Task<BookingSector> UpdateBookingApprovedAsync(int id, bool isApproved);
         Task DeleteBookingByIdAsync(int id);
-        void Dispose();
     }
 }

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using AttributeRouting.Web.Http;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
-using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using AttributeRouting.Web.Http;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -18,8 +13,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     {
         private readonly IBookingSectorService bookingService;
 
-
-        public BookingController(IBookingSectorService bookingService, ISectorService sectorService)
+        public BookingController(IBookingSectorService bookingService)
         {
             this.bookingService = bookingService;
         }
@@ -29,48 +23,39 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         {
             var dtos = await bookingService.GetBookingSectorsAsync();
             if (dtos.Any())
-            {
                 return Ok(dtos);
-            }
             else
-            {
                 return NoContent();
-            }
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get([FromRoute]int id)
         {
             var dtos = await bookingService.GetBookingByIdAsync(id);
-            if (dtos == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(dtos);
-            }
+            return Ok(dtos);
         }
 
-        // POST: api/Booking
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]BookingSectorInfo bookingInfo)
         {
-            await bookingService.BookSector(bookingInfo.SectorId, bookingInfo.From, bookingInfo.To, bookingInfo.UserId);
+            await bookingService.BookSector(bookingInfo);
             return Ok();
         }
 
-        // PUT: api/Booking/5
-        [HttpPut("{id}")]
-        public Task Put(int id, [FromBody] bool isApproved)
+        [HttpPut]
+        [HttpRoute("{id}")]
+        public async Task<IActionResult> Put([FromRoute]int id, [FromQuery]bool isApproved)
         {
-            return bookingService.UpdateBookingApprovedAsync(id, isApproved); 
+            var booking = await bookingService.UpdateBookingApprovedAsync(id, isApproved);
+            if (booking == null)
+                return NotFound();
+            return Ok(booking);
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete]
+        [HttpRoute("{id}")]
+        public async Task<IActionResult> Delete([FromRoute]int id)
         {
             await bookingService.DeleteBookingByIdAsync(id);
             return Ok();

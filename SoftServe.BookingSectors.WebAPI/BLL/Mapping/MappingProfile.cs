@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+
 namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
 {
     public sealed class MappingProfile : Profile
     {
         public MappingProfile()
         {
-
-
             CreateMap<BookingSector, BookingSectorDTO>()
                 .ReverseMap();
             CreateMap<SectorDTO, Sector>()
@@ -29,8 +28,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
             CreateMap<TournamentSector, TournamentSectorDTO>();
             CreateMap<TournamentSectorDTO, TournamentSector>()
                  .ForMember(m => m.Id, opt => opt.Ignore());
-
-        
         }
     }
 }

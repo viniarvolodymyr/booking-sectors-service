@@ -7,6 +7,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using System.Net;
 
+
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/users")]
@@ -34,6 +35,11 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<ActionResult<UserDTO>> GetById(int id)
         {
             var dto = await userService.GetUserByIdAsync(id);
+
+            if (dto == null)
+            {
+                return NotFound();
+            }
             return Ok(dto);
         }
 
