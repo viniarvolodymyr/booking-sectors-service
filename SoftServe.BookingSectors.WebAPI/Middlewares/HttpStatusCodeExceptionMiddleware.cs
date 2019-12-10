@@ -1,4 +1,5 @@
-﻿using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+﻿using System.Collections.Immutable;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -17,6 +18,7 @@ namespace SoftServe.BookingSectors.WebAPI.Middlewares
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _logger = loggerFactory?.CreateLogger<HttpStatusCodeExceptionMiddleware>() ?? throw new ArgumentNullException(nameof(loggerFactory));
+
         }
 
         /// <summary>
@@ -47,15 +49,7 @@ namespace SoftServe.BookingSectors.WebAPI.Middlewares
 
                 if (ex is HttpStatusCodeException httpException)
                 {
-                        // TODO: uncomment in case we need to deserialize error objects on the client
-                        //if (httpException.StatusCode == HttpStatusCode.BadRequest)
-                        //{
-                        //    context.Response.StatusCode = 452; // Custom status core for Client reasons
-                        //}
-                        //else
-                    {
-                        context.Response.StatusCode = (int)httpException.StatusCode;
-                    }
+                    context.Response.StatusCode = (int)httpException.StatusCode;
 
                     context.Response.ContentType = httpException.ContentType;
                 }
@@ -69,6 +63,7 @@ namespace SoftServe.BookingSectors.WebAPI.Middlewares
                 var result = JsonConvert.SerializeObject(new ErrorResponse(ex.Message));
 
                 await context.Response.WriteAsync(result);
+
             }
         }
     }

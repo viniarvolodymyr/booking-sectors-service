@@ -3,7 +3,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
 {
-    public class MappingProfile : Profile
+    public sealed class MappingProfile : Profile
     {
         public MappingProfile()
         {

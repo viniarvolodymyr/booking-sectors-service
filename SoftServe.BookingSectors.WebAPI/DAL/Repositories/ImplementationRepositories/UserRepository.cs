@@ -1,3 +1,5 @@
+using System;
+using System.Runtime.Intrinsics.X86;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,6 +7,9 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+using System.Net;
+
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
@@ -25,7 +30,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
         }
         public Task<User> GetEntityByIdAsync(int id)
         {
-            return dbSet.Include(x => x.Role).AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+
+            var result = dbSet.Include(x => x.Role).AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            if (result.Result == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"User with id: {id} not found when trying to get entity.");
+            }
+
+            return result;
+
         }
 
         public async ValueTask<EntityEntry<User>> InsertEntityAsync(User entityToInsert)
@@ -40,7 +53,11 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
         }
         public async Task DeleteEntityByIdAsync(int id)
         {
-            User userToDelete = await dbSet.FindAsync(id);
+            var userToDelete = await dbSet.FindAsync(id);
+            if (userToDelete == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"User with id: {id} not found when trying to update entity. Entity was no Deleted.");
+            }
             dbSet.Remove(userToDelete);
         }
     }

@@ -1,7 +1,7 @@
 ﻿using SoftServe.BookingSectors.WebAPI.Middlewares;
 using Microsoft.AspNetCore.Builder;
 
-namespace SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling
+namespace SoftServe.BookingSectors.WebAPI.Extensions
 {
     public static class HttpStatusCodeExceptionMiddlewareExtensions
     {
