@@ -9,7 +9,7 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
         {
              services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
+                x.SwaggerDoc("v2", new OpenApiInfo { Title = "Api", Version = "v2" });
             });  
         }
     }

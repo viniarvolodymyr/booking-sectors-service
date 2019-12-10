@@ -12,7 +12,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
     public class EFUnitOfWork : IUnitOfWork
     {
-        private readonly BookingSectorContext db;
         private readonly BookingSectorContext context;
         private SettingsRepository settingsRepository;
         private SectorRepository sectorsRepository;
@@ -36,7 +35,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             get
             {
                 if (settingsRepository == null)
-                    settingsRepository = new SettingsRepository(db);
+                    settingsRepository = new SettingsRepository(context);
                 return settingsRepository;
             }
         }
@@ -65,7 +64,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         {
             try
             {
-                var changes = db.ChangeTracker.Entries().Count(
+                var changes = context.ChangeTracker.Entries().Count(
                     p => p.State == EntityState.Modified || p.State == EntityState.Deleted
                                                          || p.State == EntityState.Added);
                 if (changes == 0) return true;
@@ -86,7 +85,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            context.Dispose();
         }
         public IBaseRepository<Sector> Sectors => throw new NotImplementedException();
     }

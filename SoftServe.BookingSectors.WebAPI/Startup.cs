@@ -34,7 +34,7 @@ namespace SoftServe.BookingSectors.WebAPI
             services.AddTransient<ISettingsService, SettingsService>();
             services.AddSwaggerGen(x =>
             {
-                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
+                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v2" });
             });
 
             var mappingConfig = new MapperConfiguration(mc =>

@@ -18,18 +18,18 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
                 .ForMember(m => m.Role, opt => opt.Ignore())
                 .ForMember(m => m.Password, opt => opt.Ignore())
                 .ForMember(m => m.Photo, opt => opt.Ignore());
-            
-            CreateMap<SectorDTO, Sector>()
+            CreateMap<TournamentDTO, Tournament>()
                 .ForMember(m => m.Id, opt => opt.Ignore());
-            CreateMap<Sector, SectorDTO>();
+            CreateMap<Tournament, TournamentDTO>();
+                
+
 
             CreateMap<TournamentSector, TournamentSectorDTO>();
             CreateMap<TournamentSectorDTO, TournamentSector>()
                  .ForMember(m => m.Id, opt => opt.Ignore());
             CreateMap<SectorDTO, Sector>()
                 .ForMember(m => m.Id, opt => opt.Ignore());
-            CreateMap<Sector, SectorDTO>()
-                .ReverseMap();
+            CreateMap<Sector, SectorDTO>();
             CreateMap<Setting, SettingsDTO>()
                 .ReverseMap();
         }
