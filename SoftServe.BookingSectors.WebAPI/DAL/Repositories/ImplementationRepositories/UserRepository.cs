@@ -30,15 +30,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
         }
         public Task<User> GetEntityByIdAsync(int id)
         {
-            
-            var result =  dbSet.Include(x => x.Role).AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
-            if (result.Result==null)
+
+            var result = dbSet.Include(x => x.Role).AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            if (result.Result == null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"User with id: {id} not found when trying to get entity.");
             }
 
             return result;
-            
+
         }
 
         public async ValueTask<EntityEntry<User>> InsertEntityAsync(User entityToInsert)

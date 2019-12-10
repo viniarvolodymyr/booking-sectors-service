@@ -7,9 +7,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling
     {
         public static IApplicationBuilder UseHttpStatusCodeExceptionMiddleware(this IApplicationBuilder builder)
         {
-            
             return builder.UseMiddleware<HttpStatusCodeExceptionMiddleware>();
-            
         }
     }
 }

@@ -18,7 +18,7 @@ namespace SoftServe.BookingSectors.WebAPI.Middlewares
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _logger = loggerFactory?.CreateLogger<HttpStatusCodeExceptionMiddleware>() ?? throw new ArgumentNullException(nameof(loggerFactory));
-            
+
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace SoftServe.BookingSectors.WebAPI.Middlewares
                 var result = JsonConvert.SerializeObject(new ErrorResponse(ex.Message));
 
                 await context.Response.WriteAsync(result);
-                
+
             }
         }
     }
