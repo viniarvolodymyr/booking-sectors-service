@@ -6,20 +6,22 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
-
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
     public class EFUnitOfWork : IUnitOfWork
     {
+        private readonly BookingSectorContext db;
         private readonly BookingSectorContext context;
+        private SettingsRepository settingsRepository;
+        private SectorRepository sectorsRepository;
         private UserRepository usersRepository;
         private TournamentSectorRepository tournamentSectorsRepository;
-        private SectorRepository sectorsRepository;
         private TournamentRepository tournamentRepository;
         private BookingSectorRepository bookingRepository;
-        private bool disposed = false;
 
+        private bool disposed = false;
         public EFUnitOfWork(BookingSectorContext context)
         {
             this.context = context;
@@ -28,6 +30,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         public IBaseRepository<TournamentSector> TournamentSectorsRepository
         {
             get { return tournamentSectorsRepository ??= new TournamentSectorRepository(context); }
+        }
+        public IBaseRepository<Setting> Settings
+        {
+            get
+            {
+                if (settingsRepository == null)
+                    settingsRepository = new SettingsRepository(db);
+                return settingsRepository;
+            }
         }
 
         public IBaseRepository<User> UsersRepository
@@ -51,16 +62,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 
 
         public async Task<bool> SaveAsync()
-
         {
             try
             {
-                var changes = context.ChangeTracker.Entries().Count(
+                var changes = db.ChangeTracker.Entries().Count(
                     p => p.State == EntityState.Modified || p.State == EntityState.Deleted
                                                          || p.State == EntityState.Added);
                 if (changes == 0) return true;
-                
 
+           
                 return await context.SaveChangesAsync()>0;
             }
             catch
@@ -69,23 +79,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             }
         }
 
-        public virtual void Dispose(bool disposing)
+        public void Save()
         {
-            if (!disposed)
-            {
-                if (disposing)
-                {
-                    context.Dispose();
-                }
-
-                disposed = true;
-            }
+            throw new NotImplementedException();
         }
+
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            throw new NotImplementedException();
         }
-
+        public IBaseRepository<Sector> Sectors => throw new NotImplementedException();
     }
 }
