@@ -5,13 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
 using SoftServe.BookingSectors.WebAPI.Extensions;
-using SoftServe.BookingSectors.WebAPI.BLL.Services;
-using Microsoft.OpenApi.Models;
-using AutoMapper;
-using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -31,16 +26,6 @@ namespace SoftServe.BookingSectors.WebAPI
             (@ConfigurationHelper.GetDatabaseConnectionString()));
 
             services.AddControllers();
-            services.AddTransient<ISettingsService, SettingsService>();
-            services.AddSwaggerGen(x =>
-            {
-                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v2" });
-            });
-
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
 
             services.ConfigureSwagger();
 

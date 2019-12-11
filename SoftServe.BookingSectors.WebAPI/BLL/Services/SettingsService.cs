@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services

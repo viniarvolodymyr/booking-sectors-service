@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using Microsoft.EntityFrameworkCore;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 

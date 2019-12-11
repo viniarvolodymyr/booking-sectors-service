@@ -1,9 +1,9 @@
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 using SoftServe.BookingSectors.WebAPI.BLL.Services;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
-using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 
 namespace SoftServe.BookingSectors.WebAPI.Extensions
 {
@@ -24,7 +24,7 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
             services.AddTransient<ITournamentService, TournamentService>();
             services.AddTransient<IBookingSectorService, BookingSectorService>();
             services.AddTransient<IUserService, UserService>();
-
+            services.AddTransient<ISettingsService, SettingsService>();
         }
 
         public static void ConfigureModelRepositories(this IServiceCollection services)
