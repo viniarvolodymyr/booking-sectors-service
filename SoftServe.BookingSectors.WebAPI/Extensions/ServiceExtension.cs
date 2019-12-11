@@ -11,7 +11,8 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
     {
         public static void ConfigureAutoMapper(this IServiceCollection services)
         {
-            services.AddSingleton(new MapperConfiguration(mc =>{
+            services.AddSingleton(new MapperConfiguration(mc =>
+            {
                 mc.AddProfile(new MappingProfile());
             }).CreateMapper());
         }
@@ -29,7 +30,7 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
 
         public static void ConfigureModelRepositories(this IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork, EFUnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }

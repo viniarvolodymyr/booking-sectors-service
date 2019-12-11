@@ -1,19 +1,18 @@
-﻿using AttributeRouting.Web.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/bookings/")]
+    [Route("api/bookings")]
     [ApiController]
-    public class BookingController : ControllerBase
+    public class BookingSectorController : ControllerBase
     {
         private readonly IBookingSectorService bookingService;
 
-        public BookingController(IBookingSectorService bookingService)
+        public BookingSectorController(IBookingSectorService bookingService)
         {
             this.bookingService = bookingService;
         }
@@ -37,9 +36,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]BookingSectorInfo bookingInfo)
+        public async Task<IActionResult> Post([FromBody]BookingSectorDTO bookingDTO)
         {
-            await bookingService.BookSector(bookingInfo);
+            await bookingService.BookSector(bookingDTO);
             return Ok();
         }
 

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
+﻿namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
 {
     public class SettingsDTO
     {
-        public string name { get; set; }
-        public int value { get; set; }
+        public string Name { get; set; }
+        public int Value { get; set; }
         public int CreateUserId { get; set; }
         public int? ModUserId { get; set; }
     }

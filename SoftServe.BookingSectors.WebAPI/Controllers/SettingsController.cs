@@ -1,30 +1,34 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
-
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/settings")]
     [ApiController]
     public class SettingsController : ControllerBase
     {
-        private readonly ISettingsService settings;
-        public SettingsController(ISettingsService settings)
+        private readonly ISettingsService settingService;
+
+        public SettingsController(ISettingsService settingService)
         {
-            this.settings = settings;
-        }
-        [HttpGet("{name}", Name = "GetSetting")]
-        public Task<SettingsDTO> Get(string name)
-        {
-            return settings.GetSettingByIdAsync(name);
-        }
-        [HttpPut("{name1}", Name = "Update setting")]
-        public async Task Update(string name1, [FromBody] SettingsDTO settingsDTO)
-        {
-           await settings.UpdateSettingsAsync(name1, settingsDTO);
+            this.settingService = settingService;
         }
 
+        [HttpGet]
+        [Route("{settingName}")]
+        public async Task<IActionResult> Get([FromRoute]string settingName)
+        {
+            return Ok(await settingService.GetSettingByIdAsync(settingName));
+        }
+
+        [HttpPut]
+        [Route("{settingName}")]
+        public async Task<IActionResult> Update([FromRoute]string settingName, [FromBody]SettingsDTO settingsDTO)
+        {
+            await settingService.UpdateSettingsAsync(settingName, settingsDTO);
+            return Ok();
+        }
     }
 }

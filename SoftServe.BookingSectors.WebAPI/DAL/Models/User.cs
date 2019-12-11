@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Models
 {
@@ -18,7 +17,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
         public int? ModUserId { get; set; }
         public byte[] Photo { get; set; }
 
-   
         public virtual UserRole Role { get; set; }
         public virtual ICollection<BookingSector> BookingSector { get; set; } = new HashSet<BookingSector>();
     }

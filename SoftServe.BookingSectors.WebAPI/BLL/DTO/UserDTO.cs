@@ -1,4 +1,3 @@
-
 namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
 {
     public class UserDTO

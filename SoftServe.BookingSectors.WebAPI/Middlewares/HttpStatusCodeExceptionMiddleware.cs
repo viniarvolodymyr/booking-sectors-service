@@ -1,8 +1,7 @@
-﻿using System.Collections.Immutable;
-using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,14 +10,13 @@ namespace SoftServe.BookingSectors.WebAPI.Middlewares
 {
     public class HttpStatusCodeExceptionMiddleware
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<HttpStatusCodeExceptionMiddleware> _logger;
+        private readonly RequestDelegate next;
+        private readonly ILogger<HttpStatusCodeExceptionMiddleware> logger;
 
-        public HttpStatusCodeExceptionMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
+        public HttpStatusCodeExceptionMiddleware(RequestDelegate next, ILoggerFactory logger)
         {
-            _next = next ?? throw new ArgumentNullException(nameof(next));
-            _logger = loggerFactory?.CreateLogger<HttpStatusCodeExceptionMiddleware>() ?? throw new ArgumentNullException(nameof(loggerFactory));
-
+            this.next = next ?? throw new ArgumentNullException(nameof(next));
+            this.logger = logger?.CreateLogger<HttpStatusCodeExceptionMiddleware>() ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -34,13 +32,13 @@ namespace SoftServe.BookingSectors.WebAPI.Middlewares
         {
             try
             {
-                await _next(context);
+                await next(context);
             }
             catch (Exception ex)
             {
                 if (context.Response.HasStarted)
                 {
-                    _logger.LogWarning(
+                    logger.LogWarning(
                         "The response has already started, the http status code middleware will not be executed.");
                     throw;
                 }
@@ -57,13 +55,12 @@ namespace SoftServe.BookingSectors.WebAPI.Middlewares
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     context.Response.ContentType = @"application/json";
-                    _logger.LogError(0, ex, "An unhandled exception has occurred: " + ex.Message);
+                    logger.LogError(0, ex, "An unhandled exception has occurred: " + ex.Message);
                 }
 
                 var result = JsonConvert.SerializeObject(new ErrorResponse(ex.Message));
 
                 await context.Response.WriteAsync(result);
-
             }
         }
     }

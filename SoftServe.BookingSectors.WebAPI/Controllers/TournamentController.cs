@@ -7,21 +7,20 @@ using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/tournament")]
+    [Route("api/tournaments")]
     [ApiController]
     public class TournamentController : ControllerBase
     {
-        readonly ITournamentService tournamentService;
-        readonly ITournamentSectorService tournamentSectorService;
+        private readonly ITournamentService tournamentService;
+        private readonly ITournamentSectorService tournamentSectorService;
+
         public TournamentController(ITournamentService tournamentService, ITournamentSectorService tournamentSectorService)
         {
             this.tournamentService = tournamentService;
             this.tournamentSectorService = tournamentSectorService;
-
         }
 
-
-        [HttpGet("all")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<TournamentDTO>>> GetAll()
         {
             var dtos = await tournamentService.GetAllTournamentsAsync();
@@ -32,28 +31,33 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dtos);
         }
 
-
-        [HttpGet("{tourId}")]
-        public async Task<TournamentDTO> GetTournament(int tourId)
+        [HttpGet]
+        [Route("{id}")]
+        public Task<TournamentDTO> GetTournament([FromRoute]int id)
         {
-            return await tournamentService.GetTournamentByIdAsync(tourId);
+            return tournamentService.GetTournamentByIdAsync(id);
         }
 
         [HttpPost]
-        public async Task Post([FromBody] TournamentDTO tournamentDTO)
+        public async Task<IActionResult> Post([FromBody]TournamentDTO tournamentDTO)
         {
             await tournamentService.InsertTournamentAsync(tournamentDTO);
+            return Ok();
         }
-        [HttpPut("{tourId}")]
-        public async Task Put(int tourId, [FromBody] TournamentDTO tournamentDTO)
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task Put([FromRoute]int tournamentId, [FromBody]TournamentDTO tournamentDTO)
         {
-            await tournamentService.UpdateTournament(tourId, tournamentDTO);
+            await tournamentService.UpdateTournament(tournamentId, tournamentDTO);
         }
-        [HttpDelete("{tourId}")]
-        public async Task Delete(int tourId)
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task Delete([FromRoute]int id)
         {
-            await tournamentSectorService.DeleteAllTournamentSectorsAsync(tourId);
-            await tournamentService.DeleteTournamentByIdAsync(tourId);
+            await tournamentSectorService.DeleteAllTournamentSectorsAsync(id);
+            await tournamentService.DeleteTournamentByIdAsync(id);
         }
     }
 }

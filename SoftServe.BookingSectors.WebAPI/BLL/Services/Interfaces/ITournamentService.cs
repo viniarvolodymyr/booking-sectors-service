@@ -11,6 +11,5 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         Task InsertTournamentAsync(TournamentDTO tournamentDTO);
         Task UpdateTournament(int tourId, TournamentDTO tournamentDTO);
         Task DeleteTournamentByIdAsync(int id);
-        void Dispose();
     }
 }

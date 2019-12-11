@@ -1,20 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using System;
-using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.EF
 {
     public partial class BookingSectorContext : DbContext
     {
-        public BookingSectorContext()
-        {
-        }
-
         public BookingSectorContext(DbContextOptions<BookingSectorContext> options)
             : base(options)
-        {
-        }
+        { }
 
         public virtual DbSet<BookingSector> BookingSector { get; set; }
         public virtual DbSet<Language> Language { get; set; }
@@ -24,7 +17,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
         public virtual DbSet<TournamentSector> TournamentSector { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BookingSector>(entity =>
@@ -339,11 +331,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
             });
 
             OnModelCreatingPartial(modelBuilder);
-        }
-
-        internal Task<Sector> FindAsync(int id)
-        {
-            throw new NotImplementedException();
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

@@ -7,6 +7,5 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
     {
         Task<SettingsDTO> GetSettingByIdAsync(string name);
         public Task UpdateSettingsAsync(string name1, SettingsDTO settingsDTO);
-        void Dispose();
     }
 }

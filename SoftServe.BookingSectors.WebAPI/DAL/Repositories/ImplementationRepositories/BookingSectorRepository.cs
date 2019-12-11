@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,36 +10,40 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
 {
     public class BookingSectorRepository : IBaseRepository<BookingSector>
     {
-        private readonly BookingSectorContext db;
-        private readonly DbSet<BookingSector> dbSet;
+        private readonly BookingSectorContext context;
+        private readonly DbSet<BookingSector> bookingSectorSet;
 
         public BookingSectorRepository(BookingSectorContext context)
         {
-            db = context;
-            dbSet = db.Set<BookingSector>();
+            this.context = context;
+            bookingSectorSet = context.Set<BookingSector>();
         }
+
         public Task<List<BookingSector>> GetAllEntitiesAsync()
         {
-            return dbSet.AsNoTracking().ToListAsync();
+            return bookingSectorSet.AsNoTracking().ToListAsync();
         }
+
         public Task<BookingSector> GetEntityByIdAsync(int id)
         {
-            return dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            return bookingSectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
+
         public ValueTask<EntityEntry<BookingSector>> InsertEntityAsync(BookingSector entity)
         {
-            return dbSet.AddAsync(entity);
+            return bookingSectorSet.AddAsync(entity);
         }
+
         public void UpdateEntity(BookingSector entity)
         {
-            dbSet.Attach(entity);
-            db.Entry(entity).State = EntityState.Modified;
+            bookingSectorSet.Attach(entity);
+            context.Entry(entity).State = EntityState.Modified;
         }
 
         public async Task DeleteEntityByIdAsync(int id)
         {
-            var existingBooking = await dbSet.FindAsync(id);
-            dbSet.Remove(existingBooking);
+            BookingSector entityToDelete = await bookingSectorSet.FindAsync(id);
+            bookingSectorSet.Remove(entityToDelete);
         }
     }
 }

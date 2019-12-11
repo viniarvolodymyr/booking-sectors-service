@@ -31,8 +31,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dtos);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SectorDTO>> GetById(int id)
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetById([FromRoute]int id)
         {
             var dto = await sectorService.GetSectorByIdAsync(id);
             if (dto == null)
@@ -42,7 +43,8 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dto);
         }
 
-        [HttpGet("freeSectors", Name = "GetFreeSectors")]
+        [HttpGet]
+        [Route("free")]
         public async Task<ActionResult<IEnumerable<SectorDTO>>> Get([FromQuery]DateTime fromDate, [FromQuery]DateTime toDate)
         {
             var freeSectors = await bookingSectorService.GetFreeSectorsAsync(fromDate, toDate);
@@ -58,14 +60,17 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         {
             await sectorService.InsertSectorAsync(sectorDTO);
         }
-        
-        [HttpPut("{id}")]
-        public async Task Put(int id, [FromBody] SectorDTO sectorDTO)
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task Put([FromRoute]int id, [FromBody] SectorDTO sectorDTO)
         {
             await sectorService.UpdateSector(id, sectorDTO);
         }
-        [HttpDelete("{id}")]
-        public async Task Delete(int id)
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task Delete([FromRoute]int id)
         {
             await sectorService.DeleteSectorByIdAsync(id);
         }

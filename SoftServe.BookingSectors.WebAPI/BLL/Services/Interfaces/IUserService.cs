@@ -1,6 +1,6 @@
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
 {
@@ -11,6 +11,5 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         Task<UserDTO> GetUserByPhoneAsync(string phone);
         Task UpdateUserById(int id, UserDTO userDTO);
         Task InsertUserAsync(UserDTO userDTO);
-        void Dispose();
     }
 }

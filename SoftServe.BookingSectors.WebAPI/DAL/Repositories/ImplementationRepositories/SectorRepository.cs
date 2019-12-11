@@ -11,38 +11,39 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
     public class SectorRepository : IBaseRepository<Sector>
     {
         private readonly BookingSectorContext context;
-        private readonly DbSet<Sector> dbSet;
+        private readonly DbSet<Sector> sectorSet;
 
         public SectorRepository(BookingSectorContext context)
         {
             this.context = context;
-            dbSet = context.Set<Sector>();
+            sectorSet = context.Set<Sector>();
         }
 
         public Task<List<Sector>> GetAllEntitiesAsync()
         {
-            return dbSet.AsNoTracking().ToListAsync();
+            return sectorSet.AsNoTracking().ToListAsync();
         }
 
         public Task<Sector> GetEntityByIdAsync(int id)
         {
-             return dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+             return sectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
         public ValueTask<EntityEntry<Sector>> InsertEntityAsync(Sector entityToInsert)
         {
-             return dbSet.AddAsync(entityToInsert);
+             return sectorSet.AddAsync(entityToInsert);
         }
 
         public void UpdateEntity(Sector entityToUpdate)
         {
-            dbSet.Attach(entityToUpdate);
+            sectorSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
+
         public async Task DeleteEntityByIdAsync(int id)
         {
-            Sector sectorToDelete =  await dbSet.FindAsync(id);
-            dbSet.Remove(sectorToDelete);
+            Sector sectorToDelete =  await sectorSet.FindAsync(id);
+            sectorSet.Remove(sectorToDelete);
         }
     }
 }
