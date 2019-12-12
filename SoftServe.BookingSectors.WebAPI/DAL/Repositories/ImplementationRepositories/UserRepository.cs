@@ -45,14 +45,14 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             userSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
-        public async Task DeleteEntityByIdAsync(int id)
+        public async Task<EntityEntry<User>> DeleteEntityByIdAsync(int id)
         {
             var entityToDelete = await userSet.FindAsync(id);
             if (entityToDelete == null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"User with id: {id} not found when trying to update entity. Entity was no Deleted.");
             }
-            userSet.Remove(entityToDelete);
+            return userSet.Remove(entityToDelete);
         }
     }
 }

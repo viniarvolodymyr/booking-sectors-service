@@ -40,7 +40,10 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             {
                 return NoContent();
             }
-            return Ok(dto);
+            else
+            {
+                return Ok(dto);
+            }
         }
 
         [HttpGet]

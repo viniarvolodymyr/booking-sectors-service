@@ -29,21 +29,21 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return bookingSectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
-        public ValueTask<EntityEntry<BookingSector>> InsertEntityAsync(BookingSector entity)
+        public ValueTask<EntityEntry<BookingSector>> InsertEntityAsync(BookingSector entityToInsert)
         {
-            return bookingSectorSet.AddAsync(entity);
+            return bookingSectorSet.AddAsync(entityToInsert);
         }
 
-        public void UpdateEntity(BookingSector entity)
+        public void UpdateEntity(BookingSector entityToUpdate)
         {
-            bookingSectorSet.Attach(entity);
-            context.Entry(entity).State = EntityState.Modified;
+            bookingSectorSet.Attach(entityToUpdate);
+            context.Entry(entityToUpdate).State = EntityState.Modified;
         }
 
-        public async Task DeleteEntityByIdAsync(int id)
+        public async Task<EntityEntry<BookingSector>> DeleteEntityByIdAsync(int id)
         {
             BookingSector entityToDelete = await bookingSectorSet.FindAsync(id);
-            bookingSectorSet.Remove(entityToDelete);
+            return bookingSectorSet.Remove(entityToDelete);
         }
     }
 }

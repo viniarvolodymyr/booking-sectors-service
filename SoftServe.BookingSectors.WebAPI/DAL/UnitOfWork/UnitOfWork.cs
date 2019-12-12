@@ -48,11 +48,16 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 {
                     return true;
                 }
-
                 return await context.SaveChangesAsync() > 0;
             }
-            catch
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
             {
+                // Logger
+                return false;
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                // Logger
                 return false;
             }
         }

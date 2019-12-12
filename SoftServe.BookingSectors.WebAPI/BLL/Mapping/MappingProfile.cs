@@ -10,7 +10,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
         {
             CreateMap<BookingSector, BookingSectorDTO>();
             CreateMap<BookingSectorDTO, BookingSector>()
-                .ForMember(m => m.IsApproved, opt => opt.Ignore());
+                .ForMember(m => m.IsApproved, opt => opt.Ignore())
+                .ForMember(m => m.Id, opt => opt.Ignore());
 
             CreateMap<User, UserDTO>()
                 .ForMember(m => m.RoleName, x => x.MapFrom(src => src.Role.Role));

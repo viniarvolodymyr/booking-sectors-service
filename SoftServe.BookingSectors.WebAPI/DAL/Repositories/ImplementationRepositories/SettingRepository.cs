@@ -41,7 +41,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
 
-        public Task DeleteEntityByIdAsync(int id)
+        public Task<EntityEntry<Setting>> DeleteEntityByIdAsync(int id)
         {
             throw new NotImplementedException();
         }

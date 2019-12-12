@@ -25,6 +25,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
             var dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(bookings);
+
             return dtos;
         }
 
@@ -32,6 +33,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var booking = await database.BookingSectorRepository.GetEntityByIdAsync(id);
             var dtos = mapper.Map<BookingSector, BookingSectorDTO>(booking);
+
             return dtos;
         }
 
@@ -48,35 +50,53 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 isFree = item.All(b => (!(b.BookingStart >= fromDate && b.BookingStart <= toDate)
                                                     && !(b.BookingEnd >= fromDate && b.BookingEnd <= toDate)));
                 if (isFree)
+                {
                     freeSectors.Add(sector);
+                }
             }
+
             return mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(freeSectors);
+        }
+
+        public async Task<BookingSectorDTO> BookSector(BookingSectorDTO bookingSectorDTO)
+        {
+            var bookingSector = mapper.Map<BookingSectorDTO, BookingSector>(bookingSectorDTO);
+            var insertedSector = await database.BookingSectorRepository.InsertEntityAsync(bookingSector);
+            bool isSaved = await database.SaveAsync();
+            if (isSaved == false)
+            {
+                return null;
+            }
+            else
+            {
+                return mapper.Map<BookingSector, BookingSectorDTO>(insertedSector.Entity);
+            }
         }
 
         public async Task<BookingSector> UpdateBookingApprovedAsync(int id, bool isApproved)
         {
             var booking = await database.BookingSectorRepository.GetEntityByIdAsync(id);
             if (booking == null)
+            {
                 return null;
-
+            }
             booking.IsApproved = isApproved;
             database.BookingSectorRepository.UpdateEntity(booking);
-            await database.SaveAsync();
-            return booking;
+            bool isSaved = await database.SaveAsync();
+
+            return (isSaved == true) ? booking : null;
         }
 
-        public async Task DeleteBookingByIdAsync(int id)
+        public async Task<BookingSector> DeleteBookingByIdAsync(int id)
         {
-            await database.BookingSectorRepository.DeleteEntityByIdAsync(id);
-            await database.SaveAsync();
-        }
+            var booking = await database.BookingSectorRepository.DeleteEntityByIdAsync(id);
+            if (booking == null)
+            {
+                return null;
+            }
+            bool isSaved = await database.SaveAsync();
 
-        public async Task<BookingSectorDTO> BookSector(BookingSectorDTO bookingSectorDTO)
-        {
-            var bookingSector = mapper.Map<BookingSectorDTO, BookingSector>(bookingSectorDTO);
-            await database.BookingSectorRepository.InsertEntityAsync(bookingSector);
-            await database.SaveAsync();
-            return mapper.Map<BookingSector, BookingSectorDTO>(bookingSector);
+            return (isSaved == true) ? booking.Entity : null;
         }
     }
 }
