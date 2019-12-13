@@ -4,6 +4,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 using SoftServe.BookingSectors.WebAPI.BLL.Services;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
+using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 
 namespace SoftServe.BookingSectors.WebAPI.Extensions
 {
@@ -31,6 +32,11 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
         public static void ConfigureModelRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+        }
+
+        public static void ConfigureLoggerService(this IServiceCollection services)
+        {
+            services.AddSingleton<ILoggerManager, LoggerManager>();
         }
     }
 }

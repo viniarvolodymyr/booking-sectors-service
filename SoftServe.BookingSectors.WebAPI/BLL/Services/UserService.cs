@@ -7,6 +7,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -14,17 +15,19 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
     {
         private readonly IUnitOfWork database;
         private readonly IMapper mapper;
+        private readonly ILoggerManager logger;
 
-        public UserService(IUnitOfWork database, IMapper mapper)
+        public UserService(IUnitOfWork database, IMapper mapper, ILoggerManager logger)
         {
             this.database = database;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
             var users = await database.UserRepository.GetAllEntitiesAsync();
-            var dtos = mapper.Map<IEnumerable<User>, List<UserDTO>>(users);
+            var dtos = mapper.Map<IEnumerable<User>, List<UserDTO>>(users);            
             return dtos;
         }
         public async Task<UserDTO> GetUserByIdAsync(int id)
