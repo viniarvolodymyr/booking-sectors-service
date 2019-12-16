@@ -11,6 +11,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
         public int CreateUserId { get; set; }
         public DateTime ModDate { get; set; }
         public int? ModUserId { get; set; }
+
         public virtual ICollection<User> User { get; set; } = new HashSet<User>();
     }
 }

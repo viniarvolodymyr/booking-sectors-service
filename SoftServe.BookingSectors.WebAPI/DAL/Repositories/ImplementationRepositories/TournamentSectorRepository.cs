@@ -1,50 +1,49 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SoftServe.BookingSectors.WebAPI.DAL.EF;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using SoftServe.BookingSectors.WebAPI.DAL.EF;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
     public class TournamentSectorRepository : IBaseRepository<TournamentSector>
     {
         private readonly BookingSectorContext context;
-        private readonly DbSet<TournamentSector> dbSet;
+        private readonly DbSet<TournamentSector> tournamentSectorSet;
 
         public TournamentSectorRepository(BookingSectorContext context)
         {
             this.context = context;
-            dbSet = context.Set<TournamentSector>();
+            tournamentSectorSet = context.Set<TournamentSector>();
         }
 
         public Task<List<TournamentSector>> GetAllEntitiesAsync()
         {
-            return dbSet.AsNoTracking().ToListAsync();
+            return tournamentSectorSet.AsNoTracking().ToListAsync();
         }
 
         public Task<TournamentSector> GetEntityByIdAsync(int id)
         {
-            return dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            return tournamentSectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
         public ValueTask<EntityEntry<TournamentSector>> InsertEntityAsync(TournamentSector entityToInsert)
         {
-            return dbSet.AddAsync(entityToInsert);
+            return tournamentSectorSet.AddAsync(entityToInsert);
         }
 
         public void UpdateEntity(TournamentSector entityToUpdate)
         {
-            dbSet.Attach(entityToUpdate);
+            tournamentSectorSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
-        public async Task DeleteEntityByIdAsync(int id)
-        {
-            TournamentSector sectorToDelete = await dbSet.FindAsync(id);
-            dbSet.Remove(sectorToDelete);
-        }
 
+        public async Task<EntityEntry<TournamentSector>> DeleteEntityByIdAsync(int id)
+        {
+            TournamentSector entityToDelete = await tournamentSectorSet.FindAsync(id);
+            return tournamentSectorSet.Remove(entityToDelete);
+        }
     }
 }

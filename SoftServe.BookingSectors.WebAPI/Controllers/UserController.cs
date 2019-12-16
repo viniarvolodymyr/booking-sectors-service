@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
-
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
-        readonly IUserService userService;
-        public UserController(IUserService service)
+        private readonly IUserService userService;
+
+        public UserController(IUserService userService)
         {
-            userService = service;
+            this.userService = userService;
         }
 
         [HttpGet]
@@ -29,8 +29,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dtos);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserDTO>> GetById(int id)
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<ActionResult<UserDTO>> GetById([FromRoute]int id)
         {
             var dto = await userService.GetUserByIdAsync(id);
             if (dto == null)
@@ -40,10 +41,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dto);
         }
 
-
-        //GET: api/User/Phone/3212321
-        [HttpGet("Phone/{phone}", Name = "GetUserByPhone")]
-        public async Task<ActionResult<UserDTO>> GetByPhone(string phone)
+        [HttpGet]
+        [Route("phone/{phone}")]
+        public async Task<ActionResult<UserDTO>> GetByPhone([FromRoute]string phone)
         {
             var dto = await userService.GetUserByPhoneAsync(phone);
             if (dto == null)
@@ -51,14 +51,19 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
                 return NotFound();
             }
             return Ok(dto);
-
         }
 
-        // PUT: api/User/5
-        [HttpPut("{id}")]
-        public void UpdateUser(int id, [FromBody] UserDTO userDTO)
+        [HttpPost]
+        public async Task Post([FromBody] UserDTO userDTO)
         {
-            userService.UpdateUserById(id, userDTO);
+            await userService.InsertUserAsync(userDTO);
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task UpdateUser([FromRoute]int id, [FromBody]UserDTO userDTO)
+        {
+            await userService.UpdateUserById(id, userDTO);
         }
     }
 }

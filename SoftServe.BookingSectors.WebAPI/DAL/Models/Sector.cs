@@ -10,7 +10,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
         public string Description { get; set; }
         public decimal GpsLat { get; set; }
         public decimal GpsLng { get; set; }
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
         public DateTime CreateDate { get; set; }
         public int CreateUserId { get; set; }
         public DateTime ModDate { get; set; }

@@ -1,5 +1,4 @@
-﻿
-namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
+﻿namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
 {
     public class TournamentSectorDTO
     {
