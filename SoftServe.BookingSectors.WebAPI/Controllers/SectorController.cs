@@ -50,7 +50,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [Route("free")]
         public async Task<ActionResult<IEnumerable<SectorDTO>>> Get([FromQuery]DateTime fromDate, [FromQuery]DateTime toDate)
         {
-            var freeSectors = await bookingSectorService.GetFreeSectorsAsync(fromDate, toDate);
+            var freeSectors = await bookingSectorService.FilterSectorsByDate(fromDate, toDate);
             if (!freeSectors.Any())
             {
                 return NoContent();

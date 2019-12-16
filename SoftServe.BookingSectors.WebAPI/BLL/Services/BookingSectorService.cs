@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AttributeRouting.Helpers;
+using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
@@ -37,25 +38,35 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dtos;
         }
 
-        public async Task<IEnumerable<SectorDTO>> GetFreeSectorsAsync(DateTime fromDate, DateTime toDate)
+        private bool? sectorIsFree(Sector sector, IEnumerable<BookingSector> bookings, DateTime fromDate, DateTime toDate)
+        {
+            if(sector.IsActive.HasValue)
+            {
+                return bookings.All(b => (!(b.BookingStart >= fromDate && b.BookingStart <= toDate)
+                                                    && !(b.BookingEnd >= fromDate && b.BookingEnd <= toDate)));
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<SectorDTO>> FilterSectorsByDate(DateTime fromDate, DateTime toDate)
         {
             var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
-            List<Sector> freeSectors = new List<Sector>();
-            var group = bookings.GroupBy(x => x.SectorId).OrderBy(x => x.Key);
-            Sector sector = null;
-            bool isFree;
-            foreach (var item in group)
-            {
-                sector = await database.SectorRepository.GetEntityByIdAsync(item.Key);
-                isFree = item.All(b => (!(b.BookingStart >= fromDate && b.BookingStart <= toDate)
-                                                    && !(b.BookingEnd >= fromDate && b.BookingEnd <= toDate)));
-                if (isFree)
-                {
-                    freeSectors.Add(sector);
-                }
-            }
+            var sectors = await database.SectorRepository.GetAllEntitiesAsync();
 
-            return mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(freeSectors);
+            var entities = sectors.GroupJoin(bookings,
+                sector => sector.Id,
+                booking => booking.SectorId,
+                (sector, bookings) => new Sector()
+                {
+                    Id = sector.Id,
+                    Number = sector.Number,
+                    Description = sector.Description,
+                    GpsLat = sector.GpsLat,
+                    GpsLng = sector.GpsLng,
+                    IsActive = sectorIsFree(sector, bookings, fromDate, toDate),
+                    CreateUserId = sector.CreateUserId
+                });
+            return mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(entities);
         }
 
         public async Task<BookingSectorDTO> BookSector(BookingSectorDTO bookingSectorDTO)
