@@ -22,7 +22,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task<IEnumerable<TournamentSectorDTO>> GetAll()
         {
-            var entities = await database.TournamentSectorsRepository.GetAllEntitiesAsync();
+            var entities = await database.TournamentSectorRepository.GetAllEntitiesAsync();
             var dtos = mapper.Map<IEnumerable<TournamentSector>, IEnumerable<TournamentSectorDTO>>(entities);
             return dtos;
         }
@@ -30,14 +30,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task<IEnumerable<TournamentSectorDTO>> GetAllTournamentSectorsAsync(int tournId)
         {
-            var sectors = await database.TournamentSectorsRepository.GetAllEntitiesAsync();
+            var sectors = await database.TournamentSectorRepository.GetAllEntitiesAsync();
             var tournamentSectors = sectors.Where(x => x.TournamentId == tournId);
             var dtos = mapper.Map<IEnumerable<TournamentSector>, IEnumerable<TournamentSectorDTO>>(tournamentSectors);
             return dtos;
         }
         public async Task<IEnumerable<TournamentSector>> DeleteAllTournamentSectorsAsync(int tournId)
         {
-            var sectors = await database.TournamentSectorsRepository.GetAllEntitiesAsync();
+            var sectors = await database.TournamentSectorRepository.GetAllEntitiesAsync();
             var tournamentSectors = sectors.Where(x => x.TournamentId == tournId);
             if (tournamentSectors == null)
             {
@@ -46,7 +46,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             foreach (TournamentSector sector in tournamentSectors)
             {
-                await database.TournamentSectorsRepository.DeleteEntityByIdAsync(sector.Id);
+                await database.TournamentSectorRepository.DeleteEntityByIdAsync(sector.Id);
             }
             bool isSaved = await database.SaveAsync();
             return (isSaved == true) ? tournamentSectors : null;
@@ -54,7 +54,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task<TournamentSector> DeleteSectorFromTournamentAsync(int tournId, int sectorId)
         {
-            var sectors = await database.TournamentSectorsRepository.GetAllEntitiesAsync();
+            var sectors = await database.TournamentSectorRepository.GetAllEntitiesAsync();
             var tournSectors = sectors.Where(x => x.TournamentId == tournId);
             if (tournSectors == null)
             {
@@ -64,7 +64,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             {
                 if (sector.SectorsId == sectorId)
                 {
-                    var deletedSector = await database.TournamentSectorsRepository.DeleteEntityByIdAsync(sector.Id);
+                    var deletedSector = await database.TournamentSectorRepository.DeleteEntityByIdAsync(sector.Id);
                     bool isSaved = await database.SaveAsync();
                     return (isSaved == true) ? deletedSector.Entity : null;
                 }
@@ -75,7 +75,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<TournamentSectorDTO> AddSectorToTournamentAsync(TournamentSectorDTO tournamentSectorDTO)
         {
             var tournSector = mapper.Map<TournamentSectorDTO, TournamentSector>(tournamentSectorDTO);
-            var insertedSector = await database.TournamentSectorsRepository.InsertEntityAsync(tournSector);
+            var insertedSector = await database.TournamentSectorRepository.InsertEntityAsync(tournSector);
             bool isSaved = await database.SaveAsync();
             if (isSaved == false)
             {
@@ -88,7 +88,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         public async Task<TournamentSector> UpdateTournamentSector(int id, TournamentSectorDTO tournamentSectorDTO)
         {
-            var tournamentSector = await database.TournamentSectorsRepository.GetEntityByIdAsync(id);
+            var tournamentSector = await database.TournamentSectorRepository.GetEntityByIdAsync(id);
             if (tournamentSector == null)
             {
                 return null;
@@ -96,7 +96,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             tournamentSector.Id = id;
             tournamentSector.TournamentId = tournamentSectorDTO.TournamentId;
             tournamentSector.SectorsId = tournamentSectorDTO.SectorsId;
-            database.TournamentSectorsRepository.UpdateEntity(tournamentSector);
+            database.TournamentSectorRepository.UpdateEntity(tournamentSector);
             bool isSaved = await database.SaveAsync();
             return (isSaved == true) ? tournamentSector : null;
         }
