@@ -12,69 +12,98 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
     public class TournamentSectorService : ITournamentSectorService
     {
-        private readonly IUnitOfWork Database;
-        private readonly IMapper _mapper;
-        public TournamentSectorService(IUnitOfWork uow, IMapper mapper)
+        private readonly IUnitOfWork database;
+        private readonly IMapper mapper;
+        public TournamentSectorService(IUnitOfWork database, IMapper mapper)
         {
-            Database = uow;
-            _mapper = mapper;
+            this.database = database;
+            this.mapper = mapper;
         }
-        public async Task<IEnumerable<TournamentSectorDTO>> GetAllTournamentSectorsAsync(int tournId)
-        {
-            var sectors = await Database.TournamentSectorsRepository.GetAllEntitiesAsync();
-            var tournamentSectors = sectors.Where(x => x.TournamentId == tournId);
 
-            var dtos = _mapper.Map<IEnumerable<TournamentSector>, List<TournamentSectorDTO>>(tournamentSectors);
+        public async Task<IEnumerable<TournamentSectorDTO>> GetAll()
+        {
+            var entities = await database.TournamentSectorsRepository.GetAllEntitiesAsync();
+            var dtos = mapper.Map<IEnumerable<TournamentSector>, IEnumerable<TournamentSectorDTO>>(entities);
             return dtos;
         }
-        public async Task DeleteAllTournamentSectorsAsync(int tournId)
+
+
+        public async Task<IEnumerable<TournamentSectorDTO>> GetAllTournamentSectorsAsync(int tournId)
         {
-            var sectors = await Database.TournamentSectorsRepository.GetAllEntitiesAsync();
+            var sectors = await database.TournamentSectorsRepository.GetAllEntitiesAsync();
             var tournamentSectors = sectors.Where(x => x.TournamentId == tournId);
+            var dtos = mapper.Map<IEnumerable<TournamentSector>, IEnumerable<TournamentSectorDTO>>(tournamentSectors);
+            return dtos;
+        }
+        public async Task<IEnumerable<TournamentSector>> DeleteAllTournamentSectorsAsync(int tournId)
+        {
+            var sectors = await database.TournamentSectorsRepository.GetAllEntitiesAsync();
+            var tournamentSectors = sectors.Where(x => x.TournamentId == tournId);
+            if (tournamentSectors == null)
+            {
+                return null;
+            }
+
             foreach (TournamentSector sector in tournamentSectors)
             {
-                await Database.TournamentSectorsRepository.DeleteEntityByIdAsync(sector.Id);
+                await database.TournamentSectorsRepository.DeleteEntityByIdAsync(sector.Id);
             }
-            await Database.SaveAsync();
+            bool isSaved = await database.SaveAsync();
+            return (isSaved == true) ? tournamentSectors : null;
         }
-        public async Task<int> DeleteSectorFromTournamentAsync(int tournId, int sectorId)
+
+        public async Task<TournamentSector> DeleteSectorFromTournamentAsync(int tournId, int sectorId)
         {
-            var sectors = await Database.TournamentSectorsRepository.GetAllEntitiesAsync();
+            var sectors = await database.TournamentSectorsRepository.GetAllEntitiesAsync();
             var tournSectors = sectors.Where(x => x.TournamentId == tournId);
-            int result = 0;
-            if (tournSectors != null)
+            if (tournSectors == null)
             {
-                foreach (TournamentSector sector in tournSectors)
+                return null;
+            }
+            foreach (TournamentSector sector in tournSectors)
+            {
+                if (sector.SectorsId == sectorId)
                 {
-                    if (sector.SectorsId == sectorId)
-                    {
-                        await Database.TournamentSectorsRepository.DeleteEntityByIdAsync(sector.Id);
-                        result = 1;
-                    }
+                    var deletedSector = await database.TournamentSectorsRepository.DeleteEntityByIdAsync(sector.Id);
+                    bool isSaved = await database.SaveAsync();
+                    return (isSaved == true) ? deletedSector.Entity : null;
                 }
-                await Database.SaveAsync();
             }
-            return result;
+            return null;
         }
 
-        public async Task AddSectorToTournamentAsync(int sectId, int tournId)
+        public async Task<TournamentSectorDTO> AddSectorToTournamentAsync(TournamentSectorDTO tournamentSectorDTO)
         {
-            var sect = await Database.TournamentSectorsRepository.GetEntityByIdAsync(sectId);
-            //var tourn = await Database.Tournament.GetEntityAsync(tournId);
-
-            if (sect != null)
+            var tournSector = mapper.Map<TournamentSectorDTO, TournamentSector>(tournamentSectorDTO);
+            var insertedSector = await database.TournamentSectorsRepository.InsertEntityAsync(tournSector);
+            bool isSaved = await database.SaveAsync();
+            if (isSaved == false)
             {
-                TournamentSector sector = new TournamentSector();
-                sector.SectorsId = sectId;
-                sector.TournamentId = tournId;
-                await Database.TournamentSectorsRepository.InsertEntityAsync(sector);
-                await Database.SaveAsync();
+                return null;
             }
-
+            else
+            {
+                return mapper.Map<TournamentSector, TournamentSectorDTO>(insertedSector.Entity);
+            }
         }
+        public async Task<TournamentSector> UpdateTournamentSector(int id, TournamentSectorDTO tournamentSectorDTO)
+        {
+            var tournamentSector = await database.TournamentSectorsRepository.GetEntityByIdAsync(id);
+            if (tournamentSector == null)
+            {
+                return null;
+            }
+            tournamentSector.Id = id;
+            tournamentSector.TournamentId = tournamentSectorDTO.TournamentId;
+            tournamentSector.SectorsId = tournamentSectorDTO.SectorsId;
+            database.TournamentSectorsRepository.UpdateEntity(tournamentSector);
+            bool isSaved = await database.SaveAsync();
+            return (isSaved == true) ? tournamentSector : null;
+        }
+
         public void Dispose()
         {
-            Database.Dispose();
+            database.Dispose();
         }
     }
 }
