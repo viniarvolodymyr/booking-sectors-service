@@ -8,17 +8,18 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
-        readonly IUserService userService;
-        public UserController(IUserService service)
+        private readonly IUserService userService;
+        public UserController(IUserService userService)
         {
-            userService = service;
+            this.userService = userService;
         }
 
         [HttpGet]
+        [Route("all")]
         public async Task<ActionResult<IEnumerable<UserDTO>>> Get()
         {
             var dtos = await userService.GetAllUsersAsync();
@@ -29,8 +30,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dtos);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserDTO>> GetById(int id)
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<ActionResult<UserDTO>> GetById([FromRoute]int id)
         {
             var dto = await userService.GetUserByIdAsync(id);
             
@@ -43,8 +45,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
 
         //GET: api/User/Phone/3212321
-        [HttpGet("Phone/{phone}", Name = "GetUserByPhone")]
-        public async Task<ActionResult<UserDTO>> GetByPhone(string phone)
+        [HttpGet]
+        [Route("Phone/{phone}")]
+        public async Task<ActionResult<UserDTO>> GetByPhone([FromRoute]string phone)
         {
             var dto = await userService.GetUserByPhoneAsync(phone);
             if (dto == null)
@@ -56,8 +59,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         // PUT: api/User/5
-        [HttpPut("{id}")]
-        public async Task UpdateUser(int id, [FromBody] UserDTO userDTO)
+        [HttpPut]
+        [Route("{id}")]
+        public async Task UpdateUser([FromRoute]int id, [FromBody] UserDTO userDTO)
         {
            await userService.UpdateUserById(id,userDTO);
         }

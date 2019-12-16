@@ -10,38 +10,38 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
 {
     public class TournamentSectorRepository : IBaseRepository<TournamentSector>
     {
-        private readonly BookingSectorContext db;
-        private readonly DbSet<TournamentSector> dbSet;
+        private readonly BookingSectorContext context;
+        private readonly DbSet<TournamentSector> tournamentSectorSet;
 
         public TournamentSectorRepository(BookingSectorContext context)
         {
-            db = context;
-            dbSet = db.Set<TournamentSector>();
+            this.context = context;
+            tournamentSectorSet = context.Set<TournamentSector>();
         }
 
         public Task<List<TournamentSector>> GetAllEntitiesAsync()
         {
-            return dbSet.AsNoTracking().ToListAsync();
+            return tournamentSectorSet.AsNoTracking().ToListAsync();
         }
 
         public async Task<TournamentSector> GetEntityByIdAsync(int id)
         {
-            return await dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            return await tournamentSectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
         public async ValueTask<EntityEntry<TournamentSector>> InsertEntityAsync(TournamentSector entity)
         {
-           return  await dbSet.AddAsync(entity);
+           return  await tournamentSectorSet.AddAsync(entity);
         }
 
         public void UpdateEntity(TournamentSector entity)
         {
-            dbSet.Attach(entity);
-            db.Entry(entity).State = EntityState.Modified;
+            tournamentSectorSet.Attach(entity);
+            context.Entry(entity).State = EntityState.Modified;
         }
-        public async Task DeleteEntityByIdAsync(int id)
+        public async Task<EntityEntry<TournamentSector>> DeleteEntityByIdAsync(int id)
         {
-            TournamentSector existing = await dbSet.FindAsync(id);
-            dbSet.Remove(existing);
+            TournamentSector existing = await tournamentSectorSet.FindAsync(id);
+            return tournamentSectorSet.Remove(existing);
         }
 
 

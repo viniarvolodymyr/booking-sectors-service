@@ -7,51 +7,85 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/tournamentSectors")]
     [ApiController]
     public class TournamentSectorController : ControllerBase
     {
-        readonly ITournamentSectorService tournamentSectorService;
-        public TournamentSectorController(ITournamentSectorService service)
+        private readonly ITournamentSectorService tournamentSectorService;
+        public TournamentSectorController(ITournamentSectorService tournamentSectorService)
         {
-            tournamentSectorService = service;
+           this.tournamentSectorService = tournamentSectorService;
         }
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TournamentSectorDTO>>> Get(int tournId)
+        [Route("all")]
+        public async Task<ActionResult> GetAll()
         {
-            var dtos = await tournamentSectorService.GetAllTournamentSectorsAsync(tournId);
+            var dtos = await tournamentSectorService.GetAll();
             if (!dtos.Any())
             {
                 return NotFound();
             }
-   
+
             return Ok(dtos);
         }
-        [HttpDelete("{tourId}")]
-        public async Task<IActionResult> DeleteAllSectors(int tourId)
-        {
-            await tournamentSectorService.DeleteAllTournamentSectorsAsync(tourId);
-            return Ok();
-        }
 
-        [HttpDelete("{tourId}/{sectorId}")]
-        public async Task<IActionResult> Delete(int tourId, int sectorId)
+        [HttpGet]
+        [Route("{tourId}")]
+        public async Task<ActionResult> Get(int tourId)
         {
-            var result = await tournamentSectorService.DeleteSectorFromTournamentAsync(tourId, sectorId);
-            if (result == 0)
+            var dtos = await tournamentSectorService.GetAllTournamentSectorsAsync(tourId);
+            if (!dtos.Any())
             {
                 return NotFound();
             }
-            return Ok();
+            return Ok(dtos);
         }
 
-
-        [HttpPost(Name = "AddSectorToTournament")]
-        public async Task AddSector(int tourId, int sectorId)
+        [HttpDelete]
+        [Route("{tourId}/{sectorId}")]
+        public async Task<IActionResult> Delete([FromRoute]int tourId, [FromRoute]int sectorId)
         {
-             await tournamentSectorService.AddSectorToTournamentAsync(sectorId, tourId);
+            var result = await tournamentSectorService.DeleteSectorFromTournamentAsync(tourId, sectorId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(result);
+            }
         }
-        
+
+
+        [HttpPost]
+        public async Task<ActionResult> AddSector([FromBody] TournamentSectorDTO tournamentSectorDTO)
+        {
+            var dto = await tournamentSectorService.AddSectorToTournamentAsync(tournamentSectorDTO);
+            if (dto == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Created($"api/tournamentSectors/{dto.Id}", dto);
+            }
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] TournamentSectorDTO tournamentSectorDTO)
+        {
+            var tournament = await tournamentSectorService.UpdateTournamentSector(id, tournamentSectorDTO);
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(tournament);
+            }
+        }
 
     }
 }

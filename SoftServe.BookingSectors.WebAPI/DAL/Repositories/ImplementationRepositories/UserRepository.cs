@@ -45,6 +45,10 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             dbSet.Remove(userToDelete);
         }
 
-     
+       async Task<EntityEntry<User>> IBaseRepository<User>.DeleteEntityByIdAsync(int id)
+        {
+            User existing = await dbSet.FindAsync(id);
+            return dbSet.Remove(existing);
+        }
     }
 }

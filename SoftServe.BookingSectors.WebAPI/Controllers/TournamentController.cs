@@ -9,7 +9,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/tournament")]
+    [Route("api/tournaments")]
     [ApiController]
     public class TournamentController : ControllerBase
     {
@@ -22,9 +22,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         }
 
-        
-        [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<TournamentDTO>>> GetAll()
+        [HttpGet]
+        [Route("all")]
+        public async Task<ActionResult> GetAll()
         {
             var dtos = await tournamentService.GetAllTournamentsAsync();
             if (!dtos.Any())
@@ -32,30 +32,70 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
                 return NotFound();
             }
             return Ok(dtos);
-}
-        
-        
-        [HttpGet("{tourId}")]
-        public async Task<TournamentDTO> GetTournament(int tourId)
-        {
-            return await tournamentService.GetTournamentByIdAsync(tourId);
         }
-        
+
+        [HttpGet]
+        [Route("{tourId}")]
+        public async Task<ActionResult> GetTournament(int tourId)
+        {
+            var dto = await tournamentService.GetTournamentByIdAsync(tourId);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
+        }
+
         [HttpPost]
-        public async Task Post([FromBody] TournamentDTO tournamentDTO)
+        public async Task<ActionResult> Post([FromBody] TournamentDTO tournamentDTO)
         {
-            await tournamentService.InsertTournamentAsync(tournamentDTO);
+            var dto = await tournamentService.InsertTournamentAsync(tournamentDTO);
+            if (dto == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Created($"api/tournaments/{dto.Id}", dto);
+            }
         }
-        [HttpPut("{tourId}")]
-        public async Task Put(int tourId, [FromBody] TournamentDTO tournamentDTO)
+
+        [HttpPut]
+        [Route("{tourId}")]
+        public async Task<IActionResult> Put([FromRoute]int tourId, [FromBody] TournamentDTO tournamentDTO)
         {
-            await tournamentService.UpdateTournament(tourId, tournamentDTO);
+            var tournament = await tournamentService.UpdateTournament(tourId, tournamentDTO);
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(tournament);
+            }
         }
-        [HttpDelete("{tourId}")]
-        public async Task Delete(int tourId)
+
+        [HttpDelete]
+        [Route("{tourId}")]
+        public async Task<ActionResult> Delete(int tourId)
         {
-            await tournamentSectorService.DeleteAllTournamentSectorsAsync(tourId);
-            await tournamentService.DeleteTournamentByIdAsync(tourId);
+            var sectors = await tournamentSectorService.DeleteAllTournamentSectorsAsync(tourId);
+            if (sectors == null)
+            {
+                return NotFound();
+            }
+            var tournament = await tournamentService.DeleteTournamentByIdAsync(tourId);
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(tournament);
+            }
         }
     }
 }
