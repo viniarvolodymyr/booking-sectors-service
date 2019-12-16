@@ -24,26 +24,26 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return tournamentSectorSet.AsNoTracking().ToListAsync();
         }
 
-        public Task<TournamentSector> GetEntityByIdAsync(int id)
+        public async Task<TournamentSector> GetEntityByIdAsync(int id)
         {
-            return tournamentSectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            return await tournamentSectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+        }
+        public async ValueTask<EntityEntry<TournamentSector>> InsertEntityAsync(TournamentSector entity)
+        {
+           return  await tournamentSectorSet.AddAsync(entity);
         }
 
-        public ValueTask<EntityEntry<TournamentSector>> InsertEntityAsync(TournamentSector entityToInsert)
+        public void UpdateEntity(TournamentSector entity)
         {
-            return tournamentSectorSet.AddAsync(entityToInsert);
+            tournamentSectorSet.Attach(entity);
+            context.Entry(entity).State = EntityState.Modified;
         }
-
-        public void UpdateEntity(TournamentSector entityToUpdate)
-        {
-            tournamentSectorSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
-        }
-
         public async Task<EntityEntry<TournamentSector>> DeleteEntityByIdAsync(int id)
         {
-            TournamentSector entityToDelete = await tournamentSectorSet.FindAsync(id);
-            return tournamentSectorSet.Remove(entityToDelete);
+            TournamentSector existing = await tournamentSectorSet.FindAsync(id);
+            return tournamentSectorSet.Remove(existing);
         }
+
+
     }
 }

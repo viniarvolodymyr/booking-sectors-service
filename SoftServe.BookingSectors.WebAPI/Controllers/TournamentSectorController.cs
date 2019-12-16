@@ -1,27 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Route("api/tournamentsSectors")]
+    [Route("api/tournamentSectors")]
     [ApiController]
     public class TournamentSectorController : ControllerBase
     {
-        private readonly ITournamentSectorService tournamentSectorService;
-
+        readonly ITournamentSectorService tournamentSectorService;
         public TournamentSectorController(ITournamentSectorService tournamentSectorService)
         {
-            this.tournamentSectorService = tournamentSectorService;
+           this.tournamentSectorService = tournamentSectorService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TournamentSectorDTO>>> Get(int id)
+        [Route("all")]
+        public async Task<ActionResult> GetAll()
         {
-            var dtos = await tournamentSectorService.GetAllTournamentSectorsAsync(id);
+            var dtos = await tournamentSectorService.GetAll();
+            if (!dtos.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(dtos);
+        }
+
+        [HttpGet]
+        [Route("{tourId}")]
+        public async Task<ActionResult> Get(int tourId)
+        {
+            var dtos = await tournamentSectorService.GetAllTournamentSectorsAsync(tourId);
             if (!dtos.Any())
             {
                 return NotFound();
@@ -29,30 +42,50 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dtos);
         }
 
-        [HttpPost]
-        public async Task AddSector(int tourId, int sectorId)
-        {
-            await tournamentSectorService.AddSectorToTournamentAsync(sectorId, tourId);
-        }
-
         [HttpDelete]
-        [Route("{id}")]
-        public async Task<IActionResult> DeleteAllSectors([FromRoute]int id)
+        [Route("{tourId}/{sectorId}")]
+        public async Task<IActionResult> Delete([FromRoute]int tourId, [FromRoute]int sectorId)
         {
-            await tournamentSectorService.DeleteAllTournamentSectorsAsync(id);
-            return Ok();
-        }
-
-        [HttpDelete]
-        [Route("{tournamentId}/{sectorId}")]
-        public async Task<IActionResult> Delete([FromRoute]int tournamentId, [FromRoute]int sectorId)
-        {
-            var result = await tournamentSectorService.DeleteSectorFromTournamentAsync(tournamentId, sectorId);
-            if (result == 0)
+            var result = await tournamentSectorService.DeleteSectorFromTournamentAsync(tourId, sectorId);
+            if (result == null)
             {
                 return NotFound();
             }
-            return Ok();
+            else
+            {
+                return Ok(result);
+            }
         }
+
+
+        [HttpPost]
+        public async Task<ActionResult> AddSector([FromBody] TournamentSectorDTO tournamentSectorDTO)
+        {
+            var dto = await tournamentSectorService.AddSectorToTournamentAsync(tournamentSectorDTO);
+            if (dto == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Created($"api/tournamentSectors/{dto.Id}", dto);
+            }
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] TournamentSectorDTO tournamentSectorDTO)
+        {
+            var tournament = await tournamentSectorService.UpdateTournamentSector(id, tournamentSectorDTO);
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(tournament);
+            }
+        }
+
     }
 }

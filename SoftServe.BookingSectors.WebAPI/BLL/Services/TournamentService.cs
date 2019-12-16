@@ -5,6 +5,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
@@ -22,56 +23,65 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<IEnumerable<TournamentDTO>> GetAllTournamentsAsync()
         {
             var entities = await database.TournamentRepository.GetAllEntitiesAsync();
-            if (entities == null)
-            {
-                return null;
-            }
             var dtos = mapper.Map<IEnumerable<Tournament>, IEnumerable<TournamentDTO>>(entities);
             return dtos;
-
         }
 
         public async Task<TournamentDTO> GetTournamentByIdAsync(int id)
         {
             var enity = await database.TournamentRepository.GetEntityByIdAsync(id);
-            if (enity == null)
-            {
-                return null;
-            };
             var dto = mapper.Map<Tournament, TournamentDTO>(enity);
             return dto;
-
         }
 
-        public async Task InsertTournamentAsync(TournamentDTO tournamentDTO)
+        public async Task<TournamentDTO> InsertTournamentAsync(TournamentDTO tournamentDTO)
         {
             var tournamentToInsert = mapper.Map<TournamentDTO, Tournament>(tournamentDTO);
-            tournamentToInsert.ModUserId = null;
-            await database.TournamentRepository.InsertEntityAsync(tournamentToInsert);
-            await database.SaveAsync();
-        }
-
-        public async Task UpdateTournament(int id, TournamentDTO tournamentDTO)
-        {
-            var entity = await database.TournamentRepository.GetEntityByIdAsync(id);
-            var tournament = mapper.Map<TournamentDTO, Tournament>(tournamentDTO);
-            tournament.Id = id;
-            tournament.CreateUserId = entity.CreateUserId;
-            tournament.CreateDate = entity.CreateDate;
-            tournament.ModDate = DateTime.Now;
-            database.TournamentRepository.UpdateEntity(tournament);
-            await database.SaveAsync();
-        }
-
-        public async Task DeleteTournamentByIdAsync(int id)
-        {
-            var entity = await database.TournamentRepository.GetEntityByIdAsync(id);
-            if (entity == null)
+            var insertedTournament = await database.TournamentRepository.InsertEntityAsync(tournamentToInsert);
+            bool isSaved = await database.SaveAsync();
+            if (isSaved == false)
             {
-                return;
-            };
-            await database.TournamentRepository.DeleteEntityByIdAsync(id);
-            await database.SaveAsync();
+                return null;
+            }
+            else
+            {
+                return mapper.Map<Tournament, TournamentDTO>(insertedTournament.Entity);
+            }
         }
+
+        public async Task<Tournament> UpdateTournament(int id, TournamentDTO tournamentDTO)
+        {
+            var tournament = await database.TournamentRepository.GetEntityByIdAsync(id);
+            if (tournament == null)
+            {
+                return null;
+            }
+            tournament.Id = id;
+            tournament.DateEnd = tournamentDTO.DateEnd;
+            tournament.DateStart = tournamentDTO.DateStart;
+            tournament.Name = tournamentDTO.Name;
+            tournament.PreparationTerm = tournamentDTO.PreparationTerm;
+            database.TournamentRepository.UpdateEntity(tournament);
+            bool isSaved = await database.SaveAsync();
+            return (isSaved == true) ? tournament : null;
+        }
+
+
+        public async Task<Tournament> DeleteTournamentByIdAsync(int id)
+        {
+            var tournament = await database.TournamentRepository.DeleteEntityByIdAsync(id);
+            if (tournament == null)
+            {
+                return  null;
+            }
+            bool isSaved = await database.SaveAsync();
+            return (isSaved == true) ? tournament.Entity : null;
+        }
+
+        public void Dispose()
+        {
+            database.Dispose();
+        }
+
     }
 }

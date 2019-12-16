@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
-    public class TournamentRepository : IBaseRepository<Tournament>
+    public class TournamentRepository: IBaseRepository<Tournament>
     {
         private readonly BookingSectorContext context;
         private readonly DbSet<Tournament> tournamentSet;
@@ -19,30 +19,31 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             tournamentSet = context.Set<Tournament>();
         }
 
-        public Task<List<Tournament>> GetAllEntitiesAsync()
+        public  Task<List<Tournament>> GetAllEntitiesAsync()
         {
             return tournamentSet.AsNoTracking().ToListAsync();
         }
 
-        public Task<Tournament> GetEntityByIdAsync(int id)
+        public async Task<Tournament>  GetEntityByIdAsync(int id)
         {
-            return tournamentSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            return await tournamentSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
-        public ValueTask<EntityEntry<Tournament>> InsertEntityAsync(Tournament entityToInsert)
+        public  ValueTask<EntityEntry<Tournament>> InsertEntityAsync(Tournament entity)
         {
-            return tournamentSet.AddAsync(entityToInsert);
+            return tournamentSet.AddAsync(entity);
         }
 
-        public void UpdateEntity(Tournament entityToUpdate)
+        public void UpdateEntity(Tournament entity)
         {
-            tournamentSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            tournamentSet.Attach(entity);
+            context.Entry(entity).State = EntityState.Modified;
         }
 
         public async Task<EntityEntry<Tournament>> DeleteEntityByIdAsync(int id)
         {
-            Tournament entityToDelete = await tournamentSet.FindAsync(id);
-            return tournamentSet.Remove(entityToDelete);
+            Tournament existing = await tournamentSet.FindAsync(id);
+            return tournamentSet.Remove(existing);
         }
+
     }
 }
