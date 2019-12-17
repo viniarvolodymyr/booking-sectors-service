@@ -44,14 +44,10 @@ namespace SoftServe.BookingSectors.WebAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseHttpStatusCodeExceptionMiddleware();
             }
-            else
-            {
-                app.UseHttpStatusCodeExceptionMiddleware();
-                app.UseExceptionHandler();
-            }
-
+            
+            app.UseHttpStatusCodeExceptionMiddleware();
+             
             app.UseSwagger();
 
             app.UseSwaggerUI(x =>
