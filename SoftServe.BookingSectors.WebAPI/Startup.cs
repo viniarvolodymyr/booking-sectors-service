@@ -30,6 +30,15 @@ namespace SoftServe.BookingSectors.WebAPI
             services.ConfigureAutoMapper();
             services.ConfigureModelRepositories();
             services.ConfigureDataAccessServices();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +61,8 @@ namespace SoftServe.BookingSectors.WebAPI
             {
                 x.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
             });
+           
+            app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
 
