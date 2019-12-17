@@ -21,24 +21,27 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SectorDTO>>> Get()
+        public async Task<IActionResult> Get()
         {
-            var dtos = await sectorService.GetAllSectorsAsync();
-            if (!dtos.Any())
+            var dtos = await sectorService.GetSectorsAsync();
+            if (dtos.Any())
             {
-                return NoContent();
+                return Ok(dtos);
             }
-            return Ok(dtos);
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetById([FromRoute]int id)
+        public async Task<IActionResult> Get([FromRoute]int id)
         {
             var dto = await sectorService.GetSectorByIdAsync(id);
             if (dto == null)
             {
-                return NoContent();
+                return NotFound();
             }
             else
             {
@@ -59,23 +62,47 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task Post([FromBody] SectorDTO sectorDTO)
+        public async Task<IActionResult> Post([FromBody] SectorDTO sectorDTO)
         {
-            await sectorService.InsertSectorAsync(sectorDTO);
+            var dto = await sectorService.InsertSectorAsync(sectorDTO);
+            if (dto == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Created($"api/sectors/{dto.Id}", dto);
+            }
         }
 
         [HttpPut]
         [Route("{id}")]
-        public async Task Put([FromRoute]int id, [FromBody] SectorDTO sectorDTO)
+        public async Task<IActionResult> Put([FromRoute]int id, [FromBody] SectorDTO sectorDTO)
         {
-            await sectorService.UpdateSector(id, sectorDTO);
+            var sector = await sectorService.UpdateSectorAsync(id, sectorDTO);
+            if (sector == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(sector);
+            }
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public async Task Delete([FromRoute]int id)
+        public async Task<IActionResult> Delete([FromRoute]int id)
         {
-            await sectorService.DeleteSectorByIdAsync(id);
+            var sector = await sectorService.DeleteSectorByIdAsync(id);
+            if (sector == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(sector);
+            }
         }
     }
 }

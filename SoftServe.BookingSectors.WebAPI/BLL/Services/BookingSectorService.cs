@@ -33,9 +33,9 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<BookingSectorDTO> GetBookingByIdAsync(int id)
         {
             var booking = await database.BookingSectorRepository.GetEntityByIdAsync(id);
-            var dtos = mapper.Map<BookingSector, BookingSectorDTO>(booking);
+            var dto = mapper.Map<BookingSector, BookingSectorDTO>(booking);
 
-            return dtos;
+            return dto;
         }
 
         private bool? sectorIsFree(Sector sector, IEnumerable<BookingSector> bookings, DateTime fromDate, DateTime toDate)
