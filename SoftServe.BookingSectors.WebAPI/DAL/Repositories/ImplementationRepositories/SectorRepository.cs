@@ -26,12 +26,12 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
 
         public Task<Sector> GetEntityByIdAsync(int id)
         {
-             return sectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            return sectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
         public ValueTask<EntityEntry<Sector>> InsertEntityAsync(Sector entityToInsert)
         {
-             return sectorSet.AddAsync(entityToInsert);
+            return sectorSet.AddAsync(entityToInsert);
         }
 
         public void UpdateEntity(Sector entityToUpdate)
@@ -42,8 +42,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
 
         public async Task<EntityEntry<Sector>> DeleteEntityByIdAsync(int id)
         {
-            Sector sectorToDelete =  await sectorSet.FindAsync(id);
-            return sectorSet.Remove(sectorToDelete);
+            Sector entityToDelete = await sectorSet.FindAsync(id);
+            return sectorSet.Remove(entityToDelete);
         }
     }
 }
