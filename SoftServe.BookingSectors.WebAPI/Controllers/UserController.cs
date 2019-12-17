@@ -54,16 +54,49 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task Post([FromBody] UserDTO userDTO)
+        public async Task<IActionResult> Post([FromBody] UserDTO userDTO)
         {
             await userService.InsertUserAsync(userDTO);
+            var dto = await userService.InsertUserAsync(userDTO);
+            if (dto == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Created($"api/users/{dto.Id}", dto);
+            }
         }
 
         [HttpPut]
         [Route("{id}")]
-        public async Task UpdateUser([FromRoute]int id, [FromBody]UserDTO userDTO)
+        public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody]UserDTO userDTO)
         {
-            await userService.UpdateUserById(id, userDTO);
+            var user = await userService.UpdateUserById(id, userDTO);
+            if (user== null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(user);
+            }
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete([FromRoute]int id)
+        {
+            var user = await userService.DeleteUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(user);
+            }
         }
     }
 }
+

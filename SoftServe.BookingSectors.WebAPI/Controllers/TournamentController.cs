@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -11,17 +13,18 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     [ApiController]
     public class TournamentController : ControllerBase
     {
-        private readonly ITournamentService tournamentService;
-        private readonly ITournamentSectorService tournamentSectorService;
-
+        readonly ITournamentService tournamentService;
+        readonly ITournamentSectorService tournamentSectorService;
         public TournamentController(ITournamentService tournamentService, ITournamentSectorService tournamentSectorService)
         {
             this.tournamentService = tournamentService;
             this.tournamentSectorService = tournamentSectorService;
+
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TournamentDTO>>> GetAll()
+        [Route("all")]
+        public async Task<ActionResult> GetAll()
         {
             var dtos = await tournamentService.GetAllTournamentsAsync();
             if (!dtos.Any())
@@ -32,32 +35,67 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{id}")]
-        public Task<TournamentDTO> GetTournament([FromRoute]int id)
+        [Route("{tourId}")]
+        public async Task<ActionResult> GetTournament(int tourId)
         {
-            return tournamentService.GetTournamentByIdAsync(id);
+            var dto = await tournamentService.GetTournamentByIdAsync(tourId);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]TournamentDTO tournamentDTO)
+        public async Task<ActionResult> Post([FromBody] TournamentDTO tournamentDTO)
         {
-            await tournamentService.InsertTournamentAsync(tournamentDTO);
-            return Ok();
+            var dto = await tournamentService.InsertTournamentAsync(tournamentDTO);
+            if (dto == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Created($"api/tournaments/{dto.Id}", dto);
+            }
         }
 
         [HttpPut]
-        [Route("{id}")]
-        public async Task Put([FromRoute]int tournamentId, [FromBody]TournamentDTO tournamentDTO)
+        [Route("{tourId}")]
+        public async Task<IActionResult> Put([FromRoute]int tourId, [FromBody] TournamentDTO tournamentDTO)
         {
-            await tournamentService.UpdateTournament(tournamentId, tournamentDTO);
+            var tournament = await tournamentService.UpdateTournament(tourId, tournamentDTO);
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(tournament);
+            }
         }
 
         [HttpDelete]
-        [Route("{id}")]
-        public async Task Delete([FromRoute]int id)
+        [Route("{tourId}")]
+        public async Task<ActionResult> Delete(int tourId)
         {
-            await tournamentSectorService.DeleteAllTournamentSectorsAsync(id);
-            await tournamentService.DeleteTournamentByIdAsync(id);
+            var sectors = await tournamentSectorService.DeleteAllTournamentSectorsAsync(tourId);
+            if (sectors == null)
+            {
+                return NotFound();
+            }
+            var tournament = await tournamentService.DeleteTournamentByIdAsync(tourId);
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(tournament);
+            }
         }
     }
 }

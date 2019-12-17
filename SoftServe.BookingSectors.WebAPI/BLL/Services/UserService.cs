@@ -56,27 +56,53 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dto;
         }
 
-        public async Task UpdateUserById(int id, UserDTO userDTO)
+        public async Task<User> UpdateUserById(int id, UserDTO userDTO)
         {
-            var entity = await database.UserRepository.GetEntityByIdAsync(id);
-            entity.Firstname = userDTO.Firstname;
-            entity.Lastname = userDTO.Lastname;
-            entity.Phone = userDTO.Phone;
-            entity.Password = System.Text.Encoding.ASCII.GetBytes(userDTO.Password);
-            entity.ModDate = System.DateTime.Now;
-            database.UserRepository.UpdateEntity(entity);
-            await database.SaveAsync();
+            var user = await database.UserRepository.GetEntityByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+            user.Firstname = userDTO.Firstname;
+            user.Lastname = userDTO.Lastname;
+            user.Phone = userDTO.Phone;
+            user.Password = System.Text.Encoding.ASCII.GetBytes(userDTO.Password);
+            user.ModDate = System.DateTime.Now;
+            database.UserRepository.UpdateEntity(user);
+            bool isSaved = await database.SaveAsync();
+
+            return (isSaved == true) ? user : null;
         }
 
-        public async Task InsertUserAsync(UserDTO userDTO)
+        public async Task<UserDTO> InsertUserAsync(UserDTO userDTO)
         {
-            var userToInsert = mapper.Map<UserDTO, User>(userDTO);
+            var insertedUser = mapper.Map<UserDTO, User>(userDTO);
             string randomPassword = RandomNumbers.Generate();
-            userToInsert.Password = SHA256Hash.Compute(randomPassword);
-            userToInsert.ModUserId = null;
+            insertedUser.Password = SHA256Hash.Compute(randomPassword);
+            insertedUser.ModUserId = null;
 
-            await database.UserRepository.InsertEntityAsync(userToInsert);
-            await database.SaveAsync();
+            await database.UserRepository.InsertEntityAsync(insertedUser);
+            bool isSaved = await database.SaveAsync();
+            if (isSaved == false)
+            {
+                return null;
+            }
+            else
+            {
+                return mapper.Map<User, UserDTO>(insertedUser);
+            }
+        }
+
+        public async Task<User> DeleteUserByIdAsync(int id)
+        {
+            var user = await database.UserRepository.DeleteEntityByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+            bool isSaved = await database.SaveAsync();
+
+            return (isSaved == true) ? user.Entity : null;
         }
     }
 }

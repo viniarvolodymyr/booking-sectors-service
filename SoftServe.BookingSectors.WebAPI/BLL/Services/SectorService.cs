@@ -21,55 +21,71 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<SectorDTO>> GetAllSectorsAsync()
+        public async Task<IEnumerable<SectorDTO>> GetSectorsAsync()
         {
             var sectors = await database.SectorRepository.GetAllEntitiesAsync();
-            var dtos = mapper.Map<IEnumerable<Sector>, List<SectorDTO>>(sectors);
+            var dtos = mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(sectors);
+            
             return dtos;
         }
 
         public async Task<SectorDTO> GetSectorByIdAsync(int id)
         {
-            var entity = await database.SectorRepository.GetEntityByIdAsync(id);
-            if (entity == null)
-            {
-                return null;
-            }
-            var dto = mapper.Map<Sector, SectorDTO>(entity);
+            var sector = await database.SectorRepository.GetEntityByIdAsync(id);
+            var dto = mapper.Map<Sector, SectorDTO>(sector);
+
             return dto;
         }
 
         public async Task<int> GetSectorIdByNumberAsync(int number)
         {
-            var entity = await database.SectorRepository.GetAllEntitiesAsync();
-            return entity.Where(x => (x.Number == number)).Select(x => x.Id).FirstOrDefault();
+            var sector = await database.SectorRepository.GetAllEntitiesAsync();
+            return sector.Where(x => (x.Number == number)).Select(x => x.Id).FirstOrDefault();
         }
 
-        public async Task InsertSectorAsync(SectorDTO sectorDTO)
+        public async Task<SectorDTO> InsertSectorAsync(SectorDTO sectorDTO)
         {
-            var sectorToInsert = mapper.Map<SectorDTO, Sector>(sectorDTO);
-            await database.SectorRepository.InsertEntityAsync(sectorToInsert);
-            await database.SaveAsync();
+            var sector = mapper.Map<SectorDTO, Sector>(sectorDTO);
+            var insertedSector = await database.SectorRepository.InsertEntityAsync(sector);
+            bool isSaved = await database.SaveAsync();
+            if (isSaved == false)
+            {
+                return null;
+            }
+            else
+            {
+                return mapper.Map<Sector, SectorDTO>(insertedSector.Entity);
+            }
         }
 
-        public async Task UpdateSector(int id, SectorDTO sectorDTO)
+        public async Task<Sector> UpdateSectorAsync(int id, SectorDTO sectorDTO)
         {
-            var entity = await database.SectorRepository.GetEntityByIdAsync(id);
-
+            var existedSector = await database.SectorRepository.GetEntityByIdAsync(id);
+            if (existedSector == null)
+            {
+                return null;
+            }
             var sector = mapper.Map<SectorDTO, Sector>(sectorDTO);
             sector.Id = id;
-            sector.CreateUserId = entity.CreateUserId;
-            sector.CreateDate = entity.CreateDate;
+            sector.CreateUserId = existedSector.CreateUserId;
+            sector.CreateDate = existedSector.CreateDate;
             sector.ModDate = DateTime.Now;
-
             database.SectorRepository.UpdateEntity(sector);
-            await database.SaveAsync();
+            bool isSaved = await database.SaveAsync();
+
+            return (isSaved == true) ? sector : null;
         }
 
-        public async Task DeleteSectorByIdAsync(int id)
+        public async Task<Sector> DeleteSectorByIdAsync(int id)
         {
-            await database.SectorRepository.DeleteEntityByIdAsync(id);
-            await database.SaveAsync();
+            var sector = await database.SectorRepository.DeleteEntityByIdAsync(id);           
+            if (sector == null)
+            {
+                return null;
+            }
+            bool isSaved = await database.SaveAsync();
+
+            return (isSaved == true) ? sector.Entity : null;
         }
     }
 }

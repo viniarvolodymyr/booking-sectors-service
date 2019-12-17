@@ -1,4 +1,6 @@
-﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+﻿using Microsoft.AspNetCore.Mvc;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,9 +8,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
 {
     public interface ITournamentSectorService
     {
-        Task<IEnumerable<TournamentSectorDTO>> GetAllTournamentSectorsAsync(int id);
-        Task DeleteAllTournamentSectorsAsync(int id);
-        Task<int> DeleteSectorFromTournamentAsync(int sectId, int id);
-        Task AddSectorToTournamentAsync(int sectorId, int tournamentId);
+        Task<IEnumerable<TournamentSectorDTO>> GetAll();
+        Task<IEnumerable<TournamentSectorDTO>> GetAllTournamentSectorsAsync(int tourId);
+        Task<IEnumerable<TournamentSector>> DeleteAllTournamentSectorsAsync(int tourId);
+        Task<TournamentSector> DeleteSectorFromTournamentAsync(int sectId, int tourId);
+        Task<TournamentSector> UpdateTournamentSector(int id, TournamentSectorDTO tournamentSectorDTO);
+        Task<TournamentSectorDTO> AddSectorToTournamentAsync(TournamentSectorDTO tournamentSectorDTO);
+        void Dispose();
     }
 }

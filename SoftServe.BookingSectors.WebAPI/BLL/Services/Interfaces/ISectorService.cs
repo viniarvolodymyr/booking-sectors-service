@@ -1,4 +1,5 @@
 ﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,11 +7,11 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
 {
     public interface ISectorService
     {
-        Task<IEnumerable<SectorDTO>> GetAllSectorsAsync();
+        Task<IEnumerable<SectorDTO>> GetSectorsAsync();
         Task<int> GetSectorIdByNumberAsync(int number);
         Task<SectorDTO> GetSectorByIdAsync(int id);
-        Task InsertSectorAsync(SectorDTO sectorDTO);
-        Task UpdateSector(int id, SectorDTO sectorDTO);
-        Task DeleteSectorByIdAsync(int id);
+        Task<SectorDTO> InsertSectorAsync(SectorDTO sectorDTO);
+        Task<Sector> UpdateSectorAsync(int id, SectorDTO sectorDTO);
+        Task<Sector> DeleteSectorByIdAsync(int id);
     }
 }
