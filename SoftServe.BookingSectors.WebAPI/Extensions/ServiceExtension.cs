@@ -14,19 +14,23 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
         {
             services.AddSingleton(new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new MappingProfile());
+                mc.AddProfile(new UserProfile());
+                mc.AddProfile(new SectorProfile());
+                mc.AddProfile(new BookingSectorProfile());
+                mc.AddProfile(new SettingProfile());
+                mc.AddProfile(new TournamentProfile());
+                mc.AddProfile(new TournamentSectorProfile());
             }).CreateMapper());
         }
 
         public static void ConfigureDataAccessServices(this IServiceCollection services)
-        {
-            services.AddTransient<ISectorService, SectorService>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ITournamentSectorService, TournamentSectorService>();
-            services.AddTransient<ITournamentService, TournamentService>();
-            services.AddTransient<IBookingSectorService, BookingSectorService>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ISettingsService, SettingsService>();
+        {        
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ISectorService, SectorService>();
+            services.AddScoped<IBookingSectorService, BookingSectorService>();
+            services.AddScoped<ISettingsService, SettingsService>();
+            services.AddScoped<ITournamentService, TournamentService>();
+            services.AddScoped<ITournamentSectorService, TournamentSectorService>();
         }
 
         public static void ConfigureModelRepositories(this IServiceCollection services)
