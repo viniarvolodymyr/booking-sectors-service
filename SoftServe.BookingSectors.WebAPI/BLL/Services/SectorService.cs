@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+using System.Net;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -25,7 +28,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var sectors = await database.SectorRepository.GetAllEntitiesAsync();
             var dtos = mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(sectors);
-            
+
             return dtos;
         }
 
@@ -39,8 +42,17 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task<int> GetSectorIdByNumberAsync(int number)
         {
-            var sector = await database.SectorRepository.GetAllEntitiesAsync();
-            return sector.Where(x => (x.Number == number)).Select(x => x.Id).FirstOrDefault();
+            int sectorId = await database.SectorRepository
+                    .GetByCondition(x => x.Number == number)
+                    .Select(x => x.Id)
+                    .FirstOrDefaultAsync();
+
+            if (sectorId == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Sector with number: {number} not found when trying to get id.");
+            }
+
+            return sectorId;
         }
 
         public async Task<SectorDTO> InsertSectorAsync(SectorDTO sectorDTO)
@@ -78,7 +90,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task<Sector> DeleteSectorByIdAsync(int id)
         {
-            var sector = await database.SectorRepository.DeleteEntityByIdAsync(id);           
+            var sector = await database.SectorRepository.DeleteEntityByIdAsync(id);
             if (sector == null)
             {
                 return null;

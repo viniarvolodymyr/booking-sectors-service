@@ -55,7 +55,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 // Logger
                 return false;
             }
-            catch (DbUpdateException dbUpdateException)
+            catch (DbUpdateException dbUpdateExceptinon)
             {
                 // Logger
                 return false;

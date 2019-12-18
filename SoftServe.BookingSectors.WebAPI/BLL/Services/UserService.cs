@@ -5,8 +5,11 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+using System.Net;
+using Microsoft.EntityFrameworkCore;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -14,11 +17,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
     {
         private readonly IUnitOfWork database;
         private readonly IMapper mapper;
+        private readonly ILoggerManager logger;
 
-        public UserService(IUnitOfWork database, IMapper mapper)
+        public UserService(IUnitOfWork database, IMapper mapper, ILoggerManager logger)
         {
             this.database = database;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
@@ -30,26 +35,22 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
             var entity = await database.UserRepository.GetEntityByIdAsync(id);
-            if (entity == null)
-            {
-                return null;
-            }
             var dto = mapper.Map<User, UserDTO>(entity);
             return dto;
         }
 
         public async Task<UserDTO> GetUserByPhoneAsync(string phone)
         {
-            var entities = await database.UserRepository.GetAllEntitiesAsync();
-            int entityId = entities.Where(u => u.Phone == phone)
-                                .Select(u => u.Id)
-                                    .FirstOrDefault();
-            var entity = await database.UserRepository.GetEntityByIdAsync(entityId);
-            if (entity == null)
+            var user = await database.UserRepository
+                .GetByCondition(x => x.Phone == phone)
+                .FirstOrDefaultAsync();
+
+            if (user == null)
             {
-                return null;
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"User with phone number: {phone} not found when trying to get entity.");
             }
-            var dto = mapper.Map<User, UserDTO>(entity);
+
+            var dto = mapper.Map<User, UserDTO>(user);
             return dto;
         }
 
