@@ -36,14 +36,7 @@ namespace SoftServe.BookingSectors.WebAPI
             services.ConfigureAutoMapper();
             services.ConfigureModelRepositories();
             services.ConfigureDataAccessServices();
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins("http://localhost:4200")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-            });
+            services.ConfigureCors();
 
         }
 
@@ -55,6 +48,7 @@ namespace SoftServe.BookingSectors.WebAPI
                 app.UseDeveloperExceptionPage();
             }
             
+
             app.UseHttpStatusCodeExceptionMiddleware();
              
             app.UseSwagger();
