@@ -4,6 +4,8 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
@@ -24,26 +26,32 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return tournamentSectorSet.AsNoTracking().ToListAsync();
         }
 
-        public Task<TournamentSector> GetEntityByIdAsync(int id)
+        public async Task<TournamentSector> GetEntityByIdAsync(int id)
         {
-            return tournamentSectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            return await tournamentSectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
-        public ValueTask<EntityEntry<TournamentSector>> InsertEntityAsync(TournamentSector entityToInsert)
+        public IQueryable<TournamentSector> GetByCondition(Expression<Func<TournamentSector, bool>> expression)
         {
-            return tournamentSectorSet.AddAsync(entityToInsert);
+            return tournamentSectorSet.Where(expression).AsNoTracking();
         }
 
-        public void UpdateEntity(TournamentSector entityToUpdate)
+        public async ValueTask<EntityEntry<TournamentSector>> InsertEntityAsync(TournamentSector entity)
         {
-            tournamentSectorSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+           return  await tournamentSectorSet.AddAsync(entity);
         }
 
+        public void UpdateEntity(TournamentSector entity)
+        {
+            tournamentSectorSet.Attach(entity);
+            context.Entry(entity).State = EntityState.Modified;
+        }
         public async Task<EntityEntry<TournamentSector>> DeleteEntityByIdAsync(int id)
         {
-            TournamentSector entityToDelete = await tournamentSectorSet.FindAsync(id);
-            return tournamentSectorSet.Remove(entityToDelete);
+            TournamentSector existing = await tournamentSectorSet.FindAsync(id);
+            return tournamentSectorSet.Remove(existing);
         }
+
+
     }
 }

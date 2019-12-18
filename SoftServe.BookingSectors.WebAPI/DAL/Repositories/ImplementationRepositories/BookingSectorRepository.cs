@@ -4,6 +4,8 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
@@ -27,6 +29,11 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
         public Task<BookingSector> GetEntityByIdAsync(int id)
         {
             return bookingSectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+        }
+
+        public IQueryable<BookingSector> GetByCondition(Expression<Func<BookingSector, bool>> expression)
+        {
+            return bookingSectorSet.Where(expression).AsNoTracking();
         }
 
         public ValueTask<EntityEntry<BookingSector>> InsertEntityAsync(BookingSector entityToInsert)

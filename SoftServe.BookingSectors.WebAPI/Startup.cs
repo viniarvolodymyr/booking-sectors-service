@@ -7,6 +7,9 @@ using Microsoft.Extensions.Hosting;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.Extensions;
+using NLog;
+using System;
+using System.IO;
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -14,6 +17,7 @@ namespace SoftServe.BookingSectors.WebAPI
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             Configuration = configuration;
         }
 
@@ -24,12 +28,23 @@ namespace SoftServe.BookingSectors.WebAPI
         {
             services.AddDbContext<BookingSectorContext>(options => options.UseSqlServer
                 (@ConfigurationHelper.GetDatabaseConnectionString()));
-            services.AddControllers();
 
+
+            services.ConfigureLoggerService();
+            services.AddControllers();
             services.ConfigureSwagger();
             services.ConfigureAutoMapper();
             services.ConfigureModelRepositories();
             services.ConfigureDataAccessServices();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,20 +53,18 @@ namespace SoftServe.BookingSectors.WebAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseHttpStatusCodeExceptionMiddleware();
             }
-            else
-            {
-                app.UseHttpStatusCodeExceptionMiddleware();
-                app.UseExceptionHandler();
-            }
-
+            
+            app.UseHttpStatusCodeExceptionMiddleware();
+             
             app.UseSwagger();
 
             app.UseSwaggerUI(x =>
             {
                 x.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
             });
+           
+            app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
 
