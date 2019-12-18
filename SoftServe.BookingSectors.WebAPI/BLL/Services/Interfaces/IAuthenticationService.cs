@@ -1,12 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using System.Threading.Tasks;
 
-namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
+namespace SoftServe.BookingSectors.WebApi.BLL.Services.Interfaces
 {
-    public class IAuthenticationService
+    /// <summary>
+    /// Behavior of authentication
+    /// </summary>
+    public interface IAuthenticationService
     {
-
+        /// <summary>
+        /// Checks credential
+        /// </summary>
+        /// <param name="credentials">User login and password</param>
+        /// <returns>Access and refresh tokens</returns>
+        Task<TokenDTO> SignInAsync(string login, string password);
+        /// <summary>
+        /// Renews a token
+        /// </summary>
+        /// <param name="token">Old tokens</param>
+        /// <returns>New tokens</returns>
+        Task<TokenDTO> TokenAsync(TokenDTO token);
     }
 }

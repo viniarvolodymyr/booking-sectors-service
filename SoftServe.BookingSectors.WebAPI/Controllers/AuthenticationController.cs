@@ -9,7 +9,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : 
     {
         
     }

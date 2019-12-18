@@ -26,6 +26,7 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
             services.AddTransient<IBookingSectorService, BookingSectorService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ISettingsService, SettingsService>();
+            services.AddTransient<ITo>
         }
 
         public static void ConfigureModelRepositories(this IServiceCollection services)

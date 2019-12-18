@@ -3,7 +3,6 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,6 +17,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         private TournamentSectorRepository tournamentSectorRepository;
         private TournamentRepository tournamentRepository;
         private BookingSectorRepository bookingRepository;
+        private TokenRepository tokenRepository;
 
         public UnitOfWork(BookingSectorContext context)
         {
@@ -36,6 +36,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             tournamentSectorRepository ??= new TournamentSectorRepository(context);
         public IBaseRepository<User> UserRepository =>
             userRepository ??= new UserRepository(context);
+        public IBaseRepository<Token> TokenRepository =>
+            tokenRepository ??= new TokenRepository(context);
 
         public async Task<bool> SaveAsync()
         {
