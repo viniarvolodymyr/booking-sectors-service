@@ -4,6 +4,8 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
@@ -28,6 +30,12 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
         {
             return await tournamentSectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
+
+        public IQueryable<TournamentSector> GetByCondition(Expression<Func<TournamentSector, bool>> expression)
+        {
+            return tournamentSectorSet.Where(expression).AsNoTracking();
+        }
+
         public async ValueTask<EntityEntry<TournamentSector>> InsertEntityAsync(TournamentSector entity)
         {
            return  await tournamentSectorSet.AddAsync(entity);

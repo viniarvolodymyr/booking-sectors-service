@@ -4,10 +4,11 @@ using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
+using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
@@ -31,10 +32,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             var result = userSet.Include(x => x.Role).AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
             if (result.Result == null)
             {
-                
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"User with id: {id} not found when trying to get entity.");
             }
+
             return result;
+        }
+
+        public  IQueryable<User> GetByCondition(Expression<Func<User, bool>> expression)
+        {
+            return userSet.Include(x => x.Role).Where(expression).AsNoTracking();
         }
 
         public ValueTask<EntityEntry<User>> InsertEntityAsync(User entityToInsert)
