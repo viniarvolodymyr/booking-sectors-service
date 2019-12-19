@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
 
-namespace SoftServe.BookingSectors.WebAPI.DAL.Models
+namespace SoftServe.BookingSectors.WebAPI.DAL.EF
 {
     public partial class BookingSectorContext : DbContext
     {
