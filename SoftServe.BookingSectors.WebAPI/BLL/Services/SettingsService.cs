@@ -5,51 +5,54 @@ using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
     public class SettingsService : ISettingsService
     {
-        private readonly IUnitOfWork _database;
-        private readonly IMapper _mapper;
+        private readonly IUnitOfWork database;
+        private readonly IMapper mapper;
 
         public SettingsService(IUnitOfWork uow, IMapper mapper)
         {
-            _database = uow;
-            _mapper = mapper;
+            database = uow;
+            mapper = mapper;
         }
-        enum settings
+        public async Task<SettingsDTO> GetSettingByIdAsync(int id)
         {
-            MAX_BOOKING_SECTORS = 1,
-            MAX_BOOKING_DAYS = 2
-        };
-        public async Task<SettingsDTO> GetSettingByIdAsync(string name)
-        {
-            var entity = await _database.Settings.GetEntityByIdAsync((int)Enum.Parse(typeof(settings), name));
+            var entity = await database.SettingsRepository.GetEntityByIdAsync(id);
             if (entity == null)
             {
                 return null;
             }
-            var dto = _mapper.Map<Setting, SettingsDTO>(entity);
+            var dto = mapper.Map<Setting, SettingsDTO>(entity);
             return dto;
         }
+        public async Task<IEnumerable<SettingsDTO>> GetSettingsAsync()
+        {
+            var settings = await database.SettingsRepository.GetAllEntitiesAsync();
+            var dtos = mapper.Map<IEnumerable<Setting>, IEnumerable<SettingsDTO>>(settings);
 
-        public async Task UpdateSettingsAsync(string name, SettingsDTO settingsDTO)
-        {
-            var entity = await _database.Settings.GetEntityByIdAsync((int)Enum.Parse(typeof(settings), name));
-            var setting = _mapper.Map<SettingsDTO, Setting>(settingsDTO);
-            setting.Id = (int)Enum.Parse(typeof(settings), name);
-            setting.CreateDate = entity.CreateDate;
-            setting.CreateUserId = entity.CreateUserId;
-            setting.ModDate = DateTime.Now;
-            _database.Settings.UpdateEntity(setting);
-            await _database.SaveAsync();
+            return dtos;
         }
-        public void Dispose()
+
+        public async Task<Setting> UpdateSettingsAsync(int id, SettingsDTO settingsDTO)
         {
-            _database.Dispose();
+            var existingSetting = await database.SettingsRepository.GetEntityByIdAsync(id);
+            if (existingSetting == null)
+            {
+                return null;
+            }
+            var setting = mapper.Map<SettingsDTO, Setting>(settingsDTO);
+            setting.Id = id;
+            setting.CreateUserId = existingSetting.CreateUserId;
+            setting.CreateDate = existingSetting.CreateDate;
+            setting.ModDate = DateTime.Now;
+            database.SettingsRepository.UpdateEntity(setting);
+            bool isSaved = await database.SaveAsync();
+
+            return (isSaved == true) ? setting : null;
         }
     }
 }
