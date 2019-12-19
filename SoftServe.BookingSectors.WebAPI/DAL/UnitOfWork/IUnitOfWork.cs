@@ -13,7 +13,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         IBaseRepository<Tournament> TournamentRepository { get; }
         IBaseRepository<Sector> SectorsRepository { get; }
         IBaseRepository<BookingSector> BookingSectorsRepository { get; }
-        IBaseRepository<Setting> Settings { get;  }
+        IBaseRepository<Setting> SettingsRepository { get;  }
         Task<bool>  SaveAsync();
     }
 }
