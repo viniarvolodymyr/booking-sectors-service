@@ -31,7 +31,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         {
             get { return tournamentSectorsRepository ??= new TournamentSectorRepository(context); }
         }
-        public IBaseRepository<Setting> Settings
+        public IBaseRepository<Setting> SettingsRepository
         {
             get
             {
