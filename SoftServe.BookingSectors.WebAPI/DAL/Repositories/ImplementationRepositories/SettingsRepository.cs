@@ -22,39 +22,26 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositori
             dbSet = db.Set<Setting>();
         }
 
-        public Task DeleteEntityByIdAsync(int id)
+        public async Task DeleteEntityByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            Setting settingToDelete = await dbSet.FindAsync(id);
+            dbSet.Remove(settingToDelete);
         }
-
-        public Task<IEnumerable<Setting>> GetAllEntitiesAsync()
+        public async Task<List<Setting>> GetAllEntitiesAsync()
         {
-            throw new NotImplementedException();
+            return await dbSet.AsNoTracking().ToListAsync();
         }
-
-        public async Task<Setting> GetEntityAsync(int id)
+        public async Task<Setting> GetEntityByIdAsync(int id)
         {
             return await dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
-
-        public Task<Setting> GetEntityByIdAsync(int id)
+        public ValueTask<EntityEntry<Setting>> InsertEntityAsync(Setting entityToInsert)
         {
-            throw new NotImplementedException();
+            return dbSet.AddAsync(entityToInsert);
         }
-
-        public ValueTask<EntityEntry<Setting>> InsertEntityAsync(Setting entity)
-        {
-            throw new NotImplementedException();
-        }
-
         public void UpdateEntity(Setting entity)
         {
             db.Entry(entity).State = EntityState.Modified;
-        }
-
-        Task<List<Setting>> IBaseRepository<Setting>.GetAllEntitiesAsync()
-        {
-            throw new NotImplementedException();
         }
     }
 }
