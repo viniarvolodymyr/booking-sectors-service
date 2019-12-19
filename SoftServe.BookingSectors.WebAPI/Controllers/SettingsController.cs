@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
+using System.Linq;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
