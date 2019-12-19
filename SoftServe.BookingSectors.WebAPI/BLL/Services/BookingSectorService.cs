@@ -72,6 +72,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<BookingSectorDTO> BookSector(BookingSectorDTO bookingSectorDTO)
         {
             var bookingSector = mapper.Map<BookingSectorDTO, BookingSector>(bookingSectorDTO);
+            if(bookingSector.TournamentId.HasValue)
+            {
+                var tournament = await database.TournamentRepository.GetEntityByIdAsync(bookingSector.TournamentId.Value);
+
+                bookingSector.BookingStart = bookingSector.BookingStart.AddDays(-tournament.PreparationTerm);
+            }
+
             var insertedSector = await database.BookingSectorRepository.InsertEntityAsync(bookingSector);
             bool isSaved = await database.SaveAsync();
             if (isSaved == false)
