@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
+using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
@@ -14,20 +9,53 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     [ApiController]
     public class SettingsController : ControllerBase
     {
-        private readonly ISettingsService settings;
+        private readonly ISettingsService settingService;
         public SettingsController(ISettingsService settings)
         {
-            this.settings = settings;
+            this.settingService = settings;
         }
-        [HttpGet("{name}", Name = "GetSetting")]
-        public Task<SettingsDTO> Get(string name)
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
-            return settings.GetSettingByIdAsync(name);
+            var dtos = await settingService.GetSettingsAsync();
+            if (dtos.Any())
+            {
+                return Ok(dtos);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
-        [HttpPut("{name1}", Name = "Update setting")]
-        public async Task Update(string name1, [FromBody] SettingsDTO settingsDTO)
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> Get([FromRoute]int id)
         {
-           await settings.UpdateSettingsAsync(name1, settingsDTO);
+            var dto = await settingService.GetSettingByIdAsync(id);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> Put([FromRoute]int id, [FromBody] SettingsDTO sectorDTO)
+        {
+            var sector = await settingService.UpdateSettingsAsync(id, sectorDTO);
+            if (sector == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(sector);
+            }
         }
 
     }
