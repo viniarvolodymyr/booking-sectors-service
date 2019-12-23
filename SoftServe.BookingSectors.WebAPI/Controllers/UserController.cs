@@ -60,7 +60,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         {
             await userService.InsertUserAsync(userDTO);
             var dto = await userService.InsertUserAsync(userDTO);
-                return Created($"api/users/{dto.Id}", dto);
+            return Created($"api/users/{dto.Id}", dto);
         }
 
         [HttpPut]
