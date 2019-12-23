@@ -58,9 +58,17 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [ServiceFilter(typeof(ValidateModelState))]
         public async Task<IActionResult> Post([FromBody] UserDTO userDTO)
         {
-            await userService.InsertUserAsync(userDTO);
+            //await userService.InsertUserAsync(userDTO);
             var dto = await userService.InsertUserAsync(userDTO);
-            return Created($"api/users/{dto.Id}", dto);
+
+            if (dto == null)		
+             {		
+                 return BadRequest();		
+             }		
+             else		
+             {		
+                 return Created($"api/users/{dto.Id}", dto);		            
+             }
         }
 
         [HttpPut]
