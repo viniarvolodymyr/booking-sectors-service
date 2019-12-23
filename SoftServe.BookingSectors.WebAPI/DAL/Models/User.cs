@@ -5,6 +5,13 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
 {
     public partial class User
     {
+        public User()
+        {
+            BookingSector = new HashSet<BookingSector>();
+            TokenCreate = new HashSet<Token>();
+            TokenMod = new HashSet<Token>();
+        }
+
         public int Id { get; set; }
         public string Lastname { get; set; }
         public string Firstname { get; set; }
@@ -18,6 +25,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
         public byte[] Photo { get; set; }
 
         public virtual UserRole Role { get; set; }
-        public virtual ICollection<BookingSector> BookingSector { get; set; } = new HashSet<BookingSector>();
+        public virtual ICollection<BookingSector> BookingSector { get; set; }
+        public virtual ICollection<Token> TokenCreate { get; set; }
+        public virtual ICollection<Token> TokenMod { get; set; }
     }
 }

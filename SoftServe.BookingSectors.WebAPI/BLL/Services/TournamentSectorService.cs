@@ -62,7 +62,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             foreach (TournamentSector sector in tournSectors)
             {
-                if (sector.SectorsId == sectorId)
+                if (sector.SectorId == sectorId)
                 {
                     var deletedSector = await database.TournamentSectorRepository.DeleteEntityByIdAsync(sector.Id);
                     bool isSaved = await database.SaveAsync();
@@ -95,7 +95,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             tournamentSector.Id = id;
             tournamentSector.TournamentId = tournamentSectorDTO.TournamentId;
-            tournamentSector.SectorsId = tournamentSectorDTO.SectorsId;
+            tournamentSector.SectorId = tournamentSectorDTO.SectorsId;
             database.TournamentSectorRepository.UpdateEntity(tournamentSector);
             bool isSaved = await database.SaveAsync();
             return (isSaved == true) ? tournamentSector : null;
