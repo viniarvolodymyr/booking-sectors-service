@@ -10,6 +10,7 @@ using SoftServe.BookingSectors.WebAPI.Extensions;
 using NLog;
 using System;
 using System.IO;
+using SoftServe.BookingSectors.WebAPI.BLL.Filters;
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -37,6 +38,7 @@ namespace SoftServe.BookingSectors.WebAPI
             services.ConfigureModelRepositories();
             services.ConfigureDataAccessServices();
             services.ConfigureCors();
+            services.ConfigureFilters();
 
         }
 
