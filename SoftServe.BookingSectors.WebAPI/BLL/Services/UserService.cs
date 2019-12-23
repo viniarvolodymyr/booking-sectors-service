@@ -10,6 +10,9 @@ using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using SoftServe.BookingSectors.WebAPI.BLL.Filters;
+
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -72,6 +75,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return (isSaved == true) ? user : null;
         }
 
+        
         public async Task<UserDTO> InsertUserAsync(UserDTO userDTO)
         {
             var insertedUser = mapper.Map<UserDTO, User>(userDTO);
