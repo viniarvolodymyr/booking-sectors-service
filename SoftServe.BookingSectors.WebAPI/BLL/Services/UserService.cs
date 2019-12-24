@@ -10,8 +10,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using SoftServe.BookingSectors.WebAPI.BLL.Filters;
+
 
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
@@ -57,26 +56,28 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dto;
         }
 
+
+
         public async Task<User> UpdateUserById(int id, UserDTO userDTO)
         {
-            var existedUser = await database.UserRepository.GetEntityByIdAsync(id);
-            if (existedUser == null)
+            var user = await database.UserRepository.GetEntityByIdAsync(id);
+            if (user == null)
             {
                 return null;
             }
-
-            var user = mapper.Map<UserDTO, User>(userDTO);
+            
             user.Firstname = userDTO.Firstname;
             user.Lastname = userDTO.Lastname;
             user.Phone = userDTO.Phone;
-            user.Password = SHA256Hash.Compute(userDTO.Password);
             user.ModDate = System.DateTime.Now;
+            user.Password = SHA256Hash.Compute(userDTO.Password);
 
             database.UserRepository.UpdateEntity(user);
 
             bool isSaved = await database.SaveAsync();
-
-            return (isSaved == true) ? user : null;
+            
+    
+            return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
         }
 
         public async Task<UserDTO> InsertUserAsync(UserDTO userDTO)
