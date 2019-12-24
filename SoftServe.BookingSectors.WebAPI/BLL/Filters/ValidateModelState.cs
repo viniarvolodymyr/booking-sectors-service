@@ -5,10 +5,8 @@ using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using System;
 using SoftServe.BookingSectors.WebAPI.Extensions;
 
-
 namespace SoftServe.BookingSectors.WebAPI.BLL.Filters
 {
-
     public class ValidateModelState : IAsyncActionFilter
     {
         private readonly ILoggerManager logger;
@@ -37,14 +35,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Filters
 
             var result = await next();
 
-            
-
             // execute any code after the action executes
         }
-
-
-
-
-
     }
 }
