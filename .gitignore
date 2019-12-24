@@ -342,6 +342,3 @@ healthchecksdb
 .vscode/tasks.json
 SoftServe.BookingSectors.WebAPI/Properties/launchSettings.json
 SoftServe.BookingSectors.WebAPI/internalLog.txt
-
-# ignore the file internalLog.txt
-internalLog.txt
