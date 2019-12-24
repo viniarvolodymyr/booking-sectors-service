@@ -61,14 +61,14 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             //await userService.InsertUserAsync(userDTO);
             var dto = await userService.InsertUserAsync(userDTO);
 
-            if (dto == null)		
-             {		
-                 return BadRequest();		
-             }		
-             else		
-             {		
-                 return Created($"api/users/{dto.Id}", dto);		            
-             }
+            if (dto == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Created($"api/users/{dto.Id}", dto);
+            }
         }
 
         [HttpPut]
@@ -76,7 +76,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody]UserDTO userDTO)
         {
             var user = await userService.UpdateUserById(id, userDTO);
-            if (user== null)
+            if (user == null)
             {
                 return NotFound();
             }
