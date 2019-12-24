@@ -20,7 +20,6 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
                 mc.AddProfile(new BookingSectorProfile());
                 mc.AddProfile(new SettingProfile());
                 mc.AddProfile(new TournamentProfile());
-                mc.AddProfile(new TournamentSectorProfile());
             }).CreateMapper());
         }
 
@@ -31,7 +30,6 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
             services.AddScoped<IBookingSectorService, BookingSectorService>();
             services.AddScoped<ISettingsService, SettingsService>();
             services.AddScoped<ITournamentService, TournamentService>();
-            services.AddScoped<ITournamentSectorService, TournamentSectorService>();
 
         }
 

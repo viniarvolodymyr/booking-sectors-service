@@ -8,7 +8,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
         public Sector()
         {
             BookingSector = new HashSet<BookingSector>();
-            TournamentSector = new HashSet<TournamentSector>();
         }
 
         public int Id { get; set; }
@@ -23,6 +22,5 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
         public int? ModUserId { get; set; }
 
         public virtual ICollection<BookingSector> BookingSector { get; set; }
-        public virtual ICollection<TournamentSector> TournamentSector { get; set; }
     }
 }

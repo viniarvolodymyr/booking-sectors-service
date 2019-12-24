@@ -17,7 +17,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         private SettingRepository settingsRepository;
         private SectorRepository sectorRepository;
         private UserRepository userRepository;
-        private TournamentSectorRepository tournamentSectorRepository;
         private TournamentRepository tournamentRepository;
         private BookingSectorRepository bookingRepository;
         private readonly ILoggerManager logger;
@@ -36,8 +35,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             settingsRepository ??= new SettingRepository(context);
         public IBaseRepository<Tournament> TournamentRepository =>
             tournamentRepository ??= new TournamentRepository(context);
-        public IBaseRepository<TournamentSector> TournamentSectorRepository =>
-            tournamentSectorRepository ??= new TournamentSectorRepository(context);
         public IBaseRepository<User> UserRepository =>
             userRepository ??= new UserRepository(context);
 
