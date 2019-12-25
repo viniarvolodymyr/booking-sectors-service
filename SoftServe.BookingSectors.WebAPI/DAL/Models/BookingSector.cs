@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Models
 {
@@ -14,8 +15,10 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
         public int CreateUserId { get; set; }
         public DateTime ModDate { get; set; }
         public int? ModUserId { get; set; }
+        public int? TournamentId { get; set; }
 
         public virtual Sector Sector { get; set; }
+        public virtual Tournament Tournament { get; set; }
         public virtual User User { get; set; }
     }
 }

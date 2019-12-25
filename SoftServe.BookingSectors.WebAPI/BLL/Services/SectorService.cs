@@ -70,13 +70,9 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
         }
 
-        public async Task<Sector> UpdateSectorAsync(int id, SectorDTO sectorDTO)
+        public async Task<SectorDTO> UpdateSectorAsync(int id, SectorDTO sectorDTO)
         {
             var existedSector = await database.SectorRepository.GetEntityByIdAsync(id);
-            if (existedSector == null)
-            {
-                return null;
-            }
             var sector = mapper.Map<SectorDTO, Sector>(sectorDTO);
             sector.Id = id;
             sector.CreateUserId = existedSector.CreateUserId;
@@ -85,19 +81,16 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             database.SectorRepository.UpdateEntity(sector);
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? sector : null;
+            return (isSaved == true) ? sectorDTO : null;
         }
 
-        public async Task<Sector> DeleteSectorByIdAsync(int id)
+        public async Task<SectorDTO> DeleteSectorByIdAsync(int id)
         {
-            var sector = await database.SectorRepository.DeleteEntityByIdAsync(id);
-            if (sector == null)
-            {
-                return null;
-            }
+            var deletedSector = await database.SectorRepository.DeleteEntityByIdAsync(id);
             bool isSaved = await database.SaveAsync();
+            var sectorDTO = mapper.Map<Sector, SectorDTO>(deletedSector.Entity);
 
-            return (isSaved == true) ? sector.Entity : null;
+            return (isSaved == true) ? sectorDTO : null;
         }
     }
 }

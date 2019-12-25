@@ -10,6 +10,7 @@ using SoftServe.BookingSectors.WebAPI.Extensions;
 using NLog;
 using System;
 using System.IO;
+using SoftServe.BookingSectors.WebAPI.BLL.Filters;
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -36,14 +37,8 @@ namespace SoftServe.BookingSectors.WebAPI
             services.ConfigureAutoMapper();
             services.ConfigureModelRepositories();
             services.ConfigureDataAccessServices();
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins("http://localhost:4200")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-            });
+            services.ConfigureCors();
+            services.ConfigureFilters();
 
         }
 
@@ -55,6 +50,7 @@ namespace SoftServe.BookingSectors.WebAPI
                 app.UseDeveloperExceptionPage();
             }
             
+
             app.UseHttpStatusCodeExceptionMiddleware();
              
             app.UseSwagger();

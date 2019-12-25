@@ -57,15 +57,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 return null;
             }
             tournament.Id = id;
-            tournament.DateEnd = tournamentDTO.DateEnd;
-            tournament.DateStart = tournamentDTO.DateStart;
             tournament.Name = tournamentDTO.Name;
             tournament.PreparationTerm = tournamentDTO.PreparationTerm;
             database.TournamentRepository.UpdateEntity(tournament);
             bool isSaved = await database.SaveAsync();
             return (isSaved == true) ? tournament : null;
         }
-
 
         public async Task<Tournament> DeleteTournamentByIdAsync(int id)
         {
