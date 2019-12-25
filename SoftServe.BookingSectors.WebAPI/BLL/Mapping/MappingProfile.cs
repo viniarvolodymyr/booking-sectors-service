@@ -34,7 +34,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
                 .ForMember(m => m.Id, opt => opt.Ignore())
                 .ForMember(m => m.Role, opt => opt.Ignore())
                 .ForMember(m => m.Password, opt => opt.Ignore())
-                .ForMember(m => m.Photo, opt => opt.Ignore());
+                .ForMember(m => m.Photo, opt => opt.Ignore());             
         }
     }
 }
