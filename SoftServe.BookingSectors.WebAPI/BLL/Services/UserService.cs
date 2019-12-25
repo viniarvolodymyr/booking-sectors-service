@@ -7,6 +7,13 @@ using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+using System.Net;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using SoftServe.BookingSectors.WebAPI.BLL.Filters;
+
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -14,11 +21,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
     {
         private readonly IUnitOfWork database;
         private readonly IMapper mapper;
+        private readonly ILoggerManager logger;
 
-        public UserService(IUnitOfWork database, IMapper mapper)
+        public UserService(IUnitOfWork database, IMapper mapper, ILoggerManager logger)
         {
             this.database = database;
             this.mapper = mapper;
+            this.logger = logger;
         }
         public async Task<bool> CheckPasswords(string password, int id)
         {
@@ -47,16 +56,16 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task<UserDTO> GetUserByPhoneAsync(string phone)
         {
-            var entities = await database.UserRepository.GetAllEntitiesAsync();
-            int entityId = entities.Where(u => u.Phone == phone)
-                                .Select(u => u.Id)
-                                    .FirstOrDefault();
-            var entity = await database.UserRepository.GetEntityByIdAsync(entityId);
-            if (entity == null)
+            var user = await database.UserRepository
+                .GetByCondition(x => x.Phone == phone)
+                .FirstOrDefaultAsync();
+
+            if (user == null)
             {
-                return null;
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"User with phone number: {phone} not found when trying to get entity.");
             }
-            var dto = mapper.Map<User, UserDTO>(entity);
+
+            var dto = mapper.Map<User, UserDTO>(user);
             return dto;
         }
 
@@ -78,6 +87,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
         }
 
+        
         public async Task<UserDTO> InsertUserAsync(UserDTO userDTO)
         {
             var insertedUser = mapper.Map<UserDTO, User>(userDTO);
@@ -97,24 +107,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
         }
 
-        public async Task<UserDTO> InsertUserPhotoAsync(UserDTO userDTO, int id)
-        {
-            var insertedUser = mapper.Map<UserDTO, User>(userDTO);
-            string randomPassword = RandomNumbers.Generate();
-            insertedUser.Password = SHA256Hash.Compute(randomPassword);
-            insertedUser.ModUserId = null;
-
-            await database.UserRepository.InsertEntityAsync(insertedUser);
-            bool isSaved = await database.SaveAsync();
-            if (isSaved == false)
-            {
-                return null;
-            }
-            else
-            {
-                return mapper.Map<User, UserDTO>(insertedUser);
-            }
-        }
         public async Task<User> DeleteUserByIdAsync(int id)
         {
             var user = await database.UserRepository.DeleteEntityByIdAsync(id);

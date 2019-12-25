@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+using System.Net;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -25,7 +28,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var sectors = await database.SectorRepository.GetAllEntitiesAsync();
             var dtos = mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(sectors);
-            
+
             return dtos;
         }
 
@@ -39,8 +42,17 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         public async Task<int> GetSectorIdByNumberAsync(int number)
         {
-            var sector = await database.SectorRepository.GetAllEntitiesAsync();
-            return sector.Where(x => (x.Number == number)).Select(x => x.Id).FirstOrDefault();
+            int sectorId = await database.SectorRepository
+                    .GetByCondition(x => x.Number == number)
+                    .Select(x => x.Id)
+                    .FirstOrDefaultAsync();
+
+            if (sectorId == 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Sector with number: {number} not found when trying to get id.");
+            }
+
+            return sectorId;
         }
 
         public async Task<SectorDTO> InsertSectorAsync(SectorDTO sectorDTO)
@@ -58,13 +70,9 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
         }
 
-        public async Task<Sector> UpdateSectorAsync(int id, SectorDTO sectorDTO)
+        public async Task<SectorDTO> UpdateSectorAsync(int id, SectorDTO sectorDTO)
         {
             var existedSector = await database.SectorRepository.GetEntityByIdAsync(id);
-            if (existedSector == null)
-            {
-                return null;
-            }
             var sector = mapper.Map<SectorDTO, Sector>(sectorDTO);
             sector.Id = id;
             sector.CreateUserId = existedSector.CreateUserId;
@@ -73,19 +81,16 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             database.SectorRepository.UpdateEntity(sector);
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? sector : null;
+            return (isSaved == true) ? sectorDTO : null;
         }
 
-        public async Task<Sector> DeleteSectorByIdAsync(int id)
+        public async Task<SectorDTO> DeleteSectorByIdAsync(int id)
         {
-            var sector = await database.SectorRepository.DeleteEntityByIdAsync(id);           
-            if (sector == null)
-            {
-                return null;
-            }
+            var deletedSector = await database.SectorRepository.DeleteEntityByIdAsync(id);
             bool isSaved = await database.SaveAsync();
+            var sectorDTO = mapper.Map<Sector, SectorDTO>(deletedSector.Entity);
 
-            return (isSaved == true) ? sector.Entity : null;
+            return (isSaved == true) ? sectorDTO : null;
         }
     }
 }

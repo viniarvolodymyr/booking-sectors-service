@@ -5,6 +5,11 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
 {
     public partial class Sector
     {
+        public Sector()
+        {
+            BookingSector = new HashSet<BookingSector>();
+        }
+
         public int Id { get; set; }
         public int Number { get; set; }
         public string Description { get; set; }
@@ -16,7 +21,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
         public DateTime ModDate { get; set; }
         public int? ModUserId { get; set; }
 
-        public virtual ICollection<BookingSector> BookingSector { get; set; } = new HashSet<BookingSector>();
-        public virtual ICollection<TournamentSector> TournamentSector { get; set; } = new HashSet<TournamentSector>();
+        public virtual ICollection<BookingSector> BookingSector { get; set; }
     }
 }
