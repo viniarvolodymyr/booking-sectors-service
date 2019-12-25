@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/users")]
@@ -51,6 +52,14 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
                 return NotFound();
             }
             return Ok(dto);
+        }
+
+        [HttpGet]
+        [Route("{id}/{password}")]
+        public async Task<bool> PasswordCheck([FromRoute]string password, [FromRoute]int id)
+        {
+            bool result = await userService.CheckPasswords(password, id);
+            return result;
         }
 
         [HttpPost]

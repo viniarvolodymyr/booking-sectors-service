@@ -20,7 +20,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             this.database = database;
             this.mapper = mapper;
         }
-
+        public async Task<bool> CheckPasswords(string password, int id)
+        {
+            var entity = await database.UserRepository.GetEntityByIdAsync(id);
+            byte[] passToCheck = SHA256Hash.Compute(password);
+            return entity.Password.SequenceEqual(passToCheck);
+        }
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
             var users = await database.UserRepository.GetAllEntitiesAsync();
@@ -30,11 +35,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
             var entity = await database.UserRepository.GetEntityByIdAsync(id);
+            
             if (entity == null)
             {
                 return null;
             }
             var dto = mapper.Map<User, UserDTO>(entity);
+
             return dto;
         }
 
@@ -63,12 +70,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             user.Firstname = userDTO.Firstname;
             user.Lastname = userDTO.Lastname;
             user.Phone = userDTO.Phone;
-            user.Password = System.Text.Encoding.ASCII.GetBytes(userDTO.Password);
+            user.Password = SHA256Hash.Compute(userDTO.Password);
             user.ModDate = System.DateTime.Now;
             database.UserRepository.UpdateEntity(user);
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? user : null;
+            return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
         }
 
         public async Task<UserDTO> InsertUserAsync(UserDTO userDTO)
@@ -90,6 +97,24 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
         }
 
+        public async Task<UserDTO> InsertUserPhotoAsync(UserDTO userDTO, int id)
+        {
+            var insertedUser = mapper.Map<UserDTO, User>(userDTO);
+            string randomPassword = RandomNumbers.Generate();
+            insertedUser.Password = SHA256Hash.Compute(randomPassword);
+            insertedUser.ModUserId = null;
+
+            await database.UserRepository.InsertEntityAsync(insertedUser);
+            bool isSaved = await database.SaveAsync();
+            if (isSaved == false)
+            {
+                return null;
+            }
+            else
+            {
+                return mapper.Map<User, UserDTO>(insertedUser);
+            }
+        }
         public async Task<User> DeleteUserByIdAsync(int id)
         {
             var user = await database.UserRepository.DeleteEntityByIdAsync(id);
