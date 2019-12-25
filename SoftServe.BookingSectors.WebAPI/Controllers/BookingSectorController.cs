@@ -33,12 +33,43 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             }
         }
 
+        
+        [HttpGet]
+        [Route("tournaments")]
+        public async Task<IActionResult> GetTournaments()
+        {
+            var dtos = await bookingSectorService.GetBookingTournamentSectorsAsync();
+            
+            if (dtos.Any())
+            {
+                return Ok(dtos);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpGet]
         [Route("{id}")]
         [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Get([FromRoute]int id)
         {
             var dto = await bookingSectorService.GetBookingByIdAsync(id);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
+        }
+        [HttpGet]
+        [Route("tournaments/{id}")]
+        public async Task<IActionResult> GetTournament([FromRoute]int id)
+        {
+            var dto = await bookingSectorService.GetBookingTournamentByIdAsync(id);
             if (dto == null)
             {
                 return NotFound();
@@ -79,6 +110,22 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
                 return Ok(booking);
             }
         }
+        [HttpPut]
+        [Route("tournaments/{id}")]
+        public async Task<IActionResult> Put([FromRoute]int id, [FromBody] BookingSectorDTO bookingSectorDTO)
+        {
+            var bookedTournament = await bookingSectorService.UpdateTournamentBooking(id, bookingSectorDTO);
+            if (bookedTournament == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(bookedTournament);
+            }
+        }
+
+
 
         [HttpDelete]
         [Route("{id}")]

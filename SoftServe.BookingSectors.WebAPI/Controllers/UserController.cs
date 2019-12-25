@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SoftServe.BookingSectors.WebAPI.BLL.Filters;
+
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -21,7 +21,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<UserDTO>>> Get()
         {
             var dtos = await userService.GetAllUsersAsync();
@@ -34,7 +33,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<UserDTO>> GetById([FromRoute]int id)
         {
             var dto = await userService.GetUserByIdAsync(id);
@@ -47,7 +45,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpGet]
         [Route("phone/{phone}")]
-        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<UserDTO>> GetByPhone([FromRoute]string phone)
         {
             var dto = await userService.GetUserByPhoneAsync(phone);
@@ -58,25 +55,33 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dto);
         }
 
+        [HttpGet]
+        [Route("{id}/{password}")]
+        public async Task<bool> PasswordCheck([FromRoute]string password, [FromRoute]int id)
+        {
+            bool result = await userService.CheckPasswords(password, id);
+            return result;
+        }
+
         [HttpPost]
-        [AllowAnonymous]
+        [ServiceFilter(typeof(ValidateModelState))]
         public async Task<IActionResult> Post([FromBody] UserDTO userDTO)
         {
-            await userService.InsertUserAsync(userDTO);
+            //await userService.InsertUserAsync(userDTO);
             var dto = await userService.InsertUserAsync(userDTO);
-            if (dto == null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                return Created($"api/users/{dto.Id}", dto);
-            }
+
+            if (dto == null)		
+             {		
+                 return BadRequest();		
+             }		
+             else		
+             {		
+                 return Created($"api/users/{dto.Id}", dto);		            
+             }
         }
 
         [HttpPut]
         [Route("{id}")]
-        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody]UserDTO userDTO)
         {
             var user = await userService.UpdateUserById(id, userDTO);
@@ -91,7 +96,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("{id}")] 
+        [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
             var user = await userService.DeleteUserByIdAsync(id);

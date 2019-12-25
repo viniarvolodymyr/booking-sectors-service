@@ -3,8 +3,11 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories;
 using System.Linq;
 using System.Threading.Tasks;
+using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
+using System;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 {
@@ -14,14 +17,14 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         private SettingRepository settingsRepository;
         private SectorRepository sectorRepository;
         private UserRepository userRepository;
-        private TournamentSectorRepository tournamentSectorRepository;
         private TournamentRepository tournamentRepository;
         private BookingSectorRepository bookingRepository;
-        private TokenRepository tokenRepository;
+        private readonly ILoggerManager logger;
 
-        public UnitOfWork(BookingSectorContext context)
+        public UnitOfWork(BookingSectorContext context, ILoggerManager logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         public IBaseRepository<BookingSector> BookingSectorRepository =>
@@ -32,12 +35,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             settingsRepository ??= new SettingRepository(context);
         public IBaseRepository<Tournament> TournamentRepository =>
             tournamentRepository ??= new TournamentRepository(context);
-        public IBaseRepository<TournamentSector> TournamentSectorRepository =>
-            tournamentSectorRepository ??= new TournamentSectorRepository(context);
         public IBaseRepository<User> UserRepository =>
             userRepository ??= new UserRepository(context);
-        public IBaseRepository<Token> TokenRepository =>
-            tokenRepository ??= new TokenRepository(context);
 
         public async Task<bool> SaveAsync()
         {
@@ -50,16 +49,18 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 {
                     return true;
                 }
+
+
                 return await context.SaveChangesAsync() > 0;
             }
-            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            catch (DbUpdateException e)
             {
-                // Logger
+                logger.LogError($"{e}, {nameof(SaveAsync)}, {e.Entries}");
                 return false;
             }
-            catch (DbUpdateException dbUpdateExceptinon)
+            catch (Exception e)
             {
-                // Logger
+                logger.LogError($"{e}, {nameof(SaveAsync)}");
                 return false;
             }
         }
