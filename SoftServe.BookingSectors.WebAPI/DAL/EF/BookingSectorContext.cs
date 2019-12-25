@@ -110,6 +110,29 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<Token>(entity =>
+            {
+                entity.ToTable("TOKEN");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CreateDate)
+                    .HasColumnName("CREATE_DATE")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.CreateId).HasColumnName("CREATE_ID");
+
+                entity.Property(e => e.ModDate)
+                    .HasColumnName("MOD_DATE")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ModId).HasColumnName("MOD_ID");
+
+                entity.Property(e => e.RefreshToken).HasColumnName("REFRESH_TOKEN");
+            });
+
             modelBuilder.Entity<Sector>(entity =>
             {
                 entity.ToTable("SECTOR");
@@ -183,39 +206,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .IsUnicode(false);
 
                 entity.Property(e => e.Value).HasColumnName("VALUE");
-            });
-
-            modelBuilder.Entity<Token>(entity =>
-            {
-                entity.ToTable("TOKEN");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.CreateDate)
-                    .HasColumnName("CREATE_DATE")
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.CreateId).HasColumnName("CREATE_ID");
-
-                entity.Property(e => e.ModDate)
-                    .HasColumnName("MOD_DATE")
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.ModId).HasColumnName("MOD_ID");
-
-                entity.Property(e => e.RefreshToken).HasColumnName("REFRESH_TOKEN");
-
-                entity.HasOne(d => d.Create)
-                    .WithMany(p => p.TokenCreate)
-                    .HasForeignKey(d => d.CreateId)
-                    .HasConstraintName("FK_CREATE_TOKEN_USER");
-
-                entity.HasOne(d => d.Mod)
-                    .WithMany(p => p.TokenMod)
-                    .HasForeignKey(d => d.ModId)
-                    .HasConstraintName("FK_MOD_TOKEN_USER");
             });
 
             modelBuilder.Entity<Tournament>(entity =>
