@@ -15,6 +15,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
         public virtual DbSet<Setting> Setting { get; set; }
         public virtual DbSet<Tournament> Tournament { get; set; }
         public virtual DbSet<TournamentSector> TournamentSector { get; set; }
+        public virtual DbSet<Token> Token { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -95,6 +96,29 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .HasColumnName("NAME")
                     .HasMaxLength(25)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Token>(entity =>
+            {
+                entity.ToTable("TOKEN");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CreateDate)
+                    .HasColumnName("CREATE_DATE")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.CreateId).HasColumnName("CREATE_ID");
+
+                entity.Property(e => e.ModDate)
+                    .HasColumnName("MOD_DATE")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ModId).HasColumnName("MOD_ID");
+
+                entity.Property(e => e.RefreshToken).HasColumnName("REFRESH_TOKEN");
             });
 
             modelBuilder.Entity<Sector>(entity =>

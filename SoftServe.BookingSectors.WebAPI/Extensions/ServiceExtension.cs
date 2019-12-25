@@ -5,6 +5,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
+using SoftServe.BookingSectors.WebApi.BLL.Services.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.Extensions
 {
@@ -27,7 +28,7 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
             services.AddTransient<IBookingSectorService, BookingSectorService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ISettingsService, SettingsService>();
-            services.AddTransient<ITo>
+            services.AddTransient<IAuthenticationService, AuthenticationService>();
         }
 
         public static void ConfigureModelRepositories(this IServiceCollection services)

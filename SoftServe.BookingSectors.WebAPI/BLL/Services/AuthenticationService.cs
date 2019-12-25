@@ -1,97 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebApi.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
-using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using Microsoft.EntityFrameworkCore;
+using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly ILogger<AuthenticationService> _logger;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IJwtFactory _jwtFactory;
+        private readonly IUnitOfWork database;
+        private readonly IMapper mapper;
+        private readonly IJwtFactory jwtFactory;
 
-        public AuthenticationService(
-            ILogger<AuthenticationService> logger,
-            IJwtFactory jwtFactory,
-            IUnitOfWork unitOfWork)
+        public AuthenticationService(IUnitOfWork database, IMapper mapper, IJwtFactory jwtFactory)
         {
-            _logger = logger;
-            _unitOfWork = unitOfWork;
-            _jwtFactory = jwtFactory;
+            this.database = database;
+            this.mapper = mapper;
+            this.jwtFactory = jwtFactory;
         }
 
-        public async Task<TokenDTO> SignInAsync(string login, string password)
+        
+
+        public async Task<TokenDTO> SignInAsync(string phone, string password)
         {
-            try
+            var user = await database.UserRepository.GetByCondition(u => u.Phone == phone).SingleOrDefaultAsync();
+            if (IsPasswordTheSame(user, password) == false) return null;
+            
+            var token = jwtFactory.GenerateToken(user.Id, user.Phone, user.Role.Role);
+
+            if (token == null) return null;
+
+            await database.TokenRepository.InsertEntityAsync(new Token
             {
-                var user = (await UserRepository.GetAllEntitiesAsync(u => u.Login == Login))
-                    .SingleOrDefault();
+                RefreshToken = token.RefreshToken,
+                CreateId = user.Id,
+                Create = user     
+            });
 
-                if (user != null && (bool)user.IsActive && _hasher.CheckMatch(password, user.Password))
-                {
-                    var role = await _unitOfWork.RoleRepository.GetByIdAsync((int)user.RoleId);
-                    var token = _jwtFactory.GenerateToken(user.Id, user.Login, role?.Name);
+            await database.SaveAsync();
+            return token;
+        }
 
-                    if (token == null) return null;
-
-                    await _unitOfWork.TokenRepository.AddAsync(new Token
-                    {
-                        RefreshToken = token.RefreshToken,
-                        CreateId = user.Id,
-                        Create = user
-                    });
-                    await _unitOfWork.SaveAsync();
-                    return token;
-                }
-                return null;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, nameof(SignInAsync));
-                throw e;
-            }
+        private bool IsPasswordTheSame(User user, string password)
+        {
+            if (user == null) return false;
+            var hashedPassword = SHA256Hash.Compute(password);
+            return hashedPassword.Zip(user.Password, (a, b) => a == b).Contains(false) == false;
         }
 
         public async Task<TokenDTO> TokenAsync(TokenDTO token)
         {
-            try
-            {
-                var user = await _unitOfWork.UserRepository.GetByIdAsync(
-                    int.Parse(
-                        _jwtFactory.GetPrincipalFromExpiredToken(token.AccessToken).jwt.Subject
-                        )
-                    );
-                var newToken = _jwtFactory.GenerateToken(user.Id, user.Login, user.Role.Name);
+            var user = await database.UserRepository.GetEntityByIdAsync(
+                int.Parse(
+                    jwtFactory.GetPrincipalFromExpiredToken(token.AccessToken).jwt.Subject
+                    ) 
+            );
 
-                await _unitOfWork.TokenRepository.AddAsync(new Token
-                {
-                    RefreshToken = newToken.RefreshToken,
-                    CreateId = user.Id,
-                    Create = user
-                });
-                await _unitOfWork.SaveAsync();
-                return newToken;
-            }
-            catch (Exception e)
-                when (e is SecurityTokenException || e is DbUpdateException)
+            var newToken = jwtFactory.GenerateToken(user.Id, user.Phone, user.Role.ToString());
+
+            await database.TokenRepository.InsertEntityAsync(new Token
             {
-                _logger.LogError(e, nameof(TokenAsync));
-                return null;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, nameof(TokenAsync));
-                throw e;
-            }
+                RefreshToken = newToken.RefreshToken,
+                CreateId = user.Id,
+                Create = user
+            });
+            await database.SaveAsync();
+            return newToken;
+
         }
+    }
 }

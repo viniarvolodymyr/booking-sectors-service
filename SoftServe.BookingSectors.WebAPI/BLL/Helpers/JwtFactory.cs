@@ -1,12 +1,11 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
-namespace TransIT.BLL.Helpers
+namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
 {
     public class JwtFactory : IJwtFactory
     {
@@ -17,7 +16,6 @@ namespace TransIT.BLL.Helpers
             _jwtOptions = jwtOptions.Value;
             ThrowIfInvalidOptions(_jwtOptions);
         }
-
         public (ClaimsPrincipal principal, JwtSecurityToken jwt) GetPrincipalFromExpiredToken(string token)
         {
             var principal = new JwtSecurityTokenHandler()
@@ -77,7 +75,7 @@ namespace TransIT.BLL.Helpers
             new[]
             {
                 new Claim(nameof(login), login),
-                new Claim(nameof(role), role),
+                new Claim(ClaimTypes.Role, role),
                 new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, _jwtOptions.JtiGenerator),
                 new Claim(JwtRegisteredClaimNames.Iat,

@@ -5,6 +5,8 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
+using System.Linq.Expressions;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
@@ -33,7 +35,10 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
         {
             return tokenSet.AddAsync(entityToInsert);
         }
-
+        public IQueryable<Token> GetByCondition(Expression<Func<Token, bool>> expression)
+        {
+            return tokenSet.Where(expression).AsNoTracking().AsQueryable();
+        }
         public void UpdateEntity(Token entityToUpdate)
         {
             tokenSet.Attach(entityToUpdate);
@@ -47,3 +52,4 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
         }
 
     }
+}

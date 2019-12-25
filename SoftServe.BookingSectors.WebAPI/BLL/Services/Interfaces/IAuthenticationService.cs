@@ -11,7 +11,6 @@ namespace SoftServe.BookingSectors.WebApi.BLL.Services.Interfaces
         /// <summary>
         /// Checks credential
         /// </summary>
-        /// <param name="credentials">User login and password</param>
         /// <returns>Access and refresh tokens</returns>
         Task<TokenDTO> SignInAsync(string login, string password);
         /// <summary>
