@@ -5,6 +5,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
@@ -27,7 +28,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             this.mapper = mapper;
             this.logger = logger;
         }
-
+        public async Task<bool> CheckPasswords(string password, int id)
+        {
+            var entity = await database.UserRepository.GetEntityByIdAsync(id);
+            byte[] passToCheck = SHA256Hash.Compute(password);
+            return entity.Password.SequenceEqual(passToCheck);
+        }
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
             var users = await database.UserRepository.GetAllEntitiesAsync();
@@ -37,7 +43,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
             var entity = await database.UserRepository.GetEntityByIdAsync(id);
+            
+            if (entity == null)
+            {
+                return null;
+            }
             var dto = mapper.Map<User, UserDTO>(entity);
+
             return dto;
         }
 
@@ -73,10 +85,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             user.Password = SHA256Hash.Compute(userDTO.Password);
 
             database.UserRepository.UpdateEntity(user);
-
             bool isSaved = await database.SaveAsync();
             
-    
             return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
         }
 

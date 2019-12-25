@@ -13,5 +13,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         Task<User> UpdateUserById(int id, UserDTO userDTO);
         Task<UserDTO> InsertUserAsync(UserDTO userDTO);
         Task<User> DeleteUserByIdAsync(int id);
+        Task<bool> CheckPasswords(string password, int id);
     }
 }
