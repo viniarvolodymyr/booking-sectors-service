@@ -31,11 +31,42 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             }
         }
 
+        
+        [HttpGet]
+        [Route("tournaments")]
+        public async Task<IActionResult> GetTournaments()
+        {
+            var dtos = await bookingSectorService.GetBookingTournamentSectorsAsync();
+            
+            if (dtos.Any())
+            {
+                return Ok(dtos);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> Get([FromRoute]int id)
         {
             var dto = await bookingSectorService.GetBookingByIdAsync(id);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
+        }
+        [HttpGet]
+        [Route("tournaments/{idTour}")]
+        public async Task<IActionResult> GetTournament([FromRoute]int idTour)
+        {
+            var dto = await bookingSectorService.GetBookingTournamentByIdAsync(idTour);
             if (dto == null)
             {
                 return NotFound();
