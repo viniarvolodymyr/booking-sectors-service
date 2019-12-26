@@ -8,7 +8,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/settings")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
     public class SettingsController : ControllerBase
     {
         private readonly ISettingsService settingService;
