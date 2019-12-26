@@ -131,6 +131,16 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                 entity.Property(e => e.ModId).HasColumnName("MOD_ID");
 
                 entity.Property(e => e.RefreshToken).HasColumnName("REFRESH_TOKEN");
+
+                entity.HasOne(d => d.Create)
+                    .WithMany(p => p.TokenCreate)
+                    .HasForeignKey(d => d.CreateId)
+                    .HasConstraintName("FK_CREATE_TOKEN_USER");
+
+                entity.HasOne(d => d.Mod)
+                    .WithMany(p => p.TokenMod)
+                    .HasForeignKey(d => d.ModId)
+                    .HasConstraintName("FK_MOD_TOKEN_USER");
             });
 
             modelBuilder.Entity<Sector>(entity =>
