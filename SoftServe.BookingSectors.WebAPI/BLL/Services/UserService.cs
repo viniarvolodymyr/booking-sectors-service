@@ -1,18 +1,16 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
+using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
-using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using System.Net;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using SoftServe.BookingSectors.WebAPI.BLL.Filters;
+using System.Threading.Tasks;
 
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services

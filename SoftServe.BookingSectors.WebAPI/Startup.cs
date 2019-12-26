@@ -34,6 +34,7 @@ namespace SoftServe.BookingSectors.WebAPI
             services.ConfigureLoggerService();
             services.AddControllers();
             services.ConfigureSwagger();
+            services.ConfigureAuthentication(Configuration);
             services.ConfigureAutoMapper();
             services.ConfigureModelRepositories();
             services.ConfigureDataAccessServices();
@@ -65,6 +66,8 @@ namespace SoftServe.BookingSectors.WebAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
