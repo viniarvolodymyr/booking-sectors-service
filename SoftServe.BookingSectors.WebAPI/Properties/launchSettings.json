@@ -15,7 +15,8 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:44393"
     },
     "SoftServe.BookingSectors.WebAPI": {
       "commandName": "Project",
@@ -25,7 +26,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "nativeDebugging": false,
-      "applicationUrl": "http://localhost:44393;http://localhost:5000"
+      "applicationUrl": "http://localhost:44393"
     }
   }
 }

@@ -100,14 +100,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             await database.UserRepository.InsertEntityAsync(insertedUser);
             bool isSaved = await database.SaveAsync();
 
-            if (isSaved == false)
-            {
-                return null;
-            }
-            else
-            {
-                return mapper.Map<User, UserDTO>(insertedUser);
-            }
+            return (isSaved == true) ? mapper.Map<User, UserDTO>(insertedUser) : null;
         }
 
         public async Task<User> DeleteUserByIdAsync(int id)
