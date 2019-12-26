@@ -21,7 +21,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        
         public async Task<ActionResult<IEnumerable<UserDTO>>> Get()
         {
             var dtos = await userService.GetAllUsersAsync();

@@ -19,7 +19,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        
         public async Task<IActionResult> Get()
         {
             var dtos = await bookingSectorService.GetBookingSectorsAsync();
