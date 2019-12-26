@@ -21,7 +21,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpGet]
-        
         public async Task<ActionResult<IEnumerable<UserDTO>>> Get()
         {
             var dtos = await userService.GetAllUsersAsync();
@@ -34,7 +33,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<UserDTO>> GetById([FromRoute]int id)
         {
             var dto = await userService.GetUserByIdAsync(id);
@@ -47,7 +45,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpGet]
         [Route("phone/{phone}")]
-        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<UserDTO>> GetByPhone([FromRoute]string phone)
         {
             var dto = await userService.GetUserByPhoneAsync(phone);
@@ -60,7 +57,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpGet]
         [Route("{id}/{password}")]
-        [Authorize(Roles = "Admin, User")]
         public async Task<bool> PasswordCheck([FromRoute]string password, [FromRoute]int id)
         {
             bool result = await userService.CheckPasswords(password, id);
@@ -69,7 +65,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPost]
         [ServiceFilter(typeof(ValidateModelState))]
-        [AllowAnonymous]
         public async Task<IActionResult> Post([FromBody] UserDTO userDTO)
         {
             var dto = await userService.InsertUserAsync(userDTO);
@@ -85,8 +80,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpPut]
-        [Route("{id}")]
-        [Authorize(Roles = "Admin, User")]
+        [Route("{id}")]       
         public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody]UserDTO userDTO)
         {
             var user = await userService.UpdateUserById(id, userDTO);
@@ -102,7 +96,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
             var user = await userService.DeleteUserByIdAsync(id);
