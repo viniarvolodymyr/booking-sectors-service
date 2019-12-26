@@ -9,6 +9,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/tournaments")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class TournamentController : ControllerBase
     {
         readonly ITournamentService tournamentService;

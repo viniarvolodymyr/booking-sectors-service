@@ -11,6 +11,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/sectors")]
     [ApiController]
+    
     public class SectorController : ControllerBase
     {
         private readonly ISectorService sectorService;
