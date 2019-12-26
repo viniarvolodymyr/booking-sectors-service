@@ -128,6 +128,24 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return (isSaved == true) ? booking : null;
         }
 
+        public async Task<BookingSector> UpdateTournamentBooking(int id, BookingSectorDTO bookingSectorDTO)
+        {
+            var bookedTournament = await database.BookingSectorRepository.GetEntityByIdAsync(id);
+            if (bookedTournament == null)
+            {
+                return null;
+            }
+            bookedTournament.Id = id;
+            bookedTournament.BookingStart = bookingSectorDTO.BookingStart;
+            bookedTournament.BookingEnd = bookingSectorDTO.BookingEnd;
+            bookedTournament.IsApproved = bookingSectorDTO.IsApproved;
+            bookedTournament.SectorId = bookingSectorDTO.SectorId;
+            bookedTournament.TournamentId = bookingSectorDTO.TournamentId;
+            database.BookingSectorRepository.UpdateEntity(bookedTournament);
+            bool isSaved = await database.SaveAsync();
+            return (isSaved == true) ? bookedTournament : null;
+        }
+
         public async Task<BookingSector> DeleteBookingByIdAsync(int id)
         {
             var booking = await database.BookingSectorRepository.DeleteEntityByIdAsync(id);
