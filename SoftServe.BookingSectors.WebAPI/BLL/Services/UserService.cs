@@ -83,6 +83,21 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             user.Lastname = userDTO.Lastname;
             user.Phone = userDTO.Phone;
             user.ModDate = System.DateTime.Now;
+
+            database.UserRepository.UpdateEntity(user);
+            bool isSaved = await database.SaveAsync();
+
+            return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
+        }
+        public async Task<User> UpdateUserPassById(int id, UserDTO userDTO)
+        {
+            var user = await database.UserRepository.GetEntityByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            user.ModDate = System.DateTime.Now;
             user.Password = SHA256Hash.Compute(userDTO.Password);
 
             database.UserRepository.UpdateEntity(user);

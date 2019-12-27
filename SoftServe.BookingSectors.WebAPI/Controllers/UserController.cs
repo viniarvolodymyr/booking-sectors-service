@@ -94,6 +94,20 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("pass/{id}")]
+        public async Task<IActionResult> UpdateUserPass([FromRoute]int id, [FromBody]UserDTO userDTO)
+        {
+            var user = await userService.UpdateUserPassById(id, userDTO);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(user);
+            }
+        }
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute]int id)
