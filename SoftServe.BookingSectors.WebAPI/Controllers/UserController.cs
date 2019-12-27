@@ -14,10 +14,12 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
+        private readonly IRegistrationService registrationService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IRegistrationService registrationService)
         {
             this.userService = userService;
+            this.registrationService = registrationService;
         }
 
         [HttpGet]
@@ -65,9 +67,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPost]
         [ServiceFilter(typeof(ValidateModelState))]
-        public async Task<IActionResult> Post([FromBody] UserDTO userDTO)
+        public async Task<IActionResult> Post([FromBody] RegistrationDTO userDTO)
         {
-            var dto = await userService.InsertUserAsync(userDTO);
+            var dto = await registrationService.InsertUserAsync(userDTO);
 
             if (dto == null)
             {

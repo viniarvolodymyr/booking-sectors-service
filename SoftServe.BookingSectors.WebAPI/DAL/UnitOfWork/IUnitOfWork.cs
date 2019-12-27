@@ -12,7 +12,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         IBaseRepository<Sector> SectorRepository { get; }
         IBaseRepository<BookingSector> BookingSectorRepository { get; }
         IBaseRepository<Setting> SettingRepository { get; }
-        IBaseRepository<Token> TokenRepository {get;}
+        IBaseRepository<Token> TokenRepository { get; }
+        IBaseRepository<Email> EmailRepository { get; }
         Task<bool> SaveAsync();
     }
 }

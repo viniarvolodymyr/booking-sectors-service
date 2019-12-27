@@ -32,6 +32,7 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
             services.AddScoped<ISettingsService, SettingsService>();
             services.AddScoped<ITournamentService, TournamentService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IRegistrationService, RegistrationService>();
 
         }
 
