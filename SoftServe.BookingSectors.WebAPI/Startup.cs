@@ -28,7 +28,7 @@ namespace SoftServe.BookingSectors.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BookingSectorContext>(options => options.UseSqlServer
-                (@ConfigurationHelper.GetDatabaseConnectionString()));
+                (@ConfigurationHelper.GetAppSettingsValue("AzureConnectionString")));
 
 
             services.ConfigureLoggerService();

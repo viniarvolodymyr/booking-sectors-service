@@ -106,25 +106,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
         }
 
-        public async Task<UserDTO> InsertUserAsync(UserDTO userDTO)
-        {
-            if (String.IsNullOrEmpty(userDTO.Password.Trim()))
-            {
-                var randomPassword = RandomNumbers.Generate();
-                userDTO.Password = SHA256Hash.ComputeString(randomPassword);
-            }
-
-            var insertedUser = mapper.Map<UserDTO, User>(userDTO);
-
-            insertedUser.ModUserId = null;
-            insertedUser.RoleId = 2;
-
-            await database.UserRepository.InsertEntityAsync(insertedUser);
-            bool isSaved = await database.SaveAsync();
-
-            return (isSaved == true) ? mapper.Map<User, UserDTO>(insertedUser) : null;
-        }
-
         public async Task<User> DeleteUserByIdAsync(int id)
         {
             var user = await database.UserRepository.DeleteEntityByIdAsync(id);
@@ -135,6 +116,30 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             bool isSaved = await database.SaveAsync();
 
             return (isSaved == true) ? user.Entity : null;
+        }
+
+        public async Task<bool> InsertEmailAsync(int id, string email)
+        {
+            var getEmail = await database.EmailRepository
+                            .GetByCondition(x => x.UserId == id)
+                            .FirstOrDefaultAsync();
+
+
+            Email emailEntity = new Email { UserId = id, Email1 = email };
+
+            if (getEmail == null)
+            {
+                await database.EmailRepository.InsertEntityAsync(emailEntity);
+            }
+            else
+            {
+                emailEntity.Id = getEmail.Id;
+                database.EmailRepository.UpdateEntity(emailEntity);
+            }
+
+
+            return (await database.SaveAsync()) ? true : false;
+
         }
     }
 }
