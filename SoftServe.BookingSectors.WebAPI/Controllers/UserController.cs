@@ -6,6 +6,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.BLL.Filters;
 using Microsoft.AspNetCore.Authorization;
+using System.Web.Helpers;
+using System.Web;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Headers;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -56,6 +60,14 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             }
             return Ok(dto);
         }
+        [HttpGet]
+        [Route("UserPhoto/{id}")]
+        public async Task<IFormFile> GetPhotoById([FromRoute]int id)
+        {
+            var file = await userService.GetUserPhotoById(id);
+         
+            return file;
+        }
 
         [HttpGet]
         [Route("{id}/{password}")]
@@ -101,6 +113,21 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> UpdateUserPass([FromRoute]int id, [FromBody]UserDTO userDTO)
         {
             var user = await userService.UpdateUserPassById(id, userDTO);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(user);
+            }
+        }
+        [HttpPut]
+        [Route("photo/{id}")]
+        public async Task<IActionResult> UpdateUserPhoto([FromRoute]int id, [FromForm] IFormFile file)
+        {
+           
+            var user = await userService.UpdateUserPhotoById(id, file);
             if (user == null)
             {
                 return NotFound();

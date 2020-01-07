@@ -12,7 +12,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System;
-
+using System.IO;
+using System.Web.Helpers;
+using Microsoft.AspNetCore.Http;
 
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
@@ -82,7 +84,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             user.Firstname = userDTO.Firstname;
             user.Lastname = userDTO.Lastname;
             user.Phone = userDTO.Phone;
-            user.ModDate = System.DateTime.Now;
 
             database.UserRepository.UpdateEntity(user);
             bool isSaved = await database.SaveAsync();
@@ -97,7 +98,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 return null;
             }
 
-            user.ModDate = System.DateTime.Now;
             user.Password = SHA256Hash.Compute(userDTO.Password);
 
             database.UserRepository.UpdateEntity(user);
@@ -106,6 +106,60 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
         }
 
+        public async Task<User> UpdateUserPhotoById(int id, IFormFile formFile)
+        {
+            var user = await database.UserRepository.GetEntityByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await formFile.CopyToAsync(memoryStream);
+           
+                // Upload the file if less than 2 MB
+                if (memoryStream.Length < 2097152)
+                {
+                    user.Photo = memoryStream.ToArray();
+                    database.UserRepository.UpdateEntity(user);
+                    bool isSaved = await database.SaveAsync();
+                    return (isSaved == true) ? user : null;
+                }
+                else
+                {
+                    return null;
+                  //  ModelState.AddModelError("File", "The file is too large.");
+                }
+            }
+       
+
+      
+        }
+
+        public async Task<IFormFile> GetUserPhotoById(int id)
+        {
+            var entity = await database.UserRepository.GetEntityByIdAsync(id);
+
+            if (entity == null)
+            {
+                return null;
+            }
+            
+            FormFile file;
+            using (var ms = new MemoryStream(entity.Photo))
+            {
+                File.WriteAllBytes("test.jpg", entity.Photo);
+                file = new FormFile(ms, 0, ms.Length, "file.jpg", "file")
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = "image/jpeg",
+                  
+                };
+
+                return file;
+            }        
+        }
         public async Task<User> DeleteUserByIdAsync(int id)
         {
             var user = await database.UserRepository.DeleteEntityByIdAsync(id);
