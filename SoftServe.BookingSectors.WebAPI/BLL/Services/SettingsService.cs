@@ -19,11 +19,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             this.database = database;
             this.mapper = mapper;
         }
-        enum settings
-        {
-            MAX_BOOKING_SECTORS = 1,
-            MAX_BOOKING_DAYS = 2
-        };
         public async Task<IEnumerable<SettingsDTO>> GetSettingsAsync()
         {
             var settings = await database.SettingRepository.GetAllEntitiesAsync();

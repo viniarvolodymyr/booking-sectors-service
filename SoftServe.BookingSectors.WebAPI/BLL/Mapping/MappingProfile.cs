@@ -24,10 +24,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
             CreateMap<TournamentDTO, Tournament>()
                 .ForMember(m => m.Id, opt => opt.Ignore());
 
-            CreateMap<TournamentSector, TournamentSectorDTO>();
-            CreateMap<TournamentSectorDTO, TournamentSector>()
-                 .ForMember(m => m.Id, opt => opt.Ignore());
-
             CreateMap<User, UserDTO>()
                 .ForMember(m => m.RoleName, x => x.MapFrom(src => src.Role.Role));
             CreateMap<UserDTO, User>()
