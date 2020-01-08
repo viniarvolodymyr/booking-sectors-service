@@ -1,17 +1,20 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
+using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
-using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+using System.Linq;
 using System.Net;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using SoftServe.BookingSectors.WebAPI.BLL.Filters;
+using System.Threading.Tasks;
+using System;
+using System.IO;
+using System.Web.Helpers;
+using Microsoft.AspNetCore.Http;
 
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
@@ -28,7 +31,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             this.mapper = mapper;
             this.logger = logger;
         }
-
+        public async Task<bool> CheckPasswords(string password, int id)
+        {
+            var entity = await database.UserRepository.GetEntityByIdAsync(id);
+            byte[] passToCheck = SHA256Hash.Compute(password);
+            return entity.Password.SequenceEqual(passToCheck);
+        }
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
             var users = await database.UserRepository.GetAllEntitiesAsync();
@@ -38,7 +46,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
             var entity = await database.UserRepository.GetEntityByIdAsync(id);
+
+            if (entity == null)
+            {
+                return null;
+            }
             var dto = mapper.Map<User, UserDTO>(entity);
+
             return dto;
         }
 
@@ -57,6 +71,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dto;
         }
 
+
+
         public async Task<User> UpdateUserById(int id, UserDTO userDTO)
         {
             var user = await database.UserRepository.GetEntityByIdAsync(id);
@@ -64,37 +80,86 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             {
                 return null;
             }
+
             user.Firstname = userDTO.Firstname;
             user.Lastname = userDTO.Lastname;
             user.Phone = userDTO.Phone;
-            user.Password = System.Text.Encoding.ASCII.GetBytes(userDTO.Password);
-            user.ModDate = System.DateTime.Now;
+
             database.UserRepository.UpdateEntity(user);
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? user : null;
+            return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
         }
-
-        
-        public async Task<UserDTO> InsertUserAsync(UserDTO userDTO)
+        public async Task<User> UpdateUserPassById(int id, UserDTO userDTO)
         {
-            var insertedUser = mapper.Map<UserDTO, User>(userDTO);
-            string randomPassword = RandomNumbers.Generate();
-            insertedUser.Password = SHA256Hash.Compute(randomPassword);
-            insertedUser.ModUserId = null;
-
-            await database.UserRepository.InsertEntityAsync(insertedUser);
-            bool isSaved = await database.SaveAsync();
-            if (isSaved == false)
+            var user = await database.UserRepository.GetEntityByIdAsync(id);
+            if (user == null)
             {
                 return null;
             }
-            else
-            {
-                return mapper.Map<User, UserDTO>(insertedUser);
-            }
+
+            user.Password = SHA256Hash.Compute(userDTO.Password);
+
+            database.UserRepository.UpdateEntity(user);
+            bool isSaved = await database.SaveAsync();
+
+            return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
         }
 
+        public async Task<User> UpdateUserPhotoById(int id, IFormFile formFile)
+        {
+            var user = await database.UserRepository.GetEntityByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await formFile.CopyToAsync(memoryStream);
+           
+                // Upload the file if less than 2 MB
+                if (memoryStream.Length < 2097152)
+                {
+                    user.Photo = memoryStream.ToArray();
+                    database.UserRepository.UpdateEntity(user);
+                    bool isSaved = await database.SaveAsync();
+                    return (isSaved == true) ? user : null;
+                }
+                else
+                {
+                    return null;
+                  //  ModelState.AddModelError("File", "The file is too large.");
+                }
+            }
+       
+
+      
+        }
+
+        public async Task<IFormFile> GetUserPhotoById(int id)
+        {
+            var entity = await database.UserRepository.GetEntityByIdAsync(id);
+
+            if (entity == null)
+            {
+                return null;
+            }
+            
+            FormFile file;
+            using (var ms = new MemoryStream(entity.Photo))
+            {
+                File.WriteAllBytes("test.jpg", entity.Photo);
+                file = new FormFile(ms, 0, ms.Length, "file.jpg", "file")
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = "image/jpeg",
+                  
+                };
+
+                return file;
+            }        
+        }
         public async Task<User> DeleteUserByIdAsync(int id)
         {
             var user = await database.UserRepository.DeleteEntityByIdAsync(id);
@@ -105,6 +170,30 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             bool isSaved = await database.SaveAsync();
 
             return (isSaved == true) ? user.Entity : null;
+        }
+
+        public async Task<bool> InsertEmailAsync(int id, string email)
+        {
+            var getEmail = await database.EmailRepository
+                            .GetByCondition(x => x.UserId == id)
+                            .FirstOrDefaultAsync();
+
+
+            Email emailEntity = new Email { UserId = id, Email1 = email };
+
+            if (getEmail == null)
+            {
+                await database.EmailRepository.InsertEntityAsync(emailEntity);
+            }
+            else
+            {
+                emailEntity.Id = getEmail.Id;
+                database.EmailRepository.UpdateEntity(emailEntity);
+            }
+
+
+            return (await database.SaveAsync()) ? true : false;
+
         }
     }
 }

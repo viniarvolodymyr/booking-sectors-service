@@ -6,6 +6,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using SoftServe.BookingSectors.WebAPI.BLL.Filters;
+using SoftServe.BookingSectors.WebApi.BLL.Services.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.Extensions
 {
@@ -30,6 +31,8 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
             services.AddScoped<IBookingSectorService, BookingSectorService>();
             services.AddScoped<ISettingsService, SettingsService>();
             services.AddScoped<ITournamentService, TournamentService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IRegistrationService, RegistrationService>();
 
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using System.Linq;
@@ -8,6 +9,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/tournaments")]
     [ApiController]
+ //   [Authorize(Roles = "Admin")]
     public class TournamentController : ControllerBase
     {
         readonly ITournamentService tournamentService;

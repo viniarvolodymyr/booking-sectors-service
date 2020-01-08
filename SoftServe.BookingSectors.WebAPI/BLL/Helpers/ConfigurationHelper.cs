@@ -8,29 +8,19 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
     /// </summary>
     public static class ConfigurationHelper
     {
-        private static string connection;
 
         /// <summary>
-        /// Get database connection string
+        /// Get parametr in appsettings.json
         /// </summary>
         /// <returns></returns>
-        public static string GetDatabaseConnectionString()
-        {
-            if (string.IsNullOrWhiteSpace(connection))
-            {
-                connection = GetAppSettingsValue();
-            }
-            return connection;
-        }
-
-        private static string GetAppSettingsValue()
+        public static string GetAppSettingsValue(string parametr)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
 
             var config = builder.Build();
-            var value = config.GetValue<string>("AzureConnectionString");
+            var value = config.GetValue<string>(parametr);
             return value;
         }
     }

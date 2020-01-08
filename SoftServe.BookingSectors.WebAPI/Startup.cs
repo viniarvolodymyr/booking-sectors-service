@@ -28,12 +28,13 @@ namespace SoftServe.BookingSectors.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BookingSectorContext>(options => options.UseSqlServer
-                (@ConfigurationHelper.GetDatabaseConnectionString()));
+                (@ConfigurationHelper.GetAppSettingsValue("AzureConnectionString")));
 
 
             services.ConfigureLoggerService();
             services.AddControllers();
             services.ConfigureSwagger();
+            services.ConfigureAuthentication(Configuration);
             services.ConfigureAutoMapper();
             services.ConfigureModelRepositories();
             services.ConfigureDataAccessServices();
@@ -65,6 +66,8 @@ namespace SoftServe.BookingSectors.WebAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

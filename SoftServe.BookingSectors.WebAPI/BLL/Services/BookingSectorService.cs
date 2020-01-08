@@ -30,11 +30,34 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dtos;
         }
 
+
+
+        public async Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentSectorsAsync()
+        {
+            var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
+            var tourBookings = bookings.Where(b=>b.TournamentId != null ).OrderBy(x=> x.TournamentId & x.SectorId);
+
+            var dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(tourBookings);
+
+            return dtos;
+        }
+
+
+
         public async Task<BookingSectorDTO> GetBookingByIdAsync(int id)
         {
             var booking = await database.BookingSectorRepository.GetEntityByIdAsync(id);
             var dto = mapper.Map<BookingSector, BookingSectorDTO>(booking);
 
+            return dto;
+        }
+
+
+        public async Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentByIdAsync(int idTour)
+        {
+            var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
+            var tourBookings = bookings.Where(b => b.TournamentId==idTour).OrderBy(x => x.SectorId);
+            var dto = mapper.Map<IEnumerable<BookingSector>,IEnumerable< BookingSectorDTO>>(tourBookings);
             return dto;
         }
 
@@ -103,6 +126,24 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             bool isSaved = await database.SaveAsync();
 
             return (isSaved == true) ? booking : null;
+        }
+
+        public async Task<BookingSector> UpdateTournamentBooking(int id, BookingSectorDTO bookingSectorDTO)
+        {
+            var bookedTournament = await database.BookingSectorRepository.GetEntityByIdAsync(id);
+            if (bookedTournament == null)
+            {
+                return null;
+            }
+            bookedTournament.Id = id;
+            bookedTournament.BookingStart = bookingSectorDTO.BookingStart;
+            bookedTournament.BookingEnd = bookingSectorDTO.BookingEnd;
+            bookedTournament.IsApproved = bookingSectorDTO.IsApproved;
+            bookedTournament.SectorId = bookingSectorDTO.SectorId;
+            bookedTournament.TournamentId = bookingSectorDTO.TournamentId;
+            database.BookingSectorRepository.UpdateEntity(bookedTournament);
+            bool isSaved = await database.SaveAsync();
+            return (isSaved == true) ? bookedTournament : null;
         }
 
         public async Task<BookingSector> DeleteBookingByIdAsync(int id)

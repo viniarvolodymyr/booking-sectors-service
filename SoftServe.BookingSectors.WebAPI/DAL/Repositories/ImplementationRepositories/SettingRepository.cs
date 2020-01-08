@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System;
 using System.Threading.Tasks;
 
-namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementedRepositories
+namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
     public class SettingRepository : IBaseRepository<Setting>
     {
