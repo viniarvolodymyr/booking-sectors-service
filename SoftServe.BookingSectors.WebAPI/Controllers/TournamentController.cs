@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/tournaments")]
     [ApiController]
+ //   [Authorize(Roles = "Admin")]
     public class TournamentController : ControllerBase
     {
         readonly ITournamentService tournamentService;
-        readonly ITournamentSectorService tournamentSectorService;
-        public TournamentController(ITournamentService tournamentService, ITournamentSectorService tournamentSectorService)
+        public TournamentController(ITournamentService tournamentService)
         {
             this.tournamentService = tournamentService;
-            this.tournamentSectorService = tournamentSectorService;
-
         }
 
         [HttpGet]
@@ -82,11 +78,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [Route("{tourId}")]
         public async Task<ActionResult> Delete(int tourId)
         {
-            var sectors = await tournamentSectorService.DeleteAllTournamentSectorsAsync(tourId);
-            if (sectors == null)
-            {
-                return NotFound();
-            }
             var tournament = await tournamentService.DeleteTournamentByIdAsync(tourId);
             if (tournament == null)
             {

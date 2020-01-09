@@ -1,5 +1,6 @@
-﻿using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using System;
+using System.IO;
+using System.Web;
+using Microsoft.AspNetCore.Http;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
 {
@@ -14,6 +15,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
         public string RoleName { get; set; }
         public int CreateUserId { get; set; }
         public int? ModUserId { get; set; }
-        public string Photo { get; set; }
+        public IFormFile Photo { get; set; }
     }
 }

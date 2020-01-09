@@ -4,42 +4,53 @@ using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
     public class BookingSectorRepository : IBaseRepository<BookingSector>
     {
-        private readonly BookingSectorContext db;
-        private readonly DbSet<BookingSector> dbSet;
+        private readonly BookingSectorContext context;
+        private readonly DbSet<BookingSector> bookingSectorSet;
 
         public BookingSectorRepository(BookingSectorContext context)
         {
-            db = context;
-            dbSet = db.Set<BookingSector>();
-        }
-        public Task<List<BookingSector>> GetAllEntitiesAsync()
-        {
-            return dbSet.AsNoTracking().ToListAsync();
-        }
-        public Task<BookingSector> GetEntityByIdAsync(int id)
-        {
-            return dbSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
-        }
-        public ValueTask<EntityEntry<BookingSector>> InsertEntityAsync(BookingSector entity)
-        {
-            return dbSet.AddAsync(entity);
-        }
-        public void UpdateEntity(BookingSector entity)
-        {
-            dbSet.Attach(entity);
-            db.Entry(entity).State = EntityState.Modified;
+            this.context = context;
+            bookingSectorSet = context.Set<BookingSector>();
         }
 
-        public async Task DeleteEntityByIdAsync(int id)
+        public Task<List<BookingSector>> GetAllEntitiesAsync()
         {
-            var existingBooking = await dbSet.FindAsync(id);
-            dbSet.Remove(existingBooking);
-        }      
+            return bookingSectorSet.AsNoTracking().ToListAsync();
+        }
+
+        public Task<BookingSector> GetEntityByIdAsync(int id)
+        {
+            return bookingSectorSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+        }
+
+        public IQueryable<BookingSector> GetByCondition(Expression<Func<BookingSector, bool>> expression)
+        {
+            return bookingSectorSet.Where(expression).AsNoTracking();
+        }
+
+        public ValueTask<EntityEntry<BookingSector>> InsertEntityAsync(BookingSector entityToInsert)
+        {
+            return bookingSectorSet.AddAsync(entityToInsert);
+        }
+
+        public void UpdateEntity(BookingSector entityToUpdate)
+        {
+            bookingSectorSet.Attach(entityToUpdate);
+            context.Entry(entityToUpdate).State = EntityState.Modified;
+        }
+
+        public async Task<EntityEntry<BookingSector>> DeleteEntityByIdAsync(int id)
+        {
+            BookingSector entityToDelete = await bookingSectorSet.FindAsync(id);
+            return bookingSectorSet.Remove(entityToDelete);
+        }
     }
 }

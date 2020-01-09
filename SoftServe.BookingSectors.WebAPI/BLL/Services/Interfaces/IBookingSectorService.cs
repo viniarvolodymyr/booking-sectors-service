@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System;
 using System.Collections.Generic;
@@ -11,10 +10,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
     {
         Task<IEnumerable<BookingSectorDTO>> GetBookingSectorsAsync();
         Task<BookingSectorDTO> GetBookingByIdAsync(int id);
-        Task<IEnumerable<SectorDTO>> GetFreeSectorsAsync(DateTime fromDate, DateTime toDate);
-        ValueTask<EntityEntry<BookingSector>> BookSector(int sectorId, DateTime fromDate, DateTime toDate, int userId);
-        Task UpdateBookingApprovedAsync(int id, bool isApproved);
-        Task DeleteBookingByIdAsync(int id);
-        void Dispose();
+        Task<IEnumerable<SectorDTO>> FilterSectorsByDate(DateTime fromDate, DateTime toDate);
+        Task<BookingSectorDTO> BookSector(BookingSectorDTO bookingSectorDTO);
+        Task<BookingSector> UpdateBookingApprovedAsync(int id, bool isApproved);
+        Task<BookingSector> DeleteBookingByIdAsync(int id);
+
+        Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentSectorsAsync();
+        Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentByIdAsync(int idTour);
+        Task<BookingSector> UpdateTournamentBooking(int id, BookingSectorDTO bookingSectorDTO);
+
     }
 }

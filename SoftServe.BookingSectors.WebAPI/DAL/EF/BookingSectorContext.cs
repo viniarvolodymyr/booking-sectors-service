@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using System;
-using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.EF
 {
@@ -17,11 +15,12 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
         }
 
         public virtual DbSet<BookingSector> BookingSector { get; set; }
+        public virtual DbSet<Email> Email { get; set; }
         public virtual DbSet<Language> Language { get; set; }
         public virtual DbSet<Sector> Sector { get; set; }
         public virtual DbSet<Setting> Setting { get; set; }
+        public virtual DbSet<Token> Token { get; set; }
         public virtual DbSet<Tournament> Tournament { get; set; }
-        public virtual DbSet<TournamentSector> TournamentSector { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
 
@@ -59,6 +58,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
 
                 entity.Property(e => e.SectorId).HasColumnName("SECTOR_ID");
 
+                entity.Property(e => e.TournamentId).HasColumnName("TOURNAMENT_ID");
+
                 entity.Property(e => e.UserId).HasColumnName("USER_ID");
 
                 entity.HasOne(d => d.Sector)
@@ -67,11 +68,35 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SECTOR_ID");
 
+                entity.HasOne(d => d.Tournament)
+                    .WithMany(p => p.BookingSector)
+                    .HasForeignKey(d => d.TournamentId)
+                    .HasConstraintName("FK_TOURNAMENT_ID");
+
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.BookingSector)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_USER_ID");
+            });
+
+            modelBuilder.Entity<Email>(entity =>
+            {
+                entity.ToTable("EMAIL");
+
+                entity.HasIndex(e => e.UserId)
+                    .HasName("UQ__EMAIL__F3BEEBFE9FCE3036")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Email1)
+                    .IsRequired()
+                    .HasColumnName("EMAIL")
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UserId).HasColumnName("USER_ID");
             });
 
             modelBuilder.Entity<Language>(entity =>
@@ -151,9 +176,11 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
             {
                 entity.ToTable("SETTING");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .ValueGeneratedNever();
+                entity.HasIndex(e => e.Name)
+                    .HasName("UK_NAME")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.CreateDate)
                     .HasColumnName("CREATE_DATE")
@@ -178,6 +205,39 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                 entity.Property(e => e.Value).HasColumnName("VALUE");
             });
 
+            modelBuilder.Entity<Token>(entity =>
+            {
+                entity.ToTable("TOKEN");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CreateDate)
+                    .HasColumnName("CREATE_DATE")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.CreateId).HasColumnName("CREATE_ID");
+
+                entity.Property(e => e.ModDate)
+                    .HasColumnName("MOD_DATE")
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.ModId).HasColumnName("MOD_ID");
+
+                entity.Property(e => e.RefreshToken).HasColumnName("REFRESH_TOKEN");
+
+                entity.HasOne(d => d.Create)
+                    .WithMany(p => p.TokenCreate)
+                    .HasForeignKey(d => d.CreateId)
+                    .HasConstraintName("FK_CREATE_TOKEN_USER");
+
+                entity.HasOne(d => d.Mod)
+                    .WithMany(p => p.TokenMod)
+                    .HasForeignKey(d => d.ModId)
+                    .HasConstraintName("FK_MOD_TOKEN_USER");
+            });
+
             modelBuilder.Entity<Tournament>(entity =>
             {
                 entity.ToTable("TOURNAMENT");
@@ -191,13 +251,10 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
 
                 entity.Property(e => e.CreateUserId).HasColumnName("CREATE_USER_ID");
 
-                entity.Property(e => e.DateEnd)
-                    .HasColumnName("DATE_END")
-                    .HasColumnType("date");
-
-                entity.Property(e => e.DateStart)
-                    .HasColumnName("DATE_START")
-                    .HasColumnType("date");
+                entity.Property(e => e.Description)
+                    .HasColumnName("DESCRIPTION")
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.ModDate)
                     .HasColumnName("MOD_DATE")
@@ -213,43 +270,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .IsUnicode(false);
 
                 entity.Property(e => e.PreparationTerm).HasColumnName("PREPARATION_TERM");
-            });
-
-            modelBuilder.Entity<TournamentSector>(entity =>
-            {
-                entity.ToTable("TOURNAMENT_SECTOR");
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.CreateDate)
-                    .HasColumnName("CREATE_DATE")
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.CreateUserId).HasColumnName("CREATE_USER_ID");
-
-                entity.Property(e => e.SectorsId).HasColumnName("SECTOR_ID");
-
-                entity.Property(e => e.TournamentId).HasColumnName("TOURNAMENT_ID");
-
-                entity.Property(e => e.ModDate)
-                    .HasColumnName("MOD_DATE")
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.ModUserId).HasColumnName("MOD_USER_ID");
-
-                entity.HasOne(d => d.IdSectorsNavigation)
-                    .WithMany(p => p.TournamentSector)
-                    .HasForeignKey(d => d.SectorsId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_SECTORS_ID");
-
-                entity.HasOne(d => d.IdTournamentNavigation)
-                    .WithMany(p => p.TournamentSector)
-                    .HasForeignKey(d => d.TournamentId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TOURNAMENT_ID");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -339,11 +359,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
             });
 
             OnModelCreatingPartial(modelBuilder);
-        }
-
-        internal Task<Sector> FindAsync(int id)
-        {
-            throw new NotImplementedException();
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

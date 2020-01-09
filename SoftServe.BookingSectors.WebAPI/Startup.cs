@@ -1,18 +1,16 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Microsoft.EntityFrameworkCore;
-using AutoMapper;
-using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
-using SoftServe.BookingSectors.WebAPI.BLL.Services;
-using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
-using SoftServe.BookingSectors.WebAPI.DAL.EF;
-using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
-using SoftServe.BookingSectors.WebAPI.BLL.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
+using SoftServe.BookingSectors.WebAPI.DAL.EF;
+using SoftServe.BookingSectors.WebAPI.Extensions;
+using NLog;
+using System;
+using System.IO;
+using SoftServe.BookingSectors.WebAPI.BLL.Filters;
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -20,6 +18,7 @@ namespace SoftServe.BookingSectors.WebAPI
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             Configuration = configuration;
         }
 
@@ -29,29 +28,19 @@ namespace SoftServe.BookingSectors.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<BookingSectorContext>(options => options.UseSqlServer
-            (@ConfigurationHelper.GetDatabaseConnectionString()));
+                (@ConfigurationHelper.GetAppSettingsValue("AzureConnectionString")));
 
+
+            services.ConfigureLoggerService();
             services.AddControllers();
+            services.ConfigureSwagger();
+            services.ConfigureAuthentication(Configuration);
+            services.ConfigureAutoMapper();
+            services.ConfigureModelRepositories();
+            services.ConfigureDataAccessServices();
+            services.ConfigureCors();
+            services.ConfigureFilters();
 
-            services.AddSwaggerGen(x =>
-            {
-                x.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
-            });
-
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
-
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
-            services.AddTransient<IUnitOfWork, EFUnitOfWork>();
-
-            services.AddTransient<ISectorService, SectorService>();
-            services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ITournamentSectorService, TournamentSectorService>();
-            services.AddTransient<ITournamentService, TournamentService>();
-            services.AddTransient<IBookingSectorService, BookingSectorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,17 +50,24 @@ namespace SoftServe.BookingSectors.WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+            
 
+            app.UseHttpStatusCodeExceptionMiddleware();
+             
             app.UseSwagger();
 
             app.UseSwaggerUI(x =>
             {
                 x.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
             });
+           
+            app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
