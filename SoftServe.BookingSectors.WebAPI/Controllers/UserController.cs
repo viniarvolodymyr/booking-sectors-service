@@ -137,6 +137,21 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
                 return Ok(user);
             }
         }
+        [HttpPut]
+        [Route("email/{email}")]
+        public async Task<IActionResult> SendEmail([FromRoute]string email)
+        {
+
+            var user = await userService.SendEmailAsync(email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(user);
+            }
+        }
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute]int id)

@@ -171,7 +171,32 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             return (isSaved == true) ? user.Entity : null;
         }
+        public async Task<RegistrationDTO> SendEmailAsync(string userEmail)
+        {
+            
+            var getEmail = await database.EmailRepository
+                          .GetByCondition(x => x.Email1 == userEmail)
+                          .FirstOrDefaultAsync();
 
+            var entity = await database.UserRepository.GetEntityByIdAsync(getEmail.UserId);
+
+            RegistrationDTO userDTO = mapper.Map<User, RegistrationDTO>(entity);
+            if (entity == null)
+            {
+                return null;
+            }
+            string email = userEmail.Trim();
+
+            EmailSender sender = new EmailSender($"Hello, {userDTO.Firstname}." +
+                                                 $" You can set a new password by following this link: {Environment.NewLine}" +
+                                                 $" http://localhost:4200/set-password {Environment.NewLine} Have a nice day :) ");
+
+            await sender.SendAsync("Reset password on TridentLake",
+                         email,
+                         $"{userDTO.Lastname} {userDTO.Firstname}");
+
+            return userDTO;
+        }
         public async Task<bool> InsertEmailAsync(int id, string email)
         {
             var getEmail = await database.EmailRepository
