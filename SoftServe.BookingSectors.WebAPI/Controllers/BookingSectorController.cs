@@ -18,8 +18,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             this.bookingSectorService = bookingSectorService;
         }
 
-        [HttpGet]
-        
+        [HttpGet]   
         public async Task<IActionResult> Get()
         {
             var dtos = await bookingSectorService.GetBookingSectorsAsync();
@@ -56,27 +55,43 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> Get([FromRoute]int id)
         {
             var dto = await bookingSectorService.GetBookingByIdAsync(id);
-            if (dto == null)
-            {
-                return NotFound();
-            }
-            else
+            if (dto != null)
             {
                 return Ok(dto);
             }
+            else
+            {
+                return NotFound();
+            }
         }
+
+        [HttpGet]
+        [Route("byUserId/{id}")]
+        public async Task<IActionResult> GetByUserId([FromRoute]int id)
+        {
+            var dtos = await bookingSectorService.GetBookingsByUserId(id);
+            if(dtos.Any())
+            {
+                return Ok(dtos);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpGet]
         [Route("tournaments/{id}")]
         public async Task<IActionResult> GetTournament([FromRoute]int id)
         {
             var dto = await bookingSectorService.GetBookingTournamentByIdAsync(id);
-            if (dto == null)
+            if (dto != null)
             {
-                return NotFound();
+                return Ok(dto);
             }
             else
             {
-                return Ok(dto);
+                return NotFound();
             }
         }
 
@@ -85,13 +100,13 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> Post([FromBody]BookingSectorDTO bookingDTO)
         {
             var dto = await bookingSectorService.BookSector(bookingDTO);
-            if (dto == null)
+            if (dto != null)
             {
-                return BadRequest();
+                return Created($"api/bookings/{dto.Id}", dto);
             }
             else
             {
-                return Created($"api/bookings/{dto.Id}", dto);
+                return BadRequest();
             }
         }
 
@@ -101,31 +116,30 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> Put([FromRoute]int id, [FromQuery]bool isApproved)
         {
             var booking = await bookingSectorService.UpdateBookingApprovedAsync(id, isApproved);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-            else
+            if (booking != null)
             {
                 return Ok(booking);
             }
+            else
+            {
+                return NotFound();
+            }
         }
+
         [HttpPut]
         [Route("tournaments/{id}")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromBody] BookingSectorDTO bookingSectorDTO)
         {
-            var bookedTournament = await bookingSectorService.UpdateTournamentBooking(id, bookingSectorDTO);
-            if (bookedTournament == null)
+            var tournament = await bookingSectorService.UpdateTournamentBooking(id, bookingSectorDTO);
+            if (tournament != null)
             {
-                return NotFound();
+                return Ok(tournament);
             }
             else
             {
-                return Ok(bookedTournament);
+                return NotFound();
             }
         }
-
-
 
         [HttpDelete]
         [Route("{id}")]
@@ -133,13 +147,13 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
             var booking = await bookingSectorService.DeleteBookingByIdAsync(id);
-            if (booking == null)
+            if (booking != null)
             {
-                return NotFound();
+                return Ok(booking);
             }
             else
             {
-                return Ok(booking);
+                return NotFound();
             }
         }
     }
