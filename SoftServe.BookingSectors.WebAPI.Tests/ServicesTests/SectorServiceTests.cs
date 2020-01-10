@@ -21,7 +21,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         readonly Mock<IUnitOfWork> unitOfWork;
         readonly Mock<IBaseRepository<Sector>> repository;
         List<Sector> sectorsContext;
-
+        SectorDTO sectorDTO;
         public SectorServiceTests()
         {
             var config = new MapperConfiguration(cfg =>
@@ -38,6 +38,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         public void SetUp()
         {
             sectorsContext = SectorData.Sectors;
+            sectorDTO = SectorData.SectorDTOToInsert;
         }
 
         [Test]
@@ -50,6 +51,25 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             //Assert
             Assert.IsNotNull(results);
             Assert.AreEqual(sectorsContext.Count, results.Count);
+        }
+        [Test]
+        public async Task InsertSector_SectorData_OneInserted()
+        {
+            repository.Setup(r => r.InsertEntityAsync(It.IsAny<Sector>()))
+                .Callback<Sector>(s =>
+                {
+                    s.Id = ++sectorsContext[sectorsContext.Count - 1].Id;
+                    sectorsContext.Add(s);
+                }).ReturnsAsync((Sector s) => s);
+
+            //Act
+            var result = await sectorService.InsertSectorAsync(sectorDTO);
+            //Assert
+            Assert.AreEqual(4, result.Id);
+            //Assert.IsNotNull(result);
+            //Assert.AreEqual(sectorDTO.Description, sectorsContext[sectorsContext.Count - 1].Description);
+
+            //Assert.AreEqual(4, sectorsContext.Count);
         }
     }
 }
