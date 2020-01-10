@@ -13,14 +13,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
         /// Get parametr in appsettings.json
         /// </summary>
         /// <returns></returns>
-        public static string GetAppSettingsValue(string parametr)
+        public static string GetAppSettingsValue(string parameter)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
 
             var config = builder.Build();
-            var value = config.GetValue<string>(parametr);
+            var value = config.GetValue<string>(parameter);
             return value;
         }
     }

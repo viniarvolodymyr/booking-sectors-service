@@ -46,12 +46,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
             var entity = await database.UserRepository.GetEntityByIdAsync(id);
-
             if (entity == null)
             {
                 return null;
             }
             var dto = mapper.Map<User, UserDTO>(entity);
+            dto.Photo = Convert.ToBase64String(entity.Photo);
 
             return dto;
         }
@@ -137,7 +137,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
       
         }
 
-        public async Task<IFormFile> GetUserPhotoById(int id)
+        public async Task<string> GetUserPhotoById(int id)
         {
             var entity = await database.UserRepository.GetEntityByIdAsync(id);
 
@@ -145,7 +145,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             {
                 return null;
             }
-            
+            var b64 = Convert.ToBase64String(entity.Photo);
             FormFile file;
             using (var ms = new MemoryStream(entity.Photo))
             {
@@ -157,7 +157,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                   
                 };
 
-                return file;
+                return b64;
             }        
         }
         public async Task<User> DeleteUserByIdAsync(int id)

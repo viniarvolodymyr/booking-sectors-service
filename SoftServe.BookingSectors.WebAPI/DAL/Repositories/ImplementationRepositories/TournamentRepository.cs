@@ -37,9 +37,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return tournamentSet.Where(expression).AsNoTracking();
         }
 
-        public  ValueTask<EntityEntry<Tournament>> InsertEntityAsync(Tournament entity)
+        public async Task<Tournament> InsertEntityAsync(Tournament entity)
         {
-            return tournamentSet.AddAsync(entity);
+            return (await tournamentSet.AddAsync(entity)).Entity;
         }
 
         public void UpdateEntity(Tournament entity)

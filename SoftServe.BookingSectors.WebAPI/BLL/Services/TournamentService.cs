@@ -45,7 +45,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             else
             {
-                return mapper.Map<Tournament, TournamentDTO>(insertedTournament.Entity);
+                return mapper.Map<Tournament, TournamentDTO>(insertedTournament);
             }
         }
 
