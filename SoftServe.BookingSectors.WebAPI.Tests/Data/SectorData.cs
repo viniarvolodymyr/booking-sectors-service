@@ -1,4 +1,5 @@
-﻿using SoftServe.BookingSectors.WebAPI.DAL.Models;
+﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System;
 using System.Collections.Generic;
 
@@ -47,6 +48,15 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.Data
                 ModDate = new DateTime(2020, 01, 02, 10, 30, 0),
                 ModUserId = 2 
             }
+        };
+        public static SectorDTO SectorDTOToInsert { get; } = new SectorDTO()
+        {
+            Id = 4,
+            Number = 4,
+            Description = "Sector 4",
+            GpsLat = 49.472219M,
+            GpsLng = 23.098712M,
+            IsActive = true
         };
     }
 }
