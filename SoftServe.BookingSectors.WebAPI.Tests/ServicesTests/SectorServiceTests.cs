@@ -52,24 +52,5 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             Assert.IsNotNull(results);
             Assert.AreEqual(sectorsContext.Count, results.Count);
         }
-        [Test]
-        public async Task InsertSector_SectorData_OneInserted()
-        {
-            repository.Setup(r => r.InsertEntityAsync(It.IsAny<Sector>()))
-                .Callback<Sector>(s =>
-                {
-                    s.Id = ++sectorsContext[sectorsContext.Count - 1].Id;
-                    sectorsContext.Add(s);
-                }).ReturnsAsync((Sector s) => s);
-
-            //Act
-            var result = await sectorService.InsertSectorAsync(sectorDTO);
-            //Assert
-            Assert.AreEqual(4, result.Id);
-            //Assert.IsNotNull(result);
-            //Assert.AreEqual(sectorDTO.Description, sectorsContext[sectorsContext.Count - 1].Description);
-
-            //Assert.AreEqual(4, sectorsContext.Count);
-        }
     }
 }
