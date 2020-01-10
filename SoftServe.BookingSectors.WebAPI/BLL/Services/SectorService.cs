@@ -66,7 +66,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             else
             {
-                return mapper.Map<Sector, SectorDTO>(insertedSector.Entity);
+                return mapper.Map<Sector, SectorDTO>(insertedSector);
             }
         }
 
