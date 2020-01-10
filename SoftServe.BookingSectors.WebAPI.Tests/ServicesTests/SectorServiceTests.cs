@@ -30,6 +30,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             });
             repository = new Mock<IBaseRepository<Sector>>();
             unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(u => u.SaveAsync()).ReturnsAsync(true);
             unitOfWork.Setup(u => u.SectorRepository).Returns(repository.Object);
             sectorService = new SectorService(unitOfWork.Object, config.CreateMapper());
         }
@@ -51,6 +52,23 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             //Assert
             Assert.IsNotNull(results);
             Assert.AreEqual(sectorsContext.Count, results.Count);
+        }
+        [Test]
+        public async Task InsertSector_SectorData_OneInserted()
+        {
+            //Arrange
+            repository.Setup(r => r.InsertEntityAsync(It.IsAny<Sector>()))
+                .ReturnsAsync((Sector s) =>
+                {
+                    s.Id = sectorDTO.Id;
+                    sectorsContext.Add(s);
+                    return s;
+                });
+            //Act
+            var result = await sectorService.InsertSectorAsync(sectorDTO);
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(sectorDTO.Id, result.Id);
         }
     }
 }
