@@ -74,10 +74,22 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             }
         };
 
+        private BookingSectorDTO bookingSector { get; } = new BookingSectorDTO() // #TODO: Move to diff file
+        {
+            Id = 10,
+            UserId = 2,
+            SectorId = 2,
+            BookingStart = new DateTime(2020, 1, 9),
+            BookingEnd = new DateTime(2020, 1, 10),
+            IsApproved = false,      
+            CreateUserId = 2         
+        };
+
         [SetUp]
         public void Setup()
         {
             bookingsContext = bookings;
+            bookingSectorDTOToInsert = bookingSector;
             unitOfWorkMock.Setup(u => u.SaveAsync()).ReturnsAsync(true);
             unitOfWorkMock.Setup(u => u.BookingSectorRepository).Returns(bookingSectorRepositoryMock.Object);
             bookingSectorRepositoryMock.Setup(b => b.GetAllEntitiesAsync()).ReturnsAsync(bookingsContext);
@@ -91,6 +103,22 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<IEnumerable<BookingSectorDTO>>(result);
             Assert.AreEqual(bookingsContext.Count, (result as List<BookingSectorDTO>).Count);
+        }
+
+        [Test]
+        public async Task BookSectorAsync_BookingSectorToInsert_GetInsertedBooking()
+        {
+            bookingSectorRepositoryMock.Setup(b => b.InsertEntityAsync(It.IsAny<BookingSector>()))
+                .ReturnsAsync((BookingSector b) =>
+                {
+                    b.Id = bookingSectorDTOToInsert.Id;
+                    bookingsContext.Add(b);
+                    return b;
+                });
+
+            var result = await bookingSectorService.BookSector(bookingSectorDTOToInsert);
+
+            Assert.AreEqual(bookingSectorDTOToInsert.Id, result.Id);
         }
     }
 }
