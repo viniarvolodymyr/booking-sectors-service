@@ -43,7 +43,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         }
 
         [Test]
-        public async Task GetAllSectors_SectorDataSectors_AllReturned()
+        public async Task GetAllSectors_SectorDataSectors_AllSectorsReturned()
         {
             //Arrange
             repository.Setup(r => r.GetAllEntitiesAsync()).ReturnsAsync(sectorsContext);
@@ -53,8 +53,25 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             Assert.IsNotNull(results);
             Assert.AreEqual(sectorsContext.Count, results.Count);
         }
+
         [Test]
-        public async Task InsertSector_SectorData_OneInserted()
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public async Task GetSectorById_SectorDataSectors_OneSectorReturned(int id)
+        {
+            //Arrange
+            repository.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => sectorsContext.Find(s => s.Id == id));
+            //Act
+            var result = await sectorService.GetSectorByIdAsync(id);
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(sectorsContext[id - 1].Id, result.Id);
+        }
+
+        [Test]
+        public async Task InsertSector_SectorData_SectorInserted()
         {
             //Arrange
             repository.Setup(r => r.InsertEntityAsync(It.IsAny<Sector>()))
