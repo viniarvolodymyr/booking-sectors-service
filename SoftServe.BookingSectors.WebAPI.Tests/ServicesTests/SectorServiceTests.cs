@@ -10,7 +10,9 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.Tests.Data;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -100,6 +102,21 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(sectorDTO.Id, result.Id);
+        }
+
+        [Test]
+        [TestCase(1)]
+        public async Task UpdateSector_SectorData_SectorUpdated(int id)
+        {
+            //Arrange
+            sectorRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => sectorsContext.Find(s => s.Id == id));
+            sectorRepositoryMock.Setup(r => r.UpdateEntity(It.IsAny<Sector>()));
+            //Act
+            var result = await sectorService.UpdateSectorAsync(id, sectorDTO); 
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(id, result.Id);
         }
 
         [Test]

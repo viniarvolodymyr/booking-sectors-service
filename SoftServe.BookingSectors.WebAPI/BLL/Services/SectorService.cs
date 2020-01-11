@@ -79,9 +79,10 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             sector.CreateDate = existedSector.CreateDate;
             sector.ModDate = DateTime.Now;
             database.SectorRepository.UpdateEntity(sector);
+            var updatedSectorDTO = mapper.Map<Sector, SectorDTO>(sector);
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? sectorDTO : null;
+            return (isSaved == true) ? updatedSectorDTO : null;
         }
 
         public async Task<SectorDTO> DeleteSectorByIdAsync(int id)
