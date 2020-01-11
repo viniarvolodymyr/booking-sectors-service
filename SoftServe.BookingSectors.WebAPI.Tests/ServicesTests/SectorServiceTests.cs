@@ -20,35 +20,43 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
     class SectorServiceTests
     {
         readonly ISectorService sectorService;
-        readonly Mock<IUnitOfWork> unitOfWork;
-        readonly Mock<IBaseRepository<Sector>> repository;
+        readonly Mock<IUnitOfWork> unitOfWorkMock;
+        readonly Mock<IBaseRepository<Sector>> sectorRepositoryMock;
         List<Sector> sectorsContext;
         SectorDTO sectorDTO;
+
         public SectorServiceTests()
         {
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<SectorProfile>();
             });
-            repository = new Mock<IBaseRepository<Sector>>();
-            unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(u => u.SaveAsync()).ReturnsAsync(true);
-            unitOfWork.Setup(u => u.SectorRepository).Returns(repository.Object);
-            sectorService = new SectorService(unitOfWork.Object, config.CreateMapper());
+            sectorRepositoryMock = new Mock<IBaseRepository<Sector>>();
+            unitOfWorkMock = new Mock<IUnitOfWork>();
+            unitOfWorkMock.Setup(u => u.SaveAsync()).ReturnsAsync(true);
+            unitOfWorkMock.Setup(u => u.SectorRepository).Returns(sectorRepositoryMock.Object);
+            sectorService = new SectorService(unitOfWorkMock.Object, config.CreateMapper());
         }
 
         [SetUp]
         public void SetUp()
         {
-            sectorsContext = SectorData.Sectors;
-            sectorDTO = SectorData.SectorDTOToInsert;
+            SectorData sectorData = new SectorData();
+            sectorsContext = sectorData.Sectors;
+            sectorDTO = sectorData.SectorDTOToInsert;
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            sectorsContext.Clear();
         }
 
         [Test]
         public async Task GetAllSectors_SectorDataSectors_AllSectorsReturned()
         {
             //Arrange
-            repository.Setup(r => r.GetAllEntitiesAsync()).ReturnsAsync(sectorsContext);
+            sectorRepositoryMock.Setup(r => r.GetAllEntitiesAsync()).ReturnsAsync(sectorsContext);
             //Act
             var results = await sectorService.GetSectorsAsync() as List<SectorDTO>;
             //Assert
@@ -63,10 +71,14 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         public async Task GetSectorById_SectorDataSectors_OneSectorReturned(int id)
         {
             //Arrange
-            repository.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
+            sectorRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((int id) => sectorsContext.Find(s => s.Id == id));
             //Act
             var result = await sectorService.GetSectorByIdAsync(id);
+            if (result == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Sector with id: {id} not found when trying to get sector.");
+            }
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(sectorsContext[id - 1].Id, result.Id);
@@ -76,7 +88,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         public async Task InsertSector_SectorData_SectorInserted()
         {
             //Arrange
-            repository.Setup(r => r.InsertEntityAsync(It.IsAny<Sector>()))
+            sectorRepositoryMock.Setup(r => r.InsertEntityAsync(It.IsAny<Sector>()))
                 .ReturnsAsync((Sector s) =>
                 {
                     s.Id = sectorDTO.Id;
@@ -91,19 +103,27 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         }
 
         [Test]
+        [TestCase(1)]
         public async Task DeleteSector_SectorData_SectorDeleted(int id)
         {
-            repository.Setup(r => r.DeleteEntityByIdAsync(It.IsAny<int>()))
+            //Arrange
+            sectorRepositoryMock.Setup(r => r.DeleteEntityByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((int id) =>
                 {
                     var founded = sectorsContext.Find(s => s.Id == id);
-                    if (founded != null)
+                    if (founded == null)
                     {
                         throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Sector with id: {id} not found when trying to delete sector. Sector wasn't deleted.");
                     }
                     sectorsContext.Remove(founded);
                     return founded;
                 });
+            int contextLength = sectorsContext.Count;
+            //Act
+            var result = await sectorService.DeleteSectorByIdAsync(id);
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(contextLength - 1, sectorsContext.Count);
         }
     }
 }

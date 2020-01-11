@@ -5,9 +5,10 @@ using System.Collections.Generic;
 
 namespace SoftServe.BookingSectors.WebAPI.Tests.Data
 {
-    static class SectorData
+    public class SectorData
     {
-        public static List<Sector> Sectors { get; } = new List<Sector>()
+        public SectorData() { }
+        public List<Sector> Sectors { get; } = new List<Sector>()
         {
             new Sector 
             { 
@@ -49,7 +50,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.Data
                 ModUserId = 2 
             }
         };
-        public static SectorDTO SectorDTOToInsert { get; } = new SectorDTO()
+        public SectorDTO SectorDTOToInsert { get; } = new SectorDTO()
         {
             Id = 4,
             Number = 4,
