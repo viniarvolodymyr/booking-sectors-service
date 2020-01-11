@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
