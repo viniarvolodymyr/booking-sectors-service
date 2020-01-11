@@ -12,6 +12,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
     {
         private readonly IUnitOfWork database;
         private readonly IMapper mapper;
+
         public TournamentService(IUnitOfWork database, IMapper mapper)
         {
             this.database = database;
@@ -71,7 +72,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 return  null;
             }
             bool isSaved = await database.SaveAsync();
-            return (isSaved == true) ? tournament.Entity : null;
+            return (isSaved == true) ? tournament : null;
         }
 
         public void Dispose()

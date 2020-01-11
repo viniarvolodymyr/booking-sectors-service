@@ -48,19 +48,18 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return (await emailSet.AddAsync(entityToInsert)).Entity;
         }
 
-        public void UpdateEntity(Email entityToUpdate)
+        public Email UpdateEntity(Email entityToUpdate)
         {
-            emailSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            return emailSet.Update(entityToUpdate).Entity;
         }
-        public async Task<EntityEntry<Email>> DeleteEntityByIdAsync(int id)
+        public async Task<Email> DeleteEntityByIdAsync(int id)
         {
             var entityToDelete = await emailSet.FindAsync(id);
             if (entityToDelete == null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"User-Email with id: {id} not found when trying to update entity. Entity was no Deleted.");
             }
-            return emailSet.Remove(entityToDelete);
+            return emailSet.Remove(entityToDelete).Entity;
         }
     }
 }

@@ -13,7 +13,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
         Task<T> GetEntityByIdAsync(int id);
         IQueryable<T> GetByCondition(Expression<Func<T, bool>> expression);
         Task<T> InsertEntityAsync(T entity);
-        void UpdateEntity(T entity);
-        Task<EntityEntry<T>> DeleteEntityByIdAsync(int id);
+        T UpdateEntity(T entity);
+        Task<T> DeleteEntityByIdAsync(int id);
     }
 }
