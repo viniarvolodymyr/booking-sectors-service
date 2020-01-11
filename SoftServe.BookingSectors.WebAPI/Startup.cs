@@ -18,7 +18,8 @@ namespace SoftServe.BookingSectors.WebAPI
     {
         public Startup(IConfiguration configuration)
         {
-            LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
+            LogManager.LoadConfiguration(configFile: $"{Directory.GetCurrentDirectory()}/nlog.config");
+         
             Configuration = configuration;
         }
 
@@ -29,7 +30,6 @@ namespace SoftServe.BookingSectors.WebAPI
         {
             services.AddDbContext<BookingSectorContext>(options => options.UseSqlServer
                 (@ConfigurationHelper.GetAppSettingsValue("AzureConnectionString")));
-
 
             services.ConfigureLoggerService();
             services.AddControllers();
@@ -50,7 +50,6 @@ namespace SoftServe.BookingSectors.WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-            
 
             app.UseHttpStatusCodeExceptionMiddleware();
              

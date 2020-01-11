@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.IO;
-
 namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
 {
     /// <summary>
@@ -8,7 +7,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
     /// </summary>
     public static class ConfigurationHelper
     {
-
         /// <summary>
         /// Get parametr in appsettings.json
         /// </summary>
@@ -21,6 +19,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
 
             var config = builder.Build();
             var value = config.GetValue<string>(parameter);
+
             return value;
         }
     }

@@ -54,13 +54,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 var changes = context.ChangeTracker.Entries().Count(
                     p => p.State == EntityState.Modified || p.State == EntityState.Deleted
                                                          || p.State == EntityState.Added);
-                if (changes == 0)
-                {
-                    return true;
-                }
-
-
-                return await context.SaveChangesAsync() > 0;
+               
+                return changes == 0 || await context.SaveChangesAsync() > 0;
             }
             catch (DbUpdateException e)
             {

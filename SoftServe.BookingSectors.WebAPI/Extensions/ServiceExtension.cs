@@ -6,7 +6,6 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using SoftServe.BookingSectors.WebAPI.BLL.Filters;
-using SoftServe.BookingSectors.WebApi.BLL.Services.Interfaces;
 
 namespace SoftServe.BookingSectors.WebAPI.Extensions
 {

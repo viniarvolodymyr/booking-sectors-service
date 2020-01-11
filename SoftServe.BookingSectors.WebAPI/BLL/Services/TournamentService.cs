@@ -37,6 +37,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var tournamentToInsert = mapper.Map<TournamentDTO, Tournament>(tournamentDTO);
             var insertedTournament = await database.TournamentRepository.InsertEntityAsync(tournamentToInsert);
+
             bool isSaved = await database.SaveAsync();
             if (isSaved == false)
             {

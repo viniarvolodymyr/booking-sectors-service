@@ -48,7 +48,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             database.SettingRepository.UpdateEntity(setting);
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? settingsDTO : null;
+            return (isSaved) ? settingsDTO : null;
         }
     }
 }

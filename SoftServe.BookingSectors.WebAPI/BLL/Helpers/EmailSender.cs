@@ -11,27 +11,24 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
     /// </summary>
     public sealed class EmailSender
     {
-        private string BodyMessage { get; set; }
-        private string SubjectMessage { get; set; }
-        private string SenderAddress { get; set; }
-        private string SenderPassword { get; set; }
-        private string SenderName { get; set; }
+        private static string Host => ConfigurationHelper.GetAppSettingsValue("EmailHost");
+        private static int Port => Convert.ToInt16(ConfigurationHelper.GetAppSettingsValue("EmailPort"));
+
+        private static string SenderAddress => ConfigurationHelper.GetAppSettingsValue("EmailAccount");
+        private static string SenderPassword => ConfigurationHelper.GetAppSettingsValue("EmailAccountPassword");
+        private static string SenderName => "Administrator's Booking Fishing Sectors";
+
         private string ToAddress { get; set; }
         private string RecipientName { get; set; }
 
-        private string Host {get; set;}
-        private int Port {get; set;}
+        private string SubjectMessage { get; set; }
+        private string BodyMessage { get; }
+        
 
         public EmailSender(string bodyMessage)
         {
-            SenderAddress = ConfigurationHelper.GetAppSettingsValue("EmailAccount");
-            SenderPassword = ConfigurationHelper.GetAppSettingsValue("EmailAccountPassword");
-            Host = ConfigurationHelper.GetAppSettingsValue("EmailHost");
-            Port = Convert.ToInt16(ConfigurationHelper.GetAppSettingsValue("EmailPort"));
-            SenderName = "Administrator's Booking Fishing Sectors";
             BodyMessage = bodyMessage;
         }
-
 
         /// <summary>
         /// A method for sending a message to a specified mail
@@ -49,28 +46,25 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
             var fromAddressData = new MailAddress(SenderAddress, SenderName);
             var toAddressData = new MailAddress(ToAddress, RecipientName);
 
-
             var smtp = new SmtpClient
             {
-                Host = this.Host,
-                Port = this.Port,
+                Host = Host,
+                Port = Port,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(fromAddressData.Address, SenderPassword)
             };
 
-            using (var message = new MailMessage(fromAddressData, toAddressData)
+            using var message = new MailMessage(fromAddressData, toAddressData)
             {
                 Subject = SubjectMessage,
                 Body = BodyMessage
-            })
+            };
+
             {
                 await smtp.SendMailAsync(message);
             }
-
         }
-
-
     }
 }

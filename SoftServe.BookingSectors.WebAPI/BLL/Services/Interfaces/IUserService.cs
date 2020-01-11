@@ -17,6 +17,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         Task<bool> CheckPasswords(string password, int id);
         Task<User> UpdateUserPhotoById(int id, IFormFile image);
         Task<string> GetUserPhotoById(int id);
-        Task<RegistrationDTO> SendEmailAsync(string email);
+        Task<bool> ResetPassword(UserDTO user);
     }
 }
