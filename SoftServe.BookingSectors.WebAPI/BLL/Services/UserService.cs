@@ -100,49 +100,57 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         #region Update
 
-        public async Task<User> UpdateUserById(int id, UserDTO userDTO)
+        public async Task<UserDTO> UpdateUserById(int id, UserDTO userDTO)
         {
-            var user = await database.UserRepository.GetEntityByIdAsync(id);
-            if (user == null)
+            var existedUser = await database.UserRepository.GetEntityByIdAsync(id);
+            if (existedUser == null)
             {
                 return null;
             }
 
-            user.Firstname = userDTO.Firstname;
-            user.Lastname = userDTO.Lastname;
-            user.Phone = userDTO.Phone;
-            user.Email = userDTO.Email;
+            existedUser.Firstname = userDTO.Firstname;
+            existedUser.Lastname = userDTO.Lastname;
+            existedUser.Phone = userDTO.Phone;
+            existedUser.Email = userDTO.Email;
 
-            database.UserRepository.UpdateEntity(user);
+            //Але сумнівно що можна буде обновити хоч колись за раз email i номер без перепровірок.
+            //сумнівний метод взагалі получається.
+            //і взагалі всі поля треба провіряти на заповненість а не заносити все підряд.
+            //мол
+            // existedUser.Lastname = (userDTO.Lastname == $"String" || userDTO.Lastname == existedUser.Lastname) ? 
+            //    userDTO.Lastname :
+            //    existedUser.Lastname;
+
+            var updatedUser = database.UserRepository.UpdateEntity(existedUser);
             bool isSaved = await database.SaveAsync();
 
             return isSaved ?
-                mapper.Map<UserDTO, User>(userDTO) :
+                mapper.Map<User, UserDTO>(updatedUser) :
                 null;
         }
 
-        public async Task<User> UpdateUserPassById(int id, UserDTO userDTO)
+        public async Task<UserDTO> UpdateUserPassById(int id, string password)
         {
-            var user = await database.UserRepository.GetEntityByIdAsync(id);
-            if (user == null)
+            var existedUser = await database.UserRepository.GetEntityByIdAsync(id);
+            if (existedUser == null)
             {
                 return null;
             }
 
-            user.Password = SHA256Hash.Compute(userDTO.Password);
+            existedUser.Password = SHA256Hash.Compute(password);
 
-            database.UserRepository.UpdateEntity(user);
+            var updatedUser = database.UserRepository.UpdateEntity(existedUser);
             bool isSaved = await database.SaveAsync();
 
             return isSaved ?
-                mapper.Map<UserDTO, User>(userDTO) :
+                mapper.Map<User, UserDTO>(updatedUser) :
                 null;
         }
 
-        public async Task<User> UpdateUserPhotoById(int id, IFormFile formFile)
+        public async Task<UserDTO> UpdateUserPhotoById(int id, IFormFile formFile)
         {
-            var user = await database.UserRepository.GetEntityByIdAsync(id);
-            if (user == null)
+            var existedUser = await database.UserRepository.GetEntityByIdAsync(id);
+            if (existedUser == null)
             {
                 return null;
             }
@@ -154,11 +162,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 // Upload the file if less than 2 MB
                 if (memoryStream.Length < 2097152)
                 {
-                    user.Photo = memoryStream.ToArray();
-                    database.UserRepository.UpdateEntity(user);
+                    existedUser.Photo = memoryStream.ToArray();
+                    var updatedUser = database.UserRepository.UpdateEntity(existedUser);
                     bool isSaved = await database.SaveAsync();
 
-                    return isSaved ? user : null;
+                    return isSaved ?
+                        mapper.Map<User, UserDTO>(updatedUser) :
+                        null;
                 }
 
 
@@ -169,7 +179,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         #endregion
 
-        public async Task<User> DeleteUserByIdAsync(int id)
+        public async Task<UserDTO> DeleteUserByIdAsync(int id)
         {
             var user = await database.UserRepository.DeleteEntityByIdAsync(id);
             if (user == null)
@@ -179,8 +189,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             bool isSaved = await database.SaveAsync();
 
 
-            return (isSaved) ? 
-                user: 
+            return (isSaved) ?
+                mapper.Map<User, UserDTO>(user) :
                 null;
         }
 

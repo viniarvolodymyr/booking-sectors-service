@@ -19,7 +19,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         private TournamentRepository tournamentRepository;
         private BookingSectorRepository bookingRepository;
         private TokenRepository tokenRepository;
-        private EmailRepository emailRepository;
+
         private readonly ILoggerManager logger;
 
 
@@ -42,10 +42,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
 
         public IBaseRepository<Token> TokenRepository =>
          tokenRepository ??= new TokenRepository(context);
-
-
-        public IBaseRepository<Email> EmailRepository =>
-         emailRepository ??= new EmailRepository(context);
 
         public async Task<bool> SaveAsync()
         {
