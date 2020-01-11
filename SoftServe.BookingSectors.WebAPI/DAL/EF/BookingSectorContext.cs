@@ -16,7 +16,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
         }
 
         public virtual DbSet<BookingSector> BookingSector { get; set; }
-        public virtual DbSet<Email> Email { get; set; }
         public virtual DbSet<Language> Language { get; set; }
         public virtual DbSet<Sector> Sector { get; set; }
         public virtual DbSet<Setting> Setting { get; set; }
@@ -81,24 +80,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .HasConstraintName("FK_USER_ID");
             });
 
-            modelBuilder.Entity<Email>(entity =>
-            {
-                entity.ToTable("EMAIL");
-
-                entity.HasIndex(e => e.UserId)
-                    .HasName("UQ__EMAIL__F3BEEBFE9FCE3036")
-                    .IsUnique();
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Email1)
-                    .IsRequired()
-                    .HasColumnName("EMAIL")
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.UserId).HasColumnName("USER_ID");
-            });
 
             modelBuilder.Entity<Language>(entity =>
             {

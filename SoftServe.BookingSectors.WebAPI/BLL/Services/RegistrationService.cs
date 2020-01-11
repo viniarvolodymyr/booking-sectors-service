@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
@@ -24,12 +25,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             this.database = database;
             this.mapper = mapper;
         }
-     
+
         public async Task<UserDTO> InsertUserAsync(UserDTO userDTO)
         {
             string inputEmail = userDTO.Email.Trim();
             var existingEmail = await GetUserByEmailAsync(inputEmail);
-            
+
             if (existingEmail != null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict,

@@ -24,6 +24,7 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="1.6.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc5" />
     <PackageReference Include="System-Web-Helpers.dll" Version="1.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.6.0" />
   </ItemGroup>
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
