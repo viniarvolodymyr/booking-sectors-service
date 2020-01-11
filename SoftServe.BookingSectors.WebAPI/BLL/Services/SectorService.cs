@@ -88,7 +88,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var deletedSector = await database.SectorRepository.DeleteEntityByIdAsync(id);
             bool isSaved = await database.SaveAsync();
-            var sectorDTO = mapper.Map<Sector, SectorDTO>(deletedSector.Entity);
+            var sectorDTO = mapper.Map<Sector, SectorDTO>(deletedSector);
 
             return (isSaved == true) ? sectorDTO : null;
         }

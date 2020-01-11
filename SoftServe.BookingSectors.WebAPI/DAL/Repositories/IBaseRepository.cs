@@ -14,6 +14,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories
         IQueryable<T> GetByCondition(Expression<Func<T, bool>> expression);
         Task<T> InsertEntityAsync(T entity);
         void UpdateEntity(T entity);
-        Task<EntityEntry<T>> DeleteEntityByIdAsync(int id);
+        Task<T> DeleteEntityByIdAsync(int id);
     }
 }

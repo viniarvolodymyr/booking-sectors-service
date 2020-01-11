@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 using SoftServe.BookingSectors.WebAPI.BLL.Services;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
@@ -10,6 +11,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.Tests.Data;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
@@ -86,6 +88,22 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(sectorDTO.Id, result.Id);
+        }
+
+        [Test]
+        public async Task DeleteSector_SectorData_SectorDeleted(int id)
+        {
+            repository.Setup(r => r.DeleteEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) =>
+                {
+                    var founded = sectorsContext.Find(s => s.Id == id);
+                    if (founded != null)
+                    {
+                        throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Sector with id: {id} not found when trying to delete sector. Sector wasn't deleted.");
+                    }
+                    sectorsContext.Remove(founded);
+                    return founded;
+                });
         }
     }
 }

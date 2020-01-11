@@ -169,7 +169,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? user.Entity : null;
+            return (isSaved == true) ? user : null;
         }
         public async Task<RegistrationDTO> SendEmailAsync(string userEmail)
         {

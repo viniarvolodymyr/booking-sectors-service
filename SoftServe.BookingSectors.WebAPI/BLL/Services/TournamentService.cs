@@ -72,7 +72,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 return  null;
             }
             bool isSaved = await database.SaveAsync();
-            return (isSaved == true) ? tournament.Entity : null;
+            return (isSaved == true) ? tournament : null;
         }
 
         public void Dispose()

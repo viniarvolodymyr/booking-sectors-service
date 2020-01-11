@@ -163,7 +163,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? booking.Entity : null;
+            return (isSaved == true) ? booking : null;
         }
     }
 }

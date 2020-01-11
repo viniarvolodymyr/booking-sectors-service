@@ -55,7 +55,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
 
-        public async Task<EntityEntry<Sector>> DeleteEntityByIdAsync(int id)
+        public async Task<Sector> DeleteEntityByIdAsync(int id)
         {
             var entityToDelete = await sectorSet.FindAsync(id);
             if (entityToDelete == null)
@@ -63,7 +63,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Sector with id: {id} not found when trying to delete sector. Sector wasn't deleted.");
             }
 
-            return sectorSet.Remove(entityToDelete);
+            return sectorSet.Remove(entityToDelete).Entity;
         }
     }
 }

@@ -45,10 +45,10 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             context.Entry(entityToUpdate).State = EntityState.Modified;
         }
 
-        public async Task<EntityEntry<Token>> DeleteEntityByIdAsync(int id)
+        public async Task<Token> DeleteEntityByIdAsync(int id)
         {
             Token tokenToDelete = await tokenSet.FindAsync(id);
-            return tokenSet.Remove(tokenToDelete);
+            return tokenSet.Remove(tokenToDelete).Entity;
         }
 
     }
