@@ -11,9 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System;
 using System.IO;
-using System.Web.Helpers;
 using Microsoft.AspNetCore.Http;
 
 
@@ -71,8 +69,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dto;
         }
 
-
-
         public async Task<User> UpdateUserById(int id, UserDTO userDTO)
         {
             var user = await database.UserRepository.GetEntityByIdAsync(id);
@@ -84,12 +80,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             user.Firstname = userDTO.Firstname;
             user.Lastname = userDTO.Lastname;
             user.Phone = userDTO.Phone;
+            user.Email = userDTO.Email;
 
             database.UserRepository.UpdateEntity(user);
             bool isSaved = await database.SaveAsync();
 
             return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
         }
+
         public async Task<User> UpdateUserPassById(int id, UserDTO userDTO)
         {
             var user = await database.UserRepository.GetEntityByIdAsync(id);
@@ -117,7 +115,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             using (var memoryStream = new MemoryStream())
             {
                 await formFile.CopyToAsync(memoryStream);
-           
+
                 // Upload the file if less than 2 MB
                 if (memoryStream.Length < 2097152)
                 {
@@ -129,12 +127,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 else
                 {
                     return null;
-                  //  ModelState.AddModelError("File", "The file is too large.");
+                    //  ModelState.AddModelError("File", "The file is too large.");
                 }
             }
-       
 
-      
+
+
         }
 
         public async Task<IFormFile> GetUserPhotoById(int id)
@@ -145,7 +143,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             {
                 return null;
             }
-            
+
             FormFile file;
             using (var ms = new MemoryStream(entity.Photo))
             {
@@ -154,11 +152,11 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 {
                     Headers = new HeaderDictionary(),
                     ContentType = "image/jpeg",
-                  
+
                 };
 
                 return file;
-            }        
+            }
         }
         public async Task<User> DeleteUserByIdAsync(int id)
         {
@@ -170,55 +168,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             bool isSaved = await database.SaveAsync();
 
             return (isSaved == true) ? user.Entity : null;
-        }
-        public async Task<RegistrationDTO> SendEmailAsync(string userEmail)
-        {
-            
-            var getEmail = await database.EmailRepository
-                          .GetByCondition(x => x.Email1 == userEmail)
-                          .FirstOrDefaultAsync();
-
-            var entity = await database.UserRepository.GetEntityByIdAsync(getEmail.UserId);
-
-            RegistrationDTO userDTO = mapper.Map<User, RegistrationDTO>(entity);
-            if (entity == null)
-            {
-                return null;
-            }
-            string email = userEmail.Trim();
-
-            EmailSender sender = new EmailSender($"Hello, {userDTO.Firstname}." +
-                                                 $" You can set a new password by following this link: {Environment.NewLine}" +
-                                                 $" http://localhost:4200/set-password {Environment.NewLine} Have a nice day :) ");
-
-            await sender.SendAsync("Reset password on TridentLake",
-                         email,
-                         $"{userDTO.Lastname} {userDTO.Firstname}");
-
-            return userDTO;
-        }
-        public async Task<bool> InsertEmailAsync(int id, string email)
-        {
-            var getEmail = await database.EmailRepository
-                            .GetByCondition(x => x.UserId == id)
-                            .FirstOrDefaultAsync();
-
-
-            Email emailEntity = new Email { UserId = id, Email1 = email };
-
-            if (getEmail == null)
-            {
-                await database.EmailRepository.InsertEntityAsync(emailEntity);
-            }
-            else
-            {
-                emailEntity.Id = getEmail.Id;
-                database.EmailRepository.UpdateEntity(emailEntity);
-            }
-
-
-            return (await database.SaveAsync()) ? true : false;
-
         }
     }
 }

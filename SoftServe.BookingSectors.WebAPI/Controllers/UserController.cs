@@ -3,13 +3,11 @@ using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.BLL.Filters;
-using Microsoft.AspNetCore.Authorization;
-using System.Web.Helpers;
-using System.Web;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Headers;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -42,11 +40,8 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<ActionResult<UserDTO>> GetById([FromRoute]int id)
         {
             var dto = await userService.GetUserByIdAsync(id);
-            if (dto == null)
-            {
-                return NotFound();
-            }
-            return Ok(dto);
+
+            return dto == null ? (ActionResult<UserDTO>) NotFound() : Ok(dto);
         }
 
         [HttpGet]
@@ -60,6 +55,22 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             }
             return Ok(dto);
         }
+
+        [HttpGet]
+        [Route("email/{email}")]
+        public async Task<ActionResult<UserDTO>> GetByEmail([FromRoute]string email)
+        {
+            var dto = await registrationService.GetUserByEmailAsync(email);
+
+            if (dto == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound,
+                   $"User with email: {email} not found when trying to get entity.");
+            }
+
+            return Ok(dto);
+        }
+
         [HttpGet]
         [Route("UserPhoto/{id}")]
         public async Task<IFormFile> GetPhotoById([FromRoute]int id)
@@ -79,18 +90,12 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPost]
         [ServiceFilter(typeof(ValidateModelState))]
-        public async Task<IActionResult> Post([FromBody] RegistrationDTO userDTO)
+        public async Task<IActionResult> Post([FromBody] UserDTO userDTO)
         {
             var dto = await registrationService.InsertUserAsync(userDTO);
 
-            if (dto == null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                return Created($"api/users/{dto.Id}", dto);
-            }
+            return dto == null ? (IActionResult) BadRequest() :
+                                                 Created($"api/users/{dto.Id}", dto);
         }
 
         [HttpPut]
@@ -137,21 +142,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
                 return Ok(user);
             }
         }
-        [HttpPut]
-        [Route("email/{email}")]
-        public async Task<IActionResult> SendEmail([FromRoute]string email)
-        {
-
-            var user = await userService.SendEmailAsync(email);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(user);
-            }
-        }
+       
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute]int id)

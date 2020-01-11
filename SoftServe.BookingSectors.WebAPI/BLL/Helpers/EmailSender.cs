@@ -13,22 +13,17 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
     {
         private string BodyMessage { get; set; }
         private string SubjectMessage { get; set; }
-        private string SenderAddress { get; set; }
-        private string SenderPassword { get; set; }
-        private string SenderName { get; set; }
+        private string SenderAddress { get; set; } = ConfigurationHelper.GetAppSettingsValue("EmailAccount");
+        private string SenderPassword { get; set; } = ConfigurationHelper.GetAppSettingsValue("EmailAccountPassword");
+        private string SenderName { get; set; } = "Administrator's Booking Fishing Sectors";
         private string ToAddress { get; set; }
         private string RecipientName { get; set; }
 
-        private string Host {get; set;}
-        private int Port {get; set;}
+        private string Host {get; set;} = ConfigurationHelper.GetAppSettingsValue("EmailHost");
+        private int Port {get; set;} = Convert.ToInt16(ConfigurationHelper.GetAppSettingsValue("EmailPort"));
 
         public EmailSender(string bodyMessage)
         {
-            SenderAddress = ConfigurationHelper.GetAppSettingsValue("EmailAccount");
-            SenderPassword = ConfigurationHelper.GetAppSettingsValue("EmailAccountPassword");
-            Host = ConfigurationHelper.GetAppSettingsValue("EmailHost");
-            Port = Convert.ToInt16(ConfigurationHelper.GetAppSettingsValue("EmailPort"));
-            SenderName = "Administrator's Booking Fishing Sectors";
             BodyMessage = bodyMessage;
         }
 
@@ -65,6 +60,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
                 Subject = SubjectMessage,
                 Body = BodyMessage
             })
+
             {
                 await smtp.SendMailAsync(message);
             }

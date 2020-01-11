@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 
 namespace SoftServe.BookingSectors.WebAPI.Extensions
 {
-    public static class HttpStatusCodeExceptionMiddlewareExtensions
+    public static class ExceptionMiddlewareExtensions
     {
         public static IApplicationBuilder UseHttpStatusCodeExceptionMiddleware(this IApplicationBuilder builder)
         {

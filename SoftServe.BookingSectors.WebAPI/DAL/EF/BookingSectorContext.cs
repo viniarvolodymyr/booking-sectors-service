@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.EF
@@ -276,6 +277,10 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
             {
                 entity.ToTable("USER");
 
+                entity.HasIndex(e => e.Email)
+                    .HasName("UK_EMAIL")
+                    .IsUnique();
+
                 entity.HasIndex(e => e.Phone)
                     .HasName("UK_PHONE")
                     .IsUnique();
@@ -288,6 +293,12 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.CreateUserId).HasColumnName("CREATE_USER_ID");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasColumnName("EMAIL")
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Firstname)
                     .HasColumnName("FIRSTNAME")
