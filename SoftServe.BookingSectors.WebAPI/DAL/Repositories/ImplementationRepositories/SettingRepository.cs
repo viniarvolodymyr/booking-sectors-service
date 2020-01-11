@@ -33,9 +33,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return settingSet.Where(expression).AsNoTracking();
         }
 
-        public ValueTask<EntityEntry<Setting>> InsertEntityAsync(Setting entityToInsert)
+        public async Task<Setting> InsertEntityAsync(Setting entityToInsert)
         {
-            return settingSet.AddAsync(entityToInsert);
+            return (await settingSet.AddAsync(entityToInsert)).Entity;
         }
         public void UpdateEntity(Setting entityToUpdate)
         {

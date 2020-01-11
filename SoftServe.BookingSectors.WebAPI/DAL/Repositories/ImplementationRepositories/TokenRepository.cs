@@ -31,9 +31,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return tokenSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
         }
 
-        public ValueTask<EntityEntry<Token>> InsertEntityAsync(Token entityToInsert)
+        public async Task<Token> InsertEntityAsync(Token entityToInsert)
         {
-            return tokenSet.AddAsync(entityToInsert);
+            return (await tokenSet.AddAsync(entityToInsert)).Entity;
         }
         public IQueryable<Token> GetByCondition(Expression<Func<Token, bool>> expression)
         {

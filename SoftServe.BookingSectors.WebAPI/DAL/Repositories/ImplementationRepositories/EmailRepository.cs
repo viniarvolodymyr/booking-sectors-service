@@ -43,9 +43,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return emailSet.Where(expression).AsNoTracking();
         }
 
-        public ValueTask<EntityEntry<Email>> InsertEntityAsync(Email entityToInsert)
+        public async Task<Email> InsertEntityAsync(Email entityToInsert)
         {
-            return emailSet.AddAsync(entityToInsert);
+            return (await emailSet.AddAsync(entityToInsert)).Entity;
         }
 
         public void UpdateEntity(Email entityToUpdate)

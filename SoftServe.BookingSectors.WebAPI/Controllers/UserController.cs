@@ -73,7 +73,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpGet]
         [Route("UserPhoto/{id}")]
-        public async Task<IFormFile> GetPhotoById([FromRoute]int id)
+        public async Task<string> GetPhotoById([FromRoute]int id)
         {
             var file = await userService.GetUserPhotoById(id);
          

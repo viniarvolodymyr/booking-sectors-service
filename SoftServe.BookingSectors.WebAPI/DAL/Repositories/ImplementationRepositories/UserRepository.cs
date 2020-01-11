@@ -43,9 +43,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return userSet.Include(x => x.Role).Where(expression).AsNoTracking();
         }
 
-        public ValueTask<EntityEntry<User>> InsertEntityAsync(User entityToInsert)
+        public async Task<User> InsertEntityAsync(User entityToInsert)
         {
-            return userSet.AddAsync(entityToInsert);
+            return (await userSet.AddAsync(entityToInsert)).Entity;
         }
 
         public void UpdateEntity(User entityToUpdate)
