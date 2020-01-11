@@ -9,7 +9,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/settings")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
     public class SettingsController : ControllerBase
     {
         private readonly ISettingsService settingService;
@@ -35,15 +34,30 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Get([FromRoute]int id)
         {
-            return Ok(await settingService.GetSettingByIdAsync(id));
-        }
+            var dto = await settingService.GetSettingByIdAsync(id);
+            if (dto == null)
+            {
+                return NotFound();
 
+            }
+            else
+            {
+                return Ok(dto);
+            }
+        }
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> Update([FromRoute]int id, [FromBody]SettingsDTO settingsDTO)
         {
-            await settingService.UpdateSettingsAsync(id, settingsDTO);
-            return Ok();
+            var setting = await settingService.UpdateSettingsAsync(id, settingsDTO);
+            if (setting == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(setting);
+            }
         }
     }
 }

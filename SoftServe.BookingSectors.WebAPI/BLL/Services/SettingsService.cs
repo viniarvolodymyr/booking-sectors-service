@@ -37,7 +37,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dto;
         }
 
-        public async Task UpdateSettingsAsync(int id, SettingsDTO settingsDTO)
+        public async Task<SettingsDTO> UpdateSettingsAsync(int id, SettingsDTO settingsDTO)
         {
             var entity = await database.SettingRepository.GetEntityByIdAsync(id);
             var setting = mapper.Map<SettingsDTO, Setting>(settingsDTO);
@@ -46,7 +46,9 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             setting.CreateUserId = entity.CreateUserId;
             setting.ModDate = DateTime.Now;
             database.SettingRepository.UpdateEntity(setting);
-            await database.SaveAsync();
+            bool isSaved = await database.SaveAsync();
+
+            return (isSaved == true) ? settingsDTO : null;
         }
     }
 }
