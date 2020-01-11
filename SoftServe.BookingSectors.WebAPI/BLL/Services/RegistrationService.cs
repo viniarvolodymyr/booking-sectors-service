@@ -19,19 +19,18 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
     {
         private readonly IUnitOfWork database;
         private readonly IMapper mapper;
-        private readonly ILoggerManager logger;
 
         public RegistrationService(IUnitOfWork database, IMapper mapper, ILoggerManager logger)
         {
             this.database = database;
             this.mapper = mapper;
-            this.logger = logger;
         }
      
         public async Task<UserDTO> InsertUserAsync(UserDTO userDTO)
         {
             string inputEmail = userDTO.Email.Trim();
             var existingEmail = await GetUserByEmailAsync(inputEmail);
+            
             if (existingEmail != null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.Conflict,
@@ -58,15 +57,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             EmailSender sender = new EmailSender($"Hello, {insertUser.Lastname}." +
                                                  $" You write a site for Booking Fishing sectors. {Environment.NewLine}" +
-                                                 $" Your login: {insertedUser.Entity.Phone} {Environment.NewLine}" +
+                                                 $" Your login: {insertedUser.Phone} {Environment.NewLine}" +
                                                  $" Your password: {inputPassword} {Environment.NewLine} Have a nice day :) ");
 
             await sender.SendAsync("Registration in Booking Fishing Sectors",
                          inputEmail,
                          $"{insertUser.Lastname} {insertUser.Firstname}");
 
-
-            return mapper.Map<User, UserDTO>(insertedUser.Entity);
+            return mapper.Map<User, UserDTO>(insertedUser);
         }
 
         public async Task<UserDTO> GetUserByEmailAsync(string email)
@@ -78,7 +76,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             if (user == null)
             {
                 return null;
-             
             }
 
             return mapper.Map<User, UserDTO>(user);

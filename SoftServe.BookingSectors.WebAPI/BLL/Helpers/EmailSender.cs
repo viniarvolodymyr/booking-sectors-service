@@ -1,7 +1,9 @@
 using System;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using System.Web.Http.Results;
 
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
@@ -44,7 +46,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
             var fromAddressData = new MailAddress(SenderAddress, SenderName);
             var toAddressData = new MailAddress(ToAddress, RecipientName);
 
-
             var smtp = new SmtpClient
             {
                 Host = this.Host,
@@ -55,18 +56,15 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
                 Credentials = new NetworkCredential(fromAddressData.Address, SenderPassword)
             };
 
-            using (var message = new MailMessage(fromAddressData, toAddressData)
+            using var message = new MailMessage(fromAddressData, toAddressData)
             {
                 Subject = SubjectMessage,
                 Body = BodyMessage
-            })
+            };
 
             {
                 await smtp.SendMailAsync(message);
             }
-
         }
-
-
     }
 }

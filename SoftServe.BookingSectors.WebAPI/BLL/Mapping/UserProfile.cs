@@ -1,3 +1,4 @@
+using System;
 using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
@@ -10,6 +11,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
         {
             CreateMap<User, UserDTO>()
                 .ForMember(m => m.RoleName, x => x.MapFrom(src => src.Role.Role))
+               // .ForMember(m=>m.Photo, x =>x.MapFrom(src=> Convert.ToBase64String(src.Photo)))
                 .ForMember(m => m.Photo, opt => opt.Ignore());
                 
             CreateMap<UserDTO, User>()

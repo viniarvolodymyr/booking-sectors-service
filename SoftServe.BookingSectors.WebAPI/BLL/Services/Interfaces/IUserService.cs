@@ -3,6 +3,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
 {
@@ -16,6 +17,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         Task<User> DeleteUserByIdAsync(int id);
         Task<bool> CheckPasswords(string password, int id);
         Task<User> UpdateUserPhotoById(int id, IFormFile image);
-        Task<IFormFile> GetUserPhotoById(int id);
+        Task<string> GetUserPhotoById(int id);
+        Task<bool> ResetPassword(UserDTO user);
     }
 }
