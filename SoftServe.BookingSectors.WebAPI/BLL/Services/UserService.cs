@@ -14,7 +14,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
@@ -181,7 +180,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
 
             return (isSaved) ? 
-                user.Entity : 
+                user: 
                 null;
         }
 

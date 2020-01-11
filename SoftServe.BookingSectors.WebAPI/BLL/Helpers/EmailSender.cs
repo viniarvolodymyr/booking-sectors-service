@@ -1,9 +1,7 @@
 using System;
-using System.Linq.Expressions;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using System.Web.Http.Results;
 
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
@@ -13,22 +11,24 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
     /// </summary>
     public sealed class EmailSender
     {
-        private string BodyMessage { get; set; }
-        private string SubjectMessage { get; set; }
-        private string SenderAddress { get; set; } = ConfigurationHelper.GetAppSettingsValue("EmailAccount");
-        private string SenderPassword { get; set; } = ConfigurationHelper.GetAppSettingsValue("EmailAccountPassword");
-        private string SenderName { get; set; } = "Administrator's Booking Fishing Sectors";
+        private static string Host => ConfigurationHelper.GetAppSettingsValue("EmailHost");
+        private static int Port => Convert.ToInt16(ConfigurationHelper.GetAppSettingsValue("EmailPort"));
+
+        private static string SenderAddress => ConfigurationHelper.GetAppSettingsValue("EmailAccount");
+        private static string SenderPassword => ConfigurationHelper.GetAppSettingsValue("EmailAccountPassword");
+        private static string SenderName => "Administrator's Booking Fishing Sectors";
+
         private string ToAddress { get; set; }
         private string RecipientName { get; set; }
 
-        private string Host {get; set;} = ConfigurationHelper.GetAppSettingsValue("EmailHost");
-        private int Port {get; set;} = Convert.ToInt16(ConfigurationHelper.GetAppSettingsValue("EmailPort"));
+        private string SubjectMessage { get; set; }
+        private string BodyMessage { get; }
+        
 
         public EmailSender(string bodyMessage)
         {
             BodyMessage = bodyMessage;
         }
-
 
         /// <summary>
         /// A method for sending a message to a specified mail
@@ -48,8 +48,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
 
             var smtp = new SmtpClient
             {
-                Host = this.Host,
-                Port = this.Port,
+                Host = Host,
+                Port = Port,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,

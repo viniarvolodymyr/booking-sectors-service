@@ -11,11 +11,11 @@ namespace SoftServe.BookingSectors.WebAPI.Middlewares
     public class HttpStatusCodeExceptionMiddleware
     {
         private readonly RequestDelegate next;
-         private readonly ILoggerManager  logger;
+        private readonly ILoggerManager  logger;
 
         public HttpStatusCodeExceptionMiddleware(RequestDelegate next, ILoggerManager logger)
         {
-            this.next = next ?? throw new ArgumentNullException(nameof(next));
+            this.next = next;
             this.logger = logger;
         }
 
@@ -48,7 +48,6 @@ namespace SoftServe.BookingSectors.WebAPI.Middlewares
                 if (ex is HttpStatusCodeException httpException)
                 {
                     context.Response.StatusCode = (int)httpException.StatusCode;
-
                     context.Response.ContentType = httpException.ContentType;
                 }
                 else

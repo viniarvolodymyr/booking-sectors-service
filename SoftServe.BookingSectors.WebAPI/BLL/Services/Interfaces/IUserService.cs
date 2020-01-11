@@ -3,7 +3,6 @@ using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
 {
