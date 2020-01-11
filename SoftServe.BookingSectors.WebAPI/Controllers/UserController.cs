@@ -62,7 +62,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
         [HttpGet]
         [Route("UserPhoto/{id}")]
-        public async Task<IFormFile> GetPhotoById([FromRoute]int id)
+        public async Task<string> GetPhotoById([FromRoute]int id)
         {
             var file = await userService.GetUserPhotoById(id);
          
@@ -128,6 +128,21 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         {
            
             var user = await userService.UpdateUserPhotoById(id, file);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(user);
+            }
+        }
+        [HttpPut]
+        [Route("email/{email}")]
+        public async Task<IActionResult> SendEmail([FromRoute]string email)
+        {
+
+            var user = await userService.SendEmailAsync(email);
             if (user == null)
             {
                 return NotFound();

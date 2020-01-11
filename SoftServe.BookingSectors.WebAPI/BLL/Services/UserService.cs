@@ -46,12 +46,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
             var entity = await database.UserRepository.GetEntityByIdAsync(id);
-
             if (entity == null)
             {
                 return null;
             }
             var dto = mapper.Map<User, UserDTO>(entity);
+            dto.Photo = Convert.ToBase64String(entity.Photo);
 
             return dto;
         }
@@ -137,7 +137,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
       
         }
 
-        public async Task<IFormFile> GetUserPhotoById(int id)
+        public async Task<string> GetUserPhotoById(int id)
         {
             var entity = await database.UserRepository.GetEntityByIdAsync(id);
 
@@ -145,7 +145,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             {
                 return null;
             }
-            
+            var b64 = Convert.ToBase64String(entity.Photo);
             FormFile file;
             using (var ms = new MemoryStream(entity.Photo))
             {
@@ -157,7 +157,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                   
                 };
 
-                return file;
+                return b64;
             }        
         }
         public async Task<User> DeleteUserByIdAsync(int id)
@@ -171,7 +171,32 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             return (isSaved == true) ? user.Entity : null;
         }
+        public async Task<RegistrationDTO> SendEmailAsync(string userEmail)
+        {
+            
+            var getEmail = await database.EmailRepository
+                          .GetByCondition(x => x.Email1 == userEmail)
+                          .FirstOrDefaultAsync();
 
+            var entity = await database.UserRepository.GetEntityByIdAsync(getEmail.UserId);
+
+            RegistrationDTO userDTO = mapper.Map<User, RegistrationDTO>(entity);
+            if (entity == null)
+            {
+                return null;
+            }
+            string email = userEmail.Trim();
+
+            EmailSender sender = new EmailSender($"Hello, {userDTO.Firstname}." +
+                                                 $" You can set a new password by following this link: {Environment.NewLine}" +
+                                                 $" http://localhost:4200/set-password {Environment.NewLine} Have a nice day :) ");
+
+            await sender.SendAsync("Reset password on TridentLake",
+                         email,
+                         $"{userDTO.Lastname} {userDTO.Firstname}");
+
+            return userDTO;
+        }
         public async Task<bool> InsertEmailAsync(int id, string email)
         {
             var getEmail = await database.EmailRepository
