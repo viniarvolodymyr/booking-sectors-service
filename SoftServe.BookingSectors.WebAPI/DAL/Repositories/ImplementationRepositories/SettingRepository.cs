@@ -37,10 +37,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
         {
             return (await settingSet.AddAsync(entityToInsert)).Entity;
         }
-        public void UpdateEntity(Setting entityToUpdate)
+        public Setting UpdateEntity(Setting entityToUpdate)
         {
-            settingSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            return settingSet.Update(entityToUpdate).Entity;
         }
         public async Task<Setting> DeleteEntityByIdAsync(int id)
         {

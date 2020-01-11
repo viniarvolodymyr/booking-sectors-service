@@ -39,10 +39,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
         {
             return tokenSet.Where(expression).AsNoTracking().AsQueryable();
         }
-        public void UpdateEntity(Token entityToUpdate)
+        public Token UpdateEntity(Token entityToUpdate)
         {
-            tokenSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            return tokenSet.Update(entityToUpdate).Entity;
         }
 
         public async Task<Token> DeleteEntityByIdAsync(int id)

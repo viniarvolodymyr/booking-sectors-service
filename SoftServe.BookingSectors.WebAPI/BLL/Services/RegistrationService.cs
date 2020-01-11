@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 using System;
 using System.Net;
 
-
-
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
     public class RegistrationService : IRegistrationService

@@ -50,8 +50,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dtos;
         }
 
-
-
         public async Task<BookingSectorDTO> GetBookingByIdAsync(int id)
         {
             var booking = await database.BookingSectorRepository.GetEntityByIdAsync(id);
@@ -59,7 +57,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             return dto;
         }
-
 
         public async Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentByIdAsync(int idTour)
         {

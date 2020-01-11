@@ -78,8 +78,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             sector.CreateUserId = existedSector.CreateUserId;
             sector.CreateDate = existedSector.CreateDate;
             sector.ModDate = DateTime.Now;
-            database.SectorRepository.UpdateEntity(sector);
-            var updatedSectorDTO = mapper.Map<Sector, SectorDTO>(sector);
+            var updatedSector = database.SectorRepository.UpdateEntity(sector);
+            var updatedSectorDTO = mapper.Map<Sector, SectorDTO>(updatedSector);
             bool isSaved = await database.SaveAsync();
 
             return (isSaved == true) ? updatedSectorDTO : null;

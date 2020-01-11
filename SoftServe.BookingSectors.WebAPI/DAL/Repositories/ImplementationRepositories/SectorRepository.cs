@@ -48,10 +48,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return (await sectorSet.AddAsync(entityToInsert)).Entity;
         }
 
-        public void UpdateEntity(Sector entityToUpdate)
+        public Sector UpdateEntity(Sector entityToUpdate)
         {
-            sectorSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            return sectorSet.Update(entityToUpdate).Entity;
         }
 
         public async Task<Sector> DeleteEntityByIdAsync(int id)
