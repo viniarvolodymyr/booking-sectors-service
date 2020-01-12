@@ -2,7 +2,6 @@
 using Moq;
 using NUnit.Framework;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 using SoftServe.BookingSectors.WebAPI.BLL.Services;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
@@ -11,7 +10,6 @@ using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
@@ -33,8 +31,8 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             });
             sectorRepositoryMock = new Mock<IBaseRepository<Sector>>();
             unitOfWorkMock = new Mock<IUnitOfWork>();
-            unitOfWorkMock.Setup(u => u.SaveAsync()).ReturnsAsync(true);
-            unitOfWorkMock.Setup(u => u.SectorRepository).Returns(sectorRepositoryMock.Object);
+            unitOfWorkMock.Setup(uow => uow.SaveAsync()).ReturnsAsync(true);
+            unitOfWorkMock.Setup(uow => uow.SectorRepository).Returns(sectorRepositoryMock.Object);
             sectorService = new SectorService(unitOfWorkMock.Object, config.CreateMapper());
         }
 
@@ -56,12 +54,12 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         public async Task GetAllSectors_InputIsSectorData_AllSectorsReturned()
         {
             //Arrange
-            sectorRepositoryMock.Setup(r => r.GetAllEntitiesAsync()).ReturnsAsync(sectorsContext);
+            sectorRepositoryMock.Setup(sectorRepository => sectorRepository.GetAllEntitiesAsync()).ReturnsAsync(sectorsContext);
             //Act
-            var results = await sectorService.GetSectorsAsync() as List<SectorDTO>;
+            var resultSectorDTOs = (await sectorService.GetSectorsAsync()) as List<SectorDTO>;
             //Assert
-            Assert.IsNotNull(results);
-            Assert.AreEqual(sectorsContext.Count, results.Count);
+            Assert.IsNotNull(resultSectorDTOs);
+            Assert.AreEqual(sectorsContext.Count, resultSectorDTOs.Count);
         }
 
         [Test]
@@ -71,32 +69,32 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         public async Task GetSectorById_InputIsSectorData_OneSectorReturned(int id)
         {
             //Arrange
-            sectorRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) => sectorsContext.Find(s => s.Id == id));
+            sectorRepositoryMock.Setup(sectorRepository => sectorRepository.GetEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => sectorsContext.Find(sector => sector.Id == id));
             //Act
-            var result = await sectorService.GetSectorByIdAsync(id) as SectorDTO;
+            var resultSectorDTO = (await sectorService.GetSectorByIdAsync(id)) as SectorDTO;
             //Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(sectorsContext[id - 1].Id, result.Id);
+            Assert.IsNotNull(resultSectorDTO);
+            Assert.AreEqual(sectorsContext[id - 1].Id, resultSectorDTO.Id);
         }
 
         [Test]
         public async Task InsertSector_InputIsSectorData_OneSectorInserted()
         {
             //Arrange
-            sectorRepositoryMock.Setup(r => r.InsertEntityAsync(It.IsAny<Sector>()))
-                .ReturnsAsync((Sector s) =>
+            sectorRepositoryMock.Setup(sectorRepository => sectorRepository.InsertEntityAsync(It.IsAny<Sector>()))
+                .ReturnsAsync((Sector sector) =>
                 {
-                    s.Id = sectorDTO.Id;
-                    sectorsContext.Add(s);
-                    return s;
+                    sector.Id = sectorDTO.Id;
+                    sectorsContext.Add(sector);
+                    return sector;
                 });
             int sectorContextLength = sectorsContext.Count;
             //Act
-            var result = await sectorService.InsertSectorAsync(sectorDTO) as SectorDTO;
+            var resultSectorDTO = (await sectorService.InsertSectorAsync(sectorDTO)) as SectorDTO;
             //Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(sectorDTO.Id, result.Id);
+            Assert.IsNotNull(resultSectorDTO);
+            Assert.AreEqual(sectorDTO.Id, resultSectorDTO.Id);
             Assert.AreEqual(sectorContextLength + 1, sectorsContext.Count);
         }
 
@@ -107,19 +105,19 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         public async Task UpdateSector_InputIsSectorData_OneSectorUpdated(int id)
         {
             //Arrange
-            sectorRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) => sectorsContext.Find(s => s.Id == id));
-            sectorRepositoryMock.Setup(r => r.UpdateEntity(It.IsAny<Sector>()))
-                .Returns((Sector s) =>
+            sectorRepositoryMock.Setup(sectorRepository => sectorRepository.GetEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => sectorsContext.Find(sector => sector.Id == id));
+            sectorRepositoryMock.Setup(sectorRepository => sectorRepository.UpdateEntity(It.IsAny<Sector>()))
+                .Returns((Sector sector) =>
                 {
-                    sectorsContext[sectorsContext.FindIndex(i => i.Id == s.Id)] = s;
-                    return s;
+                    sectorsContext[sectorsContext.FindIndex(i => i.Id == sector.Id)] = sector;
+                    return sector;
                 });
             //Act
-            var result = await sectorService.UpdateSectorAsync(id, sectorDTO) as SectorDTO;
+            var resultSectorDTO = (await sectorService.UpdateSectorAsync(id, sectorDTO)) as SectorDTO;
             //Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(sectorsContext[id - 1].Id, result.Id);
+            Assert.IsNotNull(resultSectorDTO);
+            Assert.AreEqual(sectorsContext[id - 1].Id, resultSectorDTO.Id);
         }
 
         [Test]
@@ -129,18 +127,18 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         public async Task DeleteSector_InputIsSectorData_OneSectorDeleted(int id)
         {
             //Arrange
-            sectorRepositoryMock.Setup(r => r.DeleteEntityByIdAsync(It.IsAny<int>()))
+            sectorRepositoryMock.Setup(sectorRepository => sectorRepository.DeleteEntityByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((int id) =>
                 {
-                    var foundSector = sectorsContext.Find(s => s.Id == id);
+                    var foundSector = sectorsContext.Find(sector => sector.Id == id);
                     sectorsContext.Remove(foundSector);
                     return foundSector;
                 });
             int sectorContextLength = sectorsContext.Count;
             //Act
-            var result = await sectorService.DeleteSectorByIdAsync(id) as SectorDTO;
+            var resultSectorDTO = (await sectorService.DeleteSectorByIdAsync(id)) as SectorDTO;
             //Assert
-            Assert.IsNotNull(result);
+            Assert.IsNotNull(resultSectorDTO);
             Assert.AreEqual(sectorContextLength - 1, sectorsContext.Count);
         }
     }
