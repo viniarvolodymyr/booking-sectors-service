@@ -88,5 +88,27 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             Assert.AreEqual(201, createdResult.StatusCode);
             Assert.AreEqual(sectorContextLength + 1, sectorsContext.Count);
         }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public async Task UpdateSector_InputIsSectorData_ReturnsOk(int id)
+        {
+            //Arrange
+            sectorServiceMock.Setup(r => r.UpdateSectorAsync(It.IsAny<int>(), It.IsAny<SectorDTO>()))
+                .ReturnsAsync((int id, SectorDTO s) =>
+                {
+                    s.Id = id;
+                    sectorsContext[sectorsContext.FindIndex(i => i.Id == id)] = s;
+                    return s;
+                });
+            //Act
+            var result = await sectorController.Put(id, sectorDTO);
+            var okResult = result as OkObjectResult;
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(200, okResult.StatusCode);
+        }
     }
 }

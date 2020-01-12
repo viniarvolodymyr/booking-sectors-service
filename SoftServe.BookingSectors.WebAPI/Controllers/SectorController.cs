@@ -66,14 +66,14 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] SectorDTO sectorDTO)
         {
-            var dto = await sectorService.InsertSectorAsync(sectorDTO);
-            if (dto == null)
+            var sector = await sectorService.InsertSectorAsync(sectorDTO);
+            if (sector == null)
             {
                 return BadRequest();
             }
             else
             {
-                return Created($"api/sectors/{dto.Id}", dto);
+                return Created($"api/sectors/{sector.Id}", sector);
             }
         }
 
