@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -10,6 +9,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
@@ -25,6 +25,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             this.userService = userService;
             this.registrationService = registrationService;
         }
+
 
 
         [HttpGet]
