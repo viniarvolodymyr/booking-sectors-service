@@ -19,9 +19,9 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
     [TestFixture]
     class SectorServiceTests
     {
-        readonly ISectorService sectorService;
-        readonly Mock<IUnitOfWork> unitOfWorkMock;
-        readonly Mock<IBaseRepository<Sector>> sectorRepositoryMock;
+        private readonly ISectorService sectorService;
+        private readonly Mock<IUnitOfWork> unitOfWorkMock;
+        private readonly Mock<IBaseRepository<Sector>> sectorRepositoryMock;
         List<Sector> sectorsContext;
         SectorDTO sectorDTO;
 

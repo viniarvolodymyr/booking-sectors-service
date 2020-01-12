@@ -1,28 +1,20 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
-using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
-using SoftServe.BookingSectors.WebAPI.BLL.Services;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.Controllers;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
-using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.Tests.ControllersTests.Data;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
 {
     [TestFixture]
     class SectorControllerTests
     {
-        private Mock<ISectorService> sectorServiceMock;
-        private Mock<IBookingSectorService> bookingSectorServiceMock;
-        SectorController sectorController;
+        private readonly Mock<ISectorService> sectorServiceMock;
+        private readonly Mock<IBookingSectorService> bookingSectorServiceMock;
+        private readonly SectorController sectorController;
         List<SectorDTO> sectorsContext;
 
         public SectorControllerTests()
@@ -31,6 +23,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             bookingSectorServiceMock = new Mock<IBookingSectorService>();
             sectorController = new SectorController(sectorServiceMock.Object, bookingSectorServiceMock.Object);
         }
+
         [SetUp]
         public void SetUp()
         {
