@@ -5,7 +5,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
     /// <summary>
     /// Helper for obtaining connection data
     /// </summary>
-    public static class ConfigurationHelper
+    public static class ConfigurationManager
     {
         /// <summary>
         /// Get parametr in appsettings.json

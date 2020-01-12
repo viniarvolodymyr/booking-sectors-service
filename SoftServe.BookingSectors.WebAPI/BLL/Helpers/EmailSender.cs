@@ -1,8 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Mail;
-using System.Threading.Tasks;
-
+using System.Threading.Tasks
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
 {
@@ -11,11 +10,19 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
     /// </summary>
     public sealed class EmailSender
     {
-        private static string Host => ConfigurationHelper.GetAppSettingsValue("EmailHost");
-        private static int Port => Convert.ToInt16(ConfigurationHelper.GetAppSettingsValue("EmailPort"));
 
-        private static string SenderAddress => ConfigurationHelper.GetAppSettingsValue("EmailAccount");
-        private static string SenderPassword => ConfigurationHelper.GetAppSettingsValue("EmailAccountPassword");
+        private static string Host => 
+            ConfigurationManager.GetAppSettingsValue("EmailOptions:EmailHost");
+        
+        private static int Port => 
+            Convert.ToInt16(ConfigurationManager.GetAppSettingsValue("EmailOptions:EmailPort"));
+
+        private static string SenderAddress =>
+            Startup.EmailConfiguration["EmailAccount"];
+        
+        private static string SenderPassword =>
+            Startup.EmailConfiguration["EmailAccountPassword"];
+
         private static string SenderName => "Administrator's Booking Fishing Sectors";
 
         private string ToAddress { get; set; }
@@ -29,6 +36,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
         {
             BodyMessage = bodyMessage;
         }
+      
 
         /// <summary>
         /// A method for sending a message to a specified mail
