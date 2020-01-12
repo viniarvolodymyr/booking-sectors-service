@@ -28,7 +28,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var sectors = await database.SectorRepository.GetAllEntitiesAsync();
             var dtos = mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(sectors);
-
+           
             return dtos;
         }
 
@@ -36,7 +36,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var sector = await database.SectorRepository.GetEntityByIdAsync(id);
             var dto = mapper.Map<Sector, SectorDTO>(sector);
-
+            
             return dto;
         }
 
@@ -46,7 +46,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                     .GetByCondition(x => x.Number == number)
                     .Select(x => x.Id)
                     .FirstOrDefaultAsync();
-
             if (sectorId == 0)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Sector with number: {number} not found when trying to get id.");

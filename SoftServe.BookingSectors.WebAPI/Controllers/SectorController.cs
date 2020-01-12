@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using System;
@@ -11,7 +10,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/sectors")]
     [ApiController]
-    
+
     public class SectorController : ControllerBase
     {
         private readonly ISectorService sectorService;
@@ -60,6 +59,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             {
                 return NoContent();
             }
+
             return Ok(freeSectors);
         }
 
