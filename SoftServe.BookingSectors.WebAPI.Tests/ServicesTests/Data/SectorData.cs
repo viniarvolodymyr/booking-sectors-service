@@ -3,7 +3,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System;
 using System.Collections.Generic;
 
-namespace SoftServe.BookingSectors.WebAPI.Tests.Data
+namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data
 {
     public class SectorData
     {
