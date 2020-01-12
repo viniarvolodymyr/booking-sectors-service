@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SoftServe.BookingSectors.WebApi.BLL.Services.Interfaces;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers

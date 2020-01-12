@@ -58,6 +58,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var sector = mapper.Map<SectorDTO, Sector>(sectorDTO);
             var insertedSector = await database.SectorRepository.InsertEntityAsync(sector);
+            
+            
             bool isSaved = await database.SaveAsync();
             if (isSaved == false)
             {

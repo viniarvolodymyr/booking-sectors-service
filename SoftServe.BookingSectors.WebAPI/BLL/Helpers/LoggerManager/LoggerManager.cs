@@ -4,14 +4,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager
 {
     public class LoggerManager : ILoggerManager
     {
-        private static ILogger logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Info messages
         /// </summary>
         public void LogDebug(string message)
         {
-            logger.Debug(message);
+            Logger.Debug(message);
         }
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager
         /// </summary>
         public void LogError(string message)
         {
-            logger.Error(message);
+            Logger.Error(message);
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager
         /// </summary>
         public void LogInfo(string message)
         {
-            logger.Info(message);
+            Logger.Info(message);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager
         /// </summary>
         public void LogWarn(string message)
         {
-            logger.Warn(message);
+            Logger.Warn(message);
         }
     }
 }

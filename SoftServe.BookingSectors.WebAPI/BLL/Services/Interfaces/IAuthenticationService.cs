@@ -1,7 +1,7 @@
 ﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using System.Threading.Tasks;
 
-namespace SoftServe.BookingSectors.WebApi.BLL.Services.Interfaces
+namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
 {
     /// <summary>
     /// Behavior of authentication

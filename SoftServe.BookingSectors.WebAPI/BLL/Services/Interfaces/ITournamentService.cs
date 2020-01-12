@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
