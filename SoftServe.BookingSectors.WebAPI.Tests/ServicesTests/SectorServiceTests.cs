@@ -74,12 +74,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             sectorRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((int id) => sectorsContext.Find(s => s.Id == id));
             //Act
-            var result = await sectorService.GetSectorByIdAsync(id);
-            if (result == null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound,
-                    $"Sector with id: {id} not found when trying to get sector.");
-            }
+            var result = await sectorService.GetSectorByIdAsync(id) as SectorDTO;
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(sectorsContext[id - 1].Id, result.Id);
@@ -98,7 +93,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                 });
             int sectorContextLength = sectorsContext.Count;
             //Act
-            var result = await sectorService.InsertSectorAsync(sectorDTO);
+            var result = await sectorService.InsertSectorAsync(sectorDTO) as SectorDTO;
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(sectorDTO.Id, result.Id);
@@ -121,7 +116,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                     return s;
                 });
             //Act
-            var result = await sectorService.UpdateSectorAsync(id, sectorDTO);
+            var result = await sectorService.UpdateSectorAsync(id, sectorDTO) as SectorDTO;
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(sectorsContext[id - 1].Id, result.Id);
@@ -138,17 +133,12 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                 .ReturnsAsync((int id) =>
                 {
                     var foundSector = sectorsContext.Find(s => s.Id == id);
-                    if (foundSector == null)
-                    {
-                        throw new HttpStatusCodeException(HttpStatusCode.NotFound,
-                            $"Sector with id: {id} not found when trying to delete sector. Sector wasn't deleted.");
-                    }
                     sectorsContext.Remove(foundSector);
                     return foundSector;
                 });
             int sectorContextLength = sectorsContext.Count;
             //Act
-            var result = await sectorService.DeleteSectorByIdAsync(id);
+            var result = await sectorService.DeleteSectorByIdAsync(id) as SectorDTO;
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(sectorContextLength - 1, sectorsContext.Count);

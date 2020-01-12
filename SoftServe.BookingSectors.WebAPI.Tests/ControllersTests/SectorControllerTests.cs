@@ -84,7 +84,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             var result = await sectorController.Post(sectorDTO);
             var createdResult = result as CreatedResult;
             //Assert
-            Assert.IsNotNull(result);
+            Assert.IsNotNull(createdResult);
             Assert.AreEqual(201, createdResult.StatusCode);
             Assert.AreEqual(sectorContextLength + 1, sectorsContext.Count);
         }
@@ -107,8 +107,32 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             var result = await sectorController.Put(id, sectorDTO);
             var okResult = result as OkObjectResult;
             //Assert
-            Assert.IsNotNull(result);
+            Assert.IsNotNull(okResult);
             Assert.AreEqual(200, okResult.StatusCode);
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public async Task DeleteSector_InputIsSectorData_OneSectorDeleted(int id)
+        {
+            //Arrange
+            sectorServiceMock.Setup(r => r.DeleteSectorByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => 
+                {
+                    var foundSector = sectorsContext.Find(s => s.Id == id);
+                    sectorsContext.Remove(foundSector);
+                    return foundSector;
+                });
+            int sectorContextLength = sectorsContext.Count;
+            //Act
+            var result = await sectorController.Delete(id);
+            var okResult = result as OkObjectResult;
+            //Assert
+            Assert.IsNotNull(okResult);
+            Assert.AreEqual(200, okResult.StatusCode);
+            Assert.AreEqual(sectorContextLength - 1, sectorsContext.Count);
         }
     }
 }
