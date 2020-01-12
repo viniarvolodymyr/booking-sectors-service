@@ -36,5 +36,14 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests.Data
                 IsActive = true
             }
         };
+        public SectorDTO SectorDTOToInsert { get; } = new SectorDTO()
+        {
+            Id = 4,
+            Number = 4,
+            Description = "Sector 4",
+            GpsLat = 49.472219M,
+            GpsLng = 23.098712M,
+            IsActive = true
+        };
     }
 }

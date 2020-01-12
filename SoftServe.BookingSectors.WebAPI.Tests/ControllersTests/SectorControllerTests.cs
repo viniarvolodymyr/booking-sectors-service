@@ -16,6 +16,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         private readonly Mock<IBookingSectorService> bookingSectorServiceMock;
         private readonly SectorController sectorController;
         List<SectorDTO> sectorsContext;
+        SectorDTO sectorDTO;
 
         public SectorControllerTests()
         {
@@ -29,6 +30,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         {
             SectorData sectorData = new SectorData();
             sectorsContext = sectorData.Sectors;
+            sectorDTO = sectorData.SectorDTOToInsert;
         }
 
         [TearDown]
@@ -65,6 +67,26 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             //Assert
             Assert.IsNotNull(okResult);
             Assert.AreEqual(200, okResult.StatusCode);
+        }
+
+        [Test]
+        public async Task InsertSector_InputIsSectorData_ReturnsCreated()
+        {
+            //Arrange
+            sectorServiceMock.Setup(r => r.InsertSectorAsync(It.IsAny<SectorDTO>()))
+                .ReturnsAsync((SectorDTO s) =>
+                {
+                    sectorsContext.Add(s);
+                    return s;
+                });
+            int sectorContextLength = sectorsContext.Count;
+            //Act
+            var result = await sectorController.Post(sectorDTO);
+            var createdResult = result as CreatedResult;
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(201, createdResult.StatusCode);
+            Assert.AreEqual(sectorContextLength + 1, sectorsContext.Count);
         }
     }
 }

@@ -96,11 +96,13 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                     sectorsContext.Add(s);
                     return s;
                 });
+            int sectorContextLength = sectorsContext.Count;
             //Act
             var result = await sectorService.InsertSectorAsync(sectorDTO);
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(sectorDTO.Id, result.Id);
+            Assert.AreEqual(sectorContextLength + 1, sectorsContext.Count);
         }
 
         [Test]
