@@ -22,8 +22,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         private bool tournamentIsBooked(int id, IEnumerable<BookingSector> bookings, DateTime fromDate)
         {
-            var n =  bookings.Any(bookings => bookings.TournamentId==id);
-            return n;
+           return  bookings.Any(bookings => bookings.TournamentId==id);
         }
         public async Task<IEnumerable<TournamentDTO>> GetAllTournamentsAsync()
         {
