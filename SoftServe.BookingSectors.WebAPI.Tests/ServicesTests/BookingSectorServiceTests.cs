@@ -92,7 +92,10 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             bookingSectorDTOToInsert = bookingSector;
             unitOfWorkMock.Setup(u => u.SaveAsync()).ReturnsAsync(true);
             unitOfWorkMock.Setup(u => u.BookingSectorRepository).Returns(bookingSectorRepositoryMock.Object);
-            bookingSectorRepositoryMock.Setup(b => b.GetAllEntitiesAsync()).ReturnsAsync(bookingsContext);        
+            bookingSectorRepositoryMock.Setup(b => b.GetAllEntitiesAsync()).ReturnsAsync(bookingsContext);
+            bookingSectorRepositoryMock.Setup(b => b.GetEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => bookingsContext
+                    .Find(b => b.Id == id));
         }
 
         // #TODO: Change method name when booking data property will be moved to diff file
@@ -111,10 +114,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [TestCase(3)]
         public async Task GetBookingByIdAsync_InputIsBookingSectorData_GetFoundBookingSectorDTO(int id)
         {
-            //Arrange
-            bookingSectorRepositoryMock.Setup(b => b.GetEntityByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) => bookingsContext
-                    .Find(b => b.Id == id));
             //Act
             var result = await bookingSectorService.GetBookingByIdAsync(id);
 
@@ -122,6 +121,21 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<BookingSectorDTO>(result);
             Assert.AreEqual(id, result.Id);
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public async Task GetBookingsByUserId_InputIsBookingSectorData_GetFoundBookingsSectorDTO(int id)
+        {
+            //Act
+            var result = await bookingSectorService.GetBookingsByUserId(id) as List<BookingSectorDTO>;
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<IEnumerable<BookingSectorDTO>>(result);
+            Assert.IsNotNull(result[0].UserId);
         }
 
         [Test]
