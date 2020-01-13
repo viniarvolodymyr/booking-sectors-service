@@ -65,11 +65,19 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             if (user == null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound,
-                    $"User with phone number: {phone} not found when trying to get entity.");
+                return null;
+                //throw new HttpStatusCodeException(HttpStatusCode.NotFound,
+                //    $"User with phone number: {phone} not found when trying to get entity.");
             }
 
-            return mapper.Map<User, UserDTO>(user);
+            var dto = mapper.Map<User, UserDTO>(user);
+
+            if (user.Photo != null)
+            {
+                dto.Photo = Convert.ToBase64String(user.Photo);
+            }
+
+            return dto;
         }
 
         public async Task<string> GetUserPhotoById(int id)
