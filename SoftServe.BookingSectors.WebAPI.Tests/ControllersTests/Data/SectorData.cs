@@ -45,5 +45,17 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests.Data
             GpsLng = 23.098712M,
             IsActive = true
         };
+        public List<SectorDTO> FreeSectors { get; } = new List<SectorDTO>()
+        {
+            new SectorDTO
+            {
+                Id = 3,
+                Number = 3,
+                Description = "Sector 3",
+                GpsLat = 49.472219M,
+                GpsLng = 23.098712M,
+                IsActive = true
+            }
+        };
     }
 }
