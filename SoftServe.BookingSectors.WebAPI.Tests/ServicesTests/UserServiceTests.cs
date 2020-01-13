@@ -1,15 +1,18 @@
-﻿using NUnit.Framework;
-using SoftServe.BookingSectors.WebAPI.BLL.Services;
-using System;
-using System.Collections.Generic;
+﻿using AutoMapper;
 using Moq;
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
-using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
-using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
-using AutoMapper;
+using NUnit.Framework;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
+using SoftServe.BookingSectors.WebAPI.BLL.Services;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
+using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
+using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
+using SoftServe.BookingSectors.WebAPI.Tests.Data;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
@@ -17,293 +20,207 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
     [TestFixture]
     class UserServiceTests
     {
-        [OneTimeSetUp]
-        [Obsolete]
-        public void Setup()
-        {
-            /*    tournaments = SetUpTournaments();
+            readonly IUserService userService;
+            readonly Mock<IUnitOfWork> unitOfWorkMock;
+            readonly Mock<IBaseRepository<User>> userRepositoryMock;
+            readonly Mock<ILoggerManager> logger;
 
-                tournamentRepository= SetUpTournamentRepository();
+        List<User> usersContext;
+        UserDTO userDTO;
+        string newPass;
+        string phone;
 
-
-                var config = new MapperConfiguration(opts =>
-                {
-                    opts.AddProfile<MappingProfile>();
-                });
-
-                var mapper = config.CreateMapper();
-                tournamentService = new TournamentService(unitOfWork, mapper);
-
-                */
-        }
-
-        [SetUp]
-        public void ReInitializeTest()
-        {
-
-        }
-
-        /// ////////////////////////////////////////////////////////////
-        private static List<UserDTO> SetUpUsersDTO()
-        {
-            var usersDTO = new List<UserDTO>
-                               {
-                new UserDTO()
-                {
-                    Id = 1,
-                    Firstname = "testUserName",
-                    Lastname = "testUserSurname",
-                    Phone = "9999999999",
-                    RoleId = 2,
-                    Password = "12345",
-                },
-                   new UserDTO()
-                {
-                    Id = 2,
-                    Firstname = "testUserName",
-                    Lastname = "testUserSurname",
-                    Phone = "9999999999",
-                    RoleId = 2,
-                    Password = "12345",
-                },
-                      new UserDTO()
-                {
-                    Id = 3,
-                    Firstname = "testUserName",
-                    Lastname = "testUserSurname",
-                    Phone = "9999999999",
-                    RoleId = 2,
-                    Password = "12345",
-                },
-                         new UserDTO()
-                {
-                    Id = 4,
-                    Firstname = "testUserName",
-                    Lastname = "testUserSurname",
-                    Phone = "9999999999",
-                    RoleId = 2,
-                    Password = "12345",
-                },
-                            new UserDTO()
-                {
-                    Id = 5,
-                    Firstname = "testUserName",
-                    Lastname = "testUserSurname",
-                    Phone = "9999999999",
-                    RoleId = 2,
-                    Password = "12345",
-                },
-        };
-            return usersDTO;
-        }
-
-
-        private static List<User> SetUpUsers()
-        {
-            var users = new List<User>
-                               {
-                new User()
-                {
-                    Id = 1,
-                    Firstname = "testUserName",
-                    Lastname = "testUserSurname",
-                    Phone = "9999999999",
-                    RoleId = 2,
-                   
-                },
-                   new User()
-                {
-                    Id = 2,
-                    Firstname = "testUserName",
-                    Lastname = "testUserSurname",
-                    Phone = "9999999999",
-                    RoleId = 2,
-                
-                },
-                      new User()
-                {
-                    Id = 3,
-                    Firstname = "testUserName",
-                    Lastname = "testUserSurname",
-                    Phone = "9999999999",
-                    RoleId = 2,
-                 
-                },
-                         new User()
-                {
-                    Id = 4,
-                    Firstname = "testUserName",
-                    Lastname = "testUserSurname",
-                    Phone = "9999999999",
-                    RoleId = 2,
-                   
-                },
-                            new User()
-                {
-                    Id = 5,
-                    Firstname = "testUserName",
-                    Lastname = "testUserSurname",
-                    Phone = "9999999999",
-                    RoleId = 2,
-                    
-                },
-        };
-            return users;
-        }
-        /*
-                private IBaseRepository<Tournament> SetUpTournamentRepository()
-                {
-                    var mockRepo = new Mock<IBaseRepository<Tournament>>(MockBehavior.Default, unitOfWork);
-
-                    mockRepo.Setup(p => p.GetAllEntitiesAsync()).ReturnsAsync(tournaments);
-
-                    mockRepo.Setup(p => p.GetEntityByIdAsync(It.IsAny<int>()))
-                        .ReturnsAsync(new Func<int, Tournament>(
-                                     id => tournaments.Find(p => p.Id.Equals(id))));
-                    /*
-                    mockRepo.Setup(p => p.InsertEntityAsync((It.IsAny<Tournament>())))
-                        .Callback(new Action<Tournament>(newTournament =>
-                        {
-                            dynamic maxProductID = tournaments.Last().Id;
-                            dynamic nextProductID = maxProductID + 1;
-                            newTournament.Id = nextProductID;
-                            tournaments.Add(newTournament);
-                        }));
-
-                    mockRepo.Setup(p => p.UpdateEntity(It.IsAny<Tournament>()))
-                        .Callback(new Action<Tournament>(prod =>
-                        {
-                            var oldProduct = tournaments.Find(a => a.Id == prod.Id);
-                            oldProduct = prod;
-                        }));
-
-                    mockRepo.Setup(p => p.DeleteEntityByIdAsync(It.IsAny<int>()))
-                        .Callback(new Action<Tournament>(prod =>
-                        {
-                            var productToRemove =
-                                tournaments.Find(a => a.Id == prod.Id);
-
-                            if (productToRemove != null)
-                                tournaments.Remove(productToRemove);
-                        }));
-
-                    return mockRepo.Object;
-                }
-                */
-        /////////////////////////
-        [Test]
-        public void GetAllTestAsync()
-        {
-            List<User> users = SetUpUsers();
-            
-          //  List<TournamentDTO> tournamentsDTO = new List<TournamentDTO>();
-            Mock<IBaseRepository<User>> repositoryMock = new Mock<IBaseRepository<User>>();
-
-            repositoryMock.Setup(r => r.GetAllEntitiesAsync()).ReturnsAsync(users);
-
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(uow => uow.UserRepository).Returns(repositoryMock.Object);
-
-            var config = new MapperConfiguration(opts =>
+            public UserServiceTests()
             {
-                opts.AddProfile<UserProfile>();
-            });
-            var mapper = config.CreateMapper();
-            ILoggerManager logger = new LoggerManager();
-            var sut = new UserService(mockUnitOfWork.Object, mapper, logger);
+                var config = new MapperConfiguration(cfg =>
+                {
+                    cfg.AddProfile<UserProfile>();
+                });
+                logger = new Mock<ILoggerManager>();
+                userRepositoryMock = new Mock<IBaseRepository<User>>();
+                unitOfWorkMock = new Mock<IUnitOfWork>();
+                unitOfWorkMock.Setup(u => u.SaveAsync()).ReturnsAsync(true);
+                unitOfWorkMock.Setup(u => u.UserRepository).Returns(userRepositoryMock.Object);
+                userService = new UserService(unitOfWorkMock.Object, config.CreateMapper(), logger.Object);
+            }
 
+            [SetUp]
+            public void SetUp()
+            {
+                UserData userData = new UserData();
+                usersContext = userData.Users;
+                userDTO = userData.UserDTOToInsert;
+                newPass = userData.newPassword;
+                phone = userData.phone;
+            }
+
+            [TearDown]
+            public void TearDown()
+            {
+                usersContext.Clear();
+            }
+
+            [Test]
+            public async Task GetAllUsers_InputIsUserData_AllUsersReturned()
+            {
+                //Arrange
+                userRepositoryMock.Setup(r => r.GetAllEntitiesAsync()).ReturnsAsync(usersContext);
+                //Act
+                var results = await userService.GetAllUsersAsync() as List<UserDTO>;
+                //Assert
+                Assert.IsNotNull(results);
+                Assert.AreEqual(usersContext.Count, results.Count);
+            }
+
+            [Test]
+            [TestCase(1)]
+            [TestCase(2)]
+            [TestCase(3)]
+            public async Task GetUserById_InputIsUserData_OneUserReturned(int id)
+            {
+                //Arrange
+                userRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
+                    .ReturnsAsync((int id) => usersContext.Find(s => s.Id == id));
+                //Act
+                var result = await userService.GetUserByIdAsync(id);
+                if (result == null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.NotFound,
+                        $"User with id: {id} not found when trying to get user.");
+                }
+                //Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(usersContext[id - 1].Id, result.Id);
+            }
+
+            [Test]
+            [TestCase(1)]
+            [TestCase(2)]
+            [TestCase(3)]
+            public async Task GetUserByPhone_InputIsUserData_OneUserReturned(int id)
+            {
+                //Arrange
+                userRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
+                    .ReturnsAsync((int id) => usersContext.Find(s => s.Id == id));
+                //Act
+                var result = await userService.GetUserByPhoneAsync(phone);
+                if (result == null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.NotFound,
+                        $"User with phone: {id} not found when trying to get user.");
+                }
+                //Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(usersContext[id - 1], result.Id);
+            }
+
+            [Test]
+            public async Task InsertUser_InputIsUserData_OneUserInserted()
+            {
+                //Arrange
+                userRepositoryMock.Setup(r => r.InsertEntityAsync(It.IsAny<User>()))
+                    .ReturnsAsync((User u) =>
+                    {
+                        u.Id = userDTO.Id;
+                        usersContext.Add(u);
+                        return u;
+                    });
+                //Act
+             //   var result = await userService.InsertUserAsync(userDTO);
+                //Assert
+              //  Assert.IsNotNull(result);
+                //Assert.AreEqual(userDTO.Id, result.Id);
+            }
+
+            [Test]
+            [TestCase(1)]
+            [TestCase(2)]
+            [TestCase(3)]
+            public async Task UpdateUser_InputIsUserData_OneUserUpdated(int id)
+            {
+                //Arrange
+                userRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
+                    .ReturnsAsync((int id) => usersContext.Find(u => u.Id == id));
+                userRepositoryMock.Setup(r => r.UpdateEntity(It.IsAny<User>()))
+                    .Returns((User u) =>
+                    {
+                        usersContext[usersContext.FindIndex(i => i.Id == u.Id)] = u;
+                        return u;
+                    });
+                //Act
+                 var result = await userService.UpdateUserById(id, userDTO);
+                //Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(usersContext[id - 1].Id, result.Id);
+            }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public async Task UpdateUserPass_InputIsUserData_OneUserUpdated(int id)
+        {
+            //Arrange
+            userRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => usersContext.Find(u => u.Id == id));
+            userRepositoryMock.Setup(r => r.UpdateEntity(It.IsAny<User>()))
+                .Returns((User u) =>
+                {
+                    usersContext[usersContext.FindIndex(i => i.Id == u.Id)] = u;
+                    return u;
+                });
             //Act
-
-            var result = sut.GetAllUsersAsync().Result;
-            Console.WriteLine(result);
-            //Assert.IsNotNull(result);
-            Assert.IsAssignableFrom<Task<List<UserDTO>>>(result);
-            /*
-            var result = sut.GetAllTournamentsAsync().Result;
-            tournamentsDTO =  mapper.Map<List<Tournament>, List<TournamentDTO>>(tournaments);
-            //  Assert.AreNotEqual(tournamentsDTO.Count(),result.Count());
-            */
-
-            /*
-           if (model.Count() > 0)
-
-               Assert.NotNull(model);
-
-               var expected = model?.FirstOrDefault().Title;
-               var actual = schedules?.FirstOrDefault().Title;
-
-               Assert.Equal(expected: expected, actual: actual);
-           }
-           &+*/
-
+            var result = await userService.UpdateUserPassById(id, newPass);
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(usersContext[id - 1].Id, result.Id);
         }
 
+        [Test]
+        public async Task CheckPassword_InputIsUserData(int id)
+        {
+            //Arrange
+            userRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => usersContext.Find(s => s.Id == id));
+            //Act
+            var result = await userService.CheckPasswords(newPass, id);
+            if (result == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound,
+                    $"User with id: {id} not found when trying to get user.");
+            }
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(true, result);
+        }
 
-//        [SetUp]
-//        public void Setup()
-//        {
-//            _mockRepository = new Mock<UserRepository>();
-//            _mockUnitWork = new Mock<IUnitOfWork>();
-//            _service = new UserService(_mockUnitWork.Object, mapper, logger);
+        [Test]
+            [TestCase(1)]
+            [TestCase(2)]
+            [TestCase(3)]
+            public async Task DeleteUser_InputIsUserData_OneUserDeleted(int id)
+            {
+                //Arrange
+                userRepositoryMock.Setup(r => r.DeleteEntityByIdAsync(It.IsAny<int>()))
+                    .ReturnsAsync((int id) =>
+                    {
+                        var foundUser = usersContext.Find(s => s.Id == id);
+                        if (foundUser == null)
+                        {
+                            throw new HttpStatusCodeException(HttpStatusCode.NotFound,
+                                $"User with id: {id} not found when trying to delete user. User wasn't deleted.");
+                        }
+                        usersContext.Remove(foundUser);
+                        return foundUser;
+                    });
+                int userContextLength = usersContext.Count;
+                //Act
+                var result = await userService.DeleteUserByIdAsync(id);
+                //Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(userContextLength - 1, usersContext.Count);
+            }
 
-//            userDTO = new RegistrationDTO()
-//            {
-//                Firstname = "testUserName",
-//                Lastname = "testUserSurname",
-//                Phone = "9999999999",
-//                RoleId = 2,
-//                Password = "12345",
-//            };
-////            var dto =  registrationService.InsertUserAsync(user);
-//            //database.SaveAsync();
-//        }
-//        [Test]
-//        public void GetAllUsersTest()
-//        {
-//            var result = userService.GetAllUsersAsync();
-//            Assert.IsAssignableFrom<Task<IEnumerable<UserDTO>>>(result);
-//        }
-
-//        [Test]
-//        public void CheckPasswordsTest()
-//        {
-//            byte[] passToCheck = SHA256Hash.Compute(userDTO.Password);
-//            //bool exp = user.Password.SequenceEqual(passToCheck);
-//            var result =userService.CheckPasswords(userDTO.Password, userDTO.Id);
-//           // Assert.IsFalse(result);
-//        }
-      
-
-//        [Test]
-//        public void GetUserByIdTest()
-//        {
-
-//            //Arrange
-//            _mockRepository.Setup(x => x.GetAllEntitiesAsync()).Returns(listCountry);
-
-//            //Act
-//            // List<UserDTO> results = _service.GetAllUsersAsync() as List<UserDTO>;
-//            var resultAll = _service.GetAllUsersAsync();
-
-//            //Assert
-//            Assert.IsNotNull(resultAll);
-//            //var result = _service.GetUserByIdAsync(userDTO.Id);
-//            //UserDTO dto = result.Result;
-
-//           // Assert.IsAssignableFrom<Task<UserDTO>>(result);
-//           // Assert.AreEqual(userDTO.Id, dto.Id);
-
-//        }
-
-//        [Test]
-//        public void GetUserByPhoneTest()
-//        {
-//            Task<UserDTO> result = _service.GetUserByPhoneAsync(userDTO.Phone);
             
-//            UserDTO dto = result.Result;
-        
-//            Assert.AreEqual(userDTO.Phone, dto.Phone);
-//            //Assert.IsAssignableFrom<Task<UserDTO>>(result);
-//        }
-    }
+        }
 }

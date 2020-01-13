@@ -29,35 +29,50 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> Get()
+        public async Task<ActionResult> Get()
         {
             var dtos = await userService.GetAllUsersAsync();
 
-            return !dtos.Any() ?
-                (ActionResult<IEnumerable<UserDTO>>)NotFound() :
-                Ok(dtos);
+            if (dtos.Any())
+            {
+                return Ok(dtos);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<UserDTO>> GetById([FromRoute]int id)
+        public async Task<ActionResult> GetById([FromRoute]int id)
         {
             var dto = await userService.GetUserByIdAsync(id);
 
-            return dto == null ?
-                (ActionResult<UserDTO>)NotFound() :
-                Ok(dto);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
         }
 
         [HttpGet]
         [Route("phone/{phone}")]
-        public async Task<ActionResult<UserDTO>> GetByPhone([FromRoute]string phone)
+        public async Task<ActionResult> GetByPhone([FromRoute]string phone)
         {
             var dto = await userService.GetUserByPhoneAsync(phone);
 
-            return dto == null ?
-                (ActionResult<UserDTO>)NotFound() :
-                Ok(dto);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
         }
 
         [HttpGet]
@@ -75,12 +90,17 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dto);
         }
 
-        [HttpGet]
-        [Route("UserPhoto/{id}")]
-        public async Task<string> GetPhotoById([FromRoute]int id)
-        {
-            return await userService.GetUserPhotoById(id);
-        }
+        //[HttpGet]
+        //[Route("UserPhoto/{id}")]
+        //public async Task<string> GetPhotoById([FromRoute]int id)
+        //{
+        //    var photo = await userService.GetUserPhotoById(id);
+        //    if (photo == null)
+        //    {
+        //        return null;
+        //    }
+        //    else return photo;
+        //}
 
         [HttpGet]
         [Route("reset/{email}")]
@@ -103,9 +123,14 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpGet]
         [Route("{id}/{password}")]
-        public async Task<bool> PasswordCheck([FromRoute]string password, [FromRoute]int id)
+        public async Task<IActionResult> PasswordCheck([FromRoute]string password, [FromRoute]int id)
         {
-            return await userService.CheckPasswords(password, id);
+            var result = await userService.CheckPasswords(password, id);
+            if (result == false)
+            {
+                return NotFound();
+            }
+            else return Ok(result);
         }
 
 
@@ -128,33 +153,48 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [Route("{id}")]
         public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody]UserDTO userDTO)
         {
-            var user = await userService.UpdateUserById(id, userDTO);
+            var dto = await userService.UpdateUserById(id, userDTO);
 
-            return user == null ?
-                (IActionResult)NotFound() :
-                Ok(user);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
         }
 
         [HttpPut]
         [Route("password/{id}")]
         public async Task<IActionResult> UpdateUserPass([FromRoute]int id, [BindRequired, FromQuery] string password)
         {
-            var user = await userService.UpdateUserPassById(id, password);
+            var dto = await userService.UpdateUserPassById(id, password);
 
-            return user == null ?
-                (IActionResult)NotFound() :
-                Ok(user);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
         }
 
         [HttpPut]
         [Route("photo/{id}")]
         public async Task<IActionResult> UpdateUserPhoto([FromRoute]int id, [FromForm] IFormFile file)
         {
-            var user = await userService.UpdateUserPhotoById(id, file);
+            var dto = await userService.UpdateUserPhotoById(id, file);
 
-            return user == null ?
-                (IActionResult)NotFound() :
-                Ok(user);
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
         }
 
 
@@ -164,9 +204,14 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         {
             var user = await userService.DeleteUserByIdAsync(id);
 
-            return user == null ?
-                (IActionResult)NotFound() :
-                Ok(user);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(user);
+            }
         }
 
     }

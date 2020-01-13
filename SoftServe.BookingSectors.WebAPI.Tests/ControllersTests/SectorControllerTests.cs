@@ -7,6 +7,7 @@ using SoftServe.BookingSectors.WebAPI.Controllers;
 using SoftServe.BookingSectors.WebAPI.Tests.ControllersTests.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
 {
     [TestFixture]
@@ -16,6 +17,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         private readonly Mock<IBookingSectorService> bookingSectorServiceMock;
         private readonly SectorController sectorController;
         List<SectorDTO> sectorsContext;
+        List<SectorDTO> freeSectorsDTO;
         SectorDTO sectorDTO;
 
         public SectorControllerTests()
@@ -31,6 +33,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             SectorData sectorData = new SectorData();
             sectorsContext = sectorData.Sectors;
             sectorDTO = sectorData.SectorDTOToInsert;
+            freeSectorsDTO = sectorData.FreeSectors;
         }
 
         [TearDown]
@@ -62,6 +65,20 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
                 .ReturnsAsync((int id) => sectorsContext.Find(sector => sector.Id == id));
             //Act
             var okResult = (await sectorController.Get(id)) as OkObjectResult;
+            //Assert
+            Assert.IsNotNull(okResult);
+            Assert.AreEqual(200, okResult.StatusCode);
+        }
+
+        [Test]
+        public async Task GetFreeSectors_InputIsSectorData_ReturnsOk()
+        {
+            //Arrange
+            bookingSectorServiceMock.Setup(bookingSectorService => bookingSectorService.FilterSectorsByDate
+                (new System.DateTime(2019 - 12 - 31), new System.DateTime(2020 - 01 - 02)))
+                    .ReturnsAsync(freeSectorsDTO);
+            //Act
+            var okResult = (await sectorController.Get(new System.DateTime(2019 - 12 - 31), new System.DateTime(2020 - 01 - 02))) as OkObjectResult;
             //Assert
             Assert.IsNotNull(okResult);
             Assert.AreEqual(200, okResult.StatusCode);

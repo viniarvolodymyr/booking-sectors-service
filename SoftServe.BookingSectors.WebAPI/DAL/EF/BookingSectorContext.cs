@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.EF
@@ -79,7 +80,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_USER_ID");
             });
-
 
             modelBuilder.Entity<Language>(entity =>
             {
@@ -237,6 +237,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .HasColumnName("DESCRIPTION")
                     .HasMaxLength(200)
                     .IsUnicode(false);
+
+                entity.Property(e => e.IsBooked).HasColumnName("IS_BOOKED");
 
                 entity.Property(e => e.ModDate)
                     .HasColumnName("MOD_DATE")
