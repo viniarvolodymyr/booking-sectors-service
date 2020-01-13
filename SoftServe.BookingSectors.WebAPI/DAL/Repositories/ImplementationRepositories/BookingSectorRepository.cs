@@ -41,16 +41,15 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return (await bookingSectorSet.AddAsync(entityToInsert)).Entity;
         }
 
-        public void UpdateEntity(BookingSector entityToUpdate)
+        public BookingSector UpdateEntity(BookingSector entityToUpdate)
         {
-            bookingSectorSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            return bookingSectorSet.Update(entityToUpdate).Entity;
         }
 
-        public async Task<EntityEntry<BookingSector>> DeleteEntityByIdAsync(int id)
+        public async Task<BookingSector> DeleteEntityByIdAsync(int id)
         {
             BookingSector entityToDelete = await bookingSectorSet.FindAsync(id);
-            return bookingSectorSet.Remove(entityToDelete);
+            return bookingSectorSet.Remove(entityToDelete).Entity;
         }
     }
 }

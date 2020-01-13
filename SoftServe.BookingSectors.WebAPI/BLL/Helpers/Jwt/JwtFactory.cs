@@ -5,7 +5,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
+namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers.Jwt
 {
     public class JwtFactory : IJwtFactory
     {

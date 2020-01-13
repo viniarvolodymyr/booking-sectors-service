@@ -34,9 +34,9 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
                 byte[] bytesHash = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(value));
 
                 StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < bytesHash.Length; i++)
+                foreach (var t in bytesHash)
                 {
-                    builder.Append(bytesHash[i].ToString("x2"));
+                    builder.Append(t.ToString("x2"));
                 }
 
                 return builder.ToString();

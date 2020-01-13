@@ -8,6 +8,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
     {
         Task<IEnumerable<SettingsDTO>> GetSettingsAsync();
         Task<SettingsDTO> GetSettingByIdAsync(int id);
-        public Task UpdateSettingsAsync(int id, SettingsDTO settingsDTO);
+        Task<SettingsDTO> UpdateSettingsAsync(int id, SettingsDTO settingsDTO);
     }
 }

@@ -5,7 +5,12 @@ VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoftServe.BookingSectors.WebAPI", "SoftServe.BookingSectors.WebAPI\SoftServe.BookingSectors.WebAPI.csproj", "{64CF8ACD-5707-42D0-A20F-60258D1DA4F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoftServe.BookingSectors.WebAPI.Tests", "SoftServe.BookingSectors.WebAPI.Tests\SoftServe.BookingSectors.WebAPI.Tests.csproj", "{4EC4A601-7086-416B-A0CB-16664D892537}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoftServe.BookingSectors.WebAPI.Tests", "SoftServe.BookingSectors.WebAPI.Tests\SoftServe.BookingSectors.WebAPI.Tests.csproj", "{4EC4A601-7086-416B-A0CB-16664D892537}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{938E4990-50A9-424D-8AE9-E0E5CB065AE9}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Models
 {

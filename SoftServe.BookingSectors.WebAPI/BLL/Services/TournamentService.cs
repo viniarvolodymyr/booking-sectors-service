@@ -3,9 +3,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
@@ -14,6 +12,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
     {
         private readonly IUnitOfWork database;
         private readonly IMapper mapper;
+
         public TournamentService(IUnitOfWork database, IMapper mapper)
         {
             this.database = database;
@@ -38,6 +37,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var tournamentToInsert = mapper.Map<TournamentDTO, Tournament>(tournamentDTO);
             var insertedTournament = await database.TournamentRepository.InsertEntityAsync(tournamentToInsert);
+
             bool isSaved = await database.SaveAsync();
             if (isSaved == false)
             {
@@ -72,7 +72,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 return  null;
             }
             bool isSaved = await database.SaveAsync();
-            return (isSaved == true) ? tournament.Entity : null;
+            return (isSaved == true) ? tournament : null;
         }
 
         public void Dispose()

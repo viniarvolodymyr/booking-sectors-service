@@ -19,7 +19,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         private TournamentRepository tournamentRepository;
         private BookingSectorRepository bookingRepository;
         private TokenRepository tokenRepository;
-        private EmailRepository emailRepository;
+
         private readonly ILoggerManager logger;
 
 
@@ -43,10 +43,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
         public IBaseRepository<Token> TokenRepository =>
          tokenRepository ??= new TokenRepository(context);
 
-
-        public IBaseRepository<Email> EmailRepository =>
-         emailRepository ??= new EmailRepository(context);
-
         public async Task<bool> SaveAsync()
         {
             try
@@ -54,13 +50,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
                 var changes = context.ChangeTracker.Entries().Count(
                     p => p.State == EntityState.Modified || p.State == EntityState.Deleted
                                                          || p.State == EntityState.Added);
-                if (changes == 0)
-                {
-                    return true;
-                }
-
-
-                return await context.SaveChangesAsync() > 0;
+               
+                return changes == 0 || await context.SaveChangesAsync() > 0;
             }
             catch (DbUpdateException e)
             {

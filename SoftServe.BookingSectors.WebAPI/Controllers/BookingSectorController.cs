@@ -51,7 +51,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Get([FromRoute]int id)
         {
             var dto = await bookingSectorService.GetBookingByIdAsync(id);
@@ -96,7 +95,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Post([FromBody]BookingSectorDTO bookingDTO)
         {
             var dto = await bookingSectorService.BookSector(bookingDTO);
@@ -112,7 +110,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromQuery]bool isApproved)
         {
             var booking = await bookingSectorService.UpdateBookingApprovedAsync(id, isApproved);
@@ -143,7 +140,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
             var booking = await bookingSectorService.DeleteBookingByIdAsync(id);

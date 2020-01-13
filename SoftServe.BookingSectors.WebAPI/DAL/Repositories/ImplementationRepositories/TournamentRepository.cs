@@ -37,21 +37,20 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return tournamentSet.Where(expression).AsNoTracking();
         }
 
-        public async Task<Tournament> InsertEntityAsync(Tournament entity)
+        public async Task<Tournament> InsertEntityAsync(Tournament entityToInsert)
         {
-            return (await tournamentSet.AddAsync(entity)).Entity;
+            return (await tournamentSet.AddAsync(entityToInsert)).Entity;
         }
 
-        public void UpdateEntity(Tournament entity)
+        public Tournament UpdateEntity(Tournament entityToUpdate)
         {
-            tournamentSet.Attach(entity);
-            context.Entry(entity).State = EntityState.Modified;
+            return tournamentSet.Update(entityToUpdate).Entity;
         }
 
-        public async Task<EntityEntry<Tournament>> DeleteEntityByIdAsync(int id)
+        public async Task<Tournament> DeleteEntityByIdAsync(int id)
         {
-            Tournament existing = await tournamentSet.FindAsync(id);
-            return tournamentSet.Remove(existing);
+            Tournament tournamentToDelete = await tournamentSet.FindAsync(id);
+            return tournamentSet.Remove(tournamentToDelete).Entity;
         }
 
     }

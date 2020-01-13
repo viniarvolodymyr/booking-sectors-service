@@ -1,4 +1,3 @@
-using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,12 +10,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         Task<IEnumerable<UserDTO>> GetAllUsersAsync();
         Task<UserDTO> GetUserByIdAsync(int id);
         Task<UserDTO> GetUserByPhoneAsync(string phone);
-        Task<User> UpdateUserById(int id, UserDTO userDTO);
-        Task<User> UpdateUserPassById(int id, UserDTO userDTO);
-        Task<User> DeleteUserByIdAsync(int id);
+        Task<UserDTO> UpdateUserById(int id, UserDTO userDTO);
+        Task<UserDTO> UpdateUserPassById(int id, string password);
+        Task<UserDTO> DeleteUserByIdAsync(int id);
         Task<bool> CheckPasswords(string password, int id);
-        Task<User> UpdateUserPhotoById(int id, IFormFile image);
+        Task<UserDTO> UpdateUserPhotoById(int id, IFormFile image);
         Task<string> GetUserPhotoById(int id);
-        Task<RegistrationDTO> SendEmailAsync(string email);
+        Task<bool> ResetPassword(UserDTO user);
     }
 }
