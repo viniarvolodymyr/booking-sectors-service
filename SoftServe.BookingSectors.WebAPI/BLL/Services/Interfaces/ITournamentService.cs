@@ -10,8 +10,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         Task<IEnumerable<TournamentDTO>> GetAllTournamentsAsync();
         Task<TournamentDTO> GetTournamentByIdAsync(int id);
         Task<TournamentDTO> InsertTournamentAsync(TournamentDTO tournamentDTO);
-        Task<Tournament> UpdateTournament(int tourId, TournamentDTO tournamentDTO);
-        Task<Tournament> DeleteTournamentByIdAsync(int id);
-        void Dispose();
+        Task<TournamentDTO> UpdateTournamentAsync(int id, TournamentDTO tournamentDTO);
+        Task<TournamentDTO> DeleteTournamentByIdAsync(int id);
     }
 }
