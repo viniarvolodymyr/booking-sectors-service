@@ -12,6 +12,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
         public string Password { get; set; }
         public int RoleId { get; set; }
         public string RoleName { get; set; }
-        public string? Photo { get; set; }
+        public string Photo { get; set; }
     }
 }
