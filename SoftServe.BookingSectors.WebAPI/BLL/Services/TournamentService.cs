@@ -5,6 +5,7 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
@@ -21,26 +22,28 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         private bool tournamentIsBooked(int id, IEnumerable<BookingSector> bookings, DateTime fromDate)
         {
-            return bookings.All(b => b.BookingStart >= fromDate && b.TournamentId == id);
+            var n =  bookings.Any(bookings => bookings.TournamentId==id);
+            return n;
         }
         public async Task<IEnumerable<TournamentDTO>> GetAllTournamentsAsync()
         {
             var tournaments = await database.TournamentRepository.GetAllEntitiesAsync();
             var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
-        
-            var entities = tournaments.GroupJoin(bookings,
+            var tournamentBookings = bookings.Where(b => b.TournamentId != null);
+
+            var entities = tournaments.GroupJoin(tournamentBookings,
                 tournament => tournament.Id,
-                booking => booking.SectorId,
-                (tournament, bookings) => new Tournament()
+                tournamentBookings => tournamentBookings.TournamentId,
+                (tournament, tournamentBookings) => new Tournament()
                 {
                     Id = tournament.Id,
                     Name = tournament.Name,
                     Description = tournament.Description,
                     PreparationTerm = tournament.PreparationTerm,
-                    IsBooked = tournamentIsBooked(tournament.Id, bookings, DateTime.Now),
+                    IsBooked = tournamentIsBooked(tournament.Id, tournamentBookings, DateTime.Now),
                     CreateUserId = tournament.CreateUserId
                 });
-            return mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(entities);
+            return mapper.Map<IEnumerable<Tournament>, IEnumerable<TournamentDTO>>(entities);
         }
 
         public async Task<TournamentDTO> GetTournamentByIdAsync(int id)
