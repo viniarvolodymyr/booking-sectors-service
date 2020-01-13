@@ -4,6 +4,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
@@ -18,14 +19,16 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             this.database = database;
             this.mapper = mapper;
         }
-        enum settings
+        public async Task<IEnumerable<SettingsDTO>> GetSettingsAsync()
         {
-            MAX_BOOKING_SECTORS = 1,
-            MAX_BOOKING_DAYS = 2
-        };
-        public async Task<SettingsDTO> GetSettingByIdAsync(string name)
+            var settings = await database.SettingRepository.GetAllEntitiesAsync();
+            var dtos = mapper.Map<IEnumerable<Setting>, IEnumerable<SettingsDTO>>(settings);
+
+            return dtos;
+        }
+        public async Task<SettingsDTO> GetSettingByIdAsync(int id)
         {
-            var entity = await database.SettingRepository.GetEntityByIdAsync((int)Enum.Parse(typeof(settings), name));
+            var entity = await database.SettingRepository.GetEntityByIdAsync(id);
             if (entity == null)
             {
                 return null;
@@ -34,16 +37,18 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dto;
         }
 
-        public async Task UpdateSettingsAsync(string name, SettingsDTO settingsDTO)
+        public async Task<SettingsDTO> UpdateSettingsAsync(int id, SettingsDTO settingsDTO)
         {
-            var entity = await database.SettingRepository.GetEntityByIdAsync((int)Enum.Parse(typeof(settings), name));
+            var entity = await database.SettingRepository.GetEntityByIdAsync(id);
             var setting = mapper.Map<SettingsDTO, Setting>(settingsDTO);
-            setting.Id = (int)Enum.Parse(typeof(settings), name);
+            setting.Id = id;
             setting.CreateDate = entity.CreateDate;
             setting.CreateUserId = entity.CreateUserId;
             setting.ModDate = DateTime.Now;
             database.SettingRepository.UpdateEntity(setting);
-            await database.SaveAsync();
+            bool isSaved = await database.SaveAsync();
+
+            return (isSaved) ? settingsDTO : null;
         }
     }
 }

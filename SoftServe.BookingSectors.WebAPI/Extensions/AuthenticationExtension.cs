@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using SoftServe.BookingSectors.WebApi.BLL.Services.Interfaces;
-using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+using SoftServe.BookingSectors.WebAPI.BLL.Helpers.Jwt;
 using SoftServe.BookingSectors.WebAPI.BLL.Services;
 
 namespace SoftServe.BookingSectors.WebAPI.Extensions

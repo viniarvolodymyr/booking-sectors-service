@@ -5,7 +5,6 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
@@ -14,6 +13,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
     {
         private readonly IUnitOfWork database;
         private readonly IMapper mapper;
+
         public TournamentService(IUnitOfWork database, IMapper mapper)
         {
             this.database = database;
@@ -54,6 +54,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var tournamentToInsert = mapper.Map<TournamentDTO, Tournament>(tournamentDTO);
             var insertedTournament = await database.TournamentRepository.InsertEntityAsync(tournamentToInsert);
+
             bool isSaved = await database.SaveAsync();
             if (isSaved == false)
             {
@@ -61,40 +62,36 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             else
             {
-                return mapper.Map<Tournament, TournamentDTO>(insertedTournament.Entity);
+                return mapper.Map<Tournament, TournamentDTO>(insertedTournament);
             }
         }
 
-        public async Task<Tournament> UpdateTournament(int id, TournamentDTO tournamentDTO)
+        public async Task<TournamentDTO> UpdateTournamentAsync(int id, TournamentDTO tournamentDTO)
         {
-            var tournament = await database.TournamentRepository.GetEntityByIdAsync(id);
-            if (tournament == null)
+            var existedTournament = await database.TournamentRepository.GetEntityByIdAsync(id);
+            if (existedTournament == null)
             {
                 return null;
             }
+            var tournament = mapper.Map<TournamentDTO, Tournament>(tournamentDTO);
             tournament.Id = id;
             tournament.Name = tournamentDTO.Name;
+            tournament.Description = tournamentDTO.Description;
             tournament.PreparationTerm = tournamentDTO.PreparationTerm;
-            database.TournamentRepository.UpdateEntity(tournament);
+            tournament.ModDate = DateTime.Now;
+            var updatedTournament = database.TournamentRepository.UpdateEntity(tournament);
+            var updatedTournamentDTO = mapper.Map<Tournament, TournamentDTO>(updatedTournament);
             bool isSaved = await database.SaveAsync();
-            return (isSaved == true) ? tournament : null;
+            return (isSaved == true) ? updatedTournamentDTO : null;
         }
 
-        public async Task<Tournament> DeleteTournamentByIdAsync(int id)
+        public async Task<TournamentDTO> DeleteTournamentByIdAsync(int id)
         {
-            var tournament = await database.TournamentRepository.DeleteEntityByIdAsync(id);
-            if (tournament == null)
-            {
-                return  null;
-            }
+            var deletedTournament = await database.TournamentRepository.DeleteEntityByIdAsync(id);
             bool isSaved = await database.SaveAsync();
-            return (isSaved == true) ? tournament.Entity : null;
+            var tournamentDTO = mapper.Map<Tournament, TournamentDTO>(deletedTournament);
+          
+            return (isSaved == true) ? tournamentDTO : null;
         }
-
-        public void Dispose()
-        {
-            database.Dispose();
-        }
-
     }
 }

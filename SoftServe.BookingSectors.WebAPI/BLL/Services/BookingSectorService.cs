@@ -1,5 +1,6 @@
 ﻿using AttributeRouting.Helpers;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
@@ -30,7 +31,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dtos;
         }
 
+        public async Task<IEnumerable<BookingSectorDTO>> GetBookingsByUserId(int id)
+        {
+            var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
+            var bookingsByUserId = bookings.Where(b => b.UserId == id);
+            var dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(bookingsByUserId);
 
+            return dtos;
+        }
 
         public async Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentSectorsAsync()
         {
@@ -42,8 +50,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dtos;
         }
 
-
-
         public async Task<BookingSectorDTO> GetBookingByIdAsync(int id)
         {
             var booking = await database.BookingSectorRepository.GetEntityByIdAsync(id);
@@ -51,7 +57,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             return dto;
         }
-
 
         public async Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentByIdAsync(int idTour)
         {
@@ -110,7 +115,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             else
             {
-                return mapper.Map<BookingSector, BookingSectorDTO>(insertedSector.Entity);
+                return mapper.Map<BookingSector, BookingSectorDTO>(insertedSector);
             }
         }
 
@@ -155,7 +160,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? booking.Entity : null;
+            return (isSaved == true) ? booking : null;
         }
     }
 }

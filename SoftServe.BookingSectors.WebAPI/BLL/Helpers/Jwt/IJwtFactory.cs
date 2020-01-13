@@ -1,9 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 
-namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
+namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers.Jwt
 {
     /// <summary>
     /// Behavior of jwt

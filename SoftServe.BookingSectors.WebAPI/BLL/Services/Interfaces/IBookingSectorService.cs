@@ -14,6 +14,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         Task<BookingSectorDTO> BookSector(BookingSectorDTO bookingSectorDTO);
         Task<BookingSector> UpdateBookingApprovedAsync(int id, bool isApproved);
         Task<BookingSector> DeleteBookingByIdAsync(int id);
+        Task<IEnumerable<BookingSectorDTO>> GetBookingsByUserId(int id);
 
         Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentSectorsAsync();
         Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentByIdAsync(int idTour);

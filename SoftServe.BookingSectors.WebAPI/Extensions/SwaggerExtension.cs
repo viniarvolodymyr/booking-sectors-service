@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,6 +22,7 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
                     {"Bearer", new string[] { }},
                 };
 
+
                 x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -31,6 +31,7 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer"
                 });
+
                 x.AddSecurityRequirement(new OpenApiSecurityRequirement()
                 {
                     {
@@ -49,6 +50,7 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
                         new List<string>()
                     }
                 });
+
                 x.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
             });
         }

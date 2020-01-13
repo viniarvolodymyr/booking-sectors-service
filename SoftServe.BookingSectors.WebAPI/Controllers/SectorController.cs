@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using System;
@@ -11,7 +10,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/sectors")]
     [ApiController]
-    
+
     public class SectorController : ControllerBase
     {
         private readonly ISectorService sectorService;
@@ -53,27 +52,28 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpGet]
         [Route("free")]
-        public async Task<ActionResult<IEnumerable<SectorDTO>>> Get([FromQuery]DateTime fromDate, [FromQuery]DateTime toDate)
+        public async Task<IActionResult> Get([FromQuery]DateTime fromDate, [FromQuery]DateTime toDate)
         {
             var freeSectors = await bookingSectorService.FilterSectorsByDate(fromDate, toDate);
             if (!freeSectors.Any())
             {
                 return NoContent();
             }
+
             return Ok(freeSectors);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] SectorDTO sectorDTO)
         {
-            var dto = await sectorService.InsertSectorAsync(sectorDTO);
-            if (dto == null)
+            var sector = await sectorService.InsertSectorAsync(sectorDTO);
+            if (sector == null)
             {
                 return BadRequest();
             }
             else
             {
-                return Created($"api/sectors/{dto.Id}", dto);
+                return Created($"api/sectors/{sector.Id}", sector);
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
+namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers.Jwt
 {
     public class JwtIssuerOptions
     {

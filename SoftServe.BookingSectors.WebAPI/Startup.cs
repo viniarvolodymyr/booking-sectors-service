@@ -1,16 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
-using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.Extensions;
 using NLog;
-using System;
 using System.IO;
-using SoftServe.BookingSectors.WebAPI.BLL.Filters;
 
 namespace SoftServe.BookingSectors.WebAPI
 {
@@ -18,19 +13,19 @@ namespace SoftServe.BookingSectors.WebAPI
     {
         public Startup(IConfiguration configuration)
         {
-            LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
+            LogManager.LoadConfiguration(configFile: $"{Directory.GetCurrentDirectory()}/nlog.config");
+         
             Configuration = configuration;
+            EmailConfiguration = configuration;
         }
 
+        public static IConfiguration EmailConfiguration { get; private set; }
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<BookingSectorContext>(options => options.UseSqlServer
-                (@ConfigurationHelper.GetAppSettingsValue("AzureConnectionString")));
-
-
+            services.ConfigureDatabase(Configuration);
             services.ConfigureLoggerService();
             services.AddControllers();
             services.ConfigureSwagger();
@@ -40,7 +35,6 @@ namespace SoftServe.BookingSectors.WebAPI
             services.ConfigureDataAccessServices();
             services.ConfigureCors();
             services.ConfigureFilters();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,7 +44,6 @@ namespace SoftServe.BookingSectors.WebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-            
 
             app.UseHttpStatusCodeExceptionMiddleware();
              

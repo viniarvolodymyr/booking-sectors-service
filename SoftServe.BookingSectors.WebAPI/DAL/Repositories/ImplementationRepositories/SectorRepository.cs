@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System;
-using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
@@ -44,18 +43,17 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             return sectorSet.Where(expression).AsNoTracking().AsQueryable();
         }
 
-        public ValueTask<EntityEntry<Sector>> InsertEntityAsync(Sector entityToInsert)
+        public async Task<Sector> InsertEntityAsync(Sector entityToInsert)
         {
-            return sectorSet.AddAsync(entityToInsert);
+            return (await sectorSet.AddAsync(entityToInsert)).Entity;
         }
 
-        public void UpdateEntity(Sector entityToUpdate)
+        public Sector UpdateEntity(Sector entityToUpdate)
         {
-            sectorSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            return sectorSet.Update(entityToUpdate).Entity;
         }
 
-        public async Task<EntityEntry<Sector>> DeleteEntityByIdAsync(int id)
+        public async Task<Sector> DeleteEntityByIdAsync(int id)
         {
             var entityToDelete = await sectorSet.FindAsync(id);
             if (entityToDelete == null)
@@ -63,7 +61,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Sector with id: {id} not found when trying to delete sector. Sector wasn't deleted.");
             }
 
-            return sectorSet.Remove(entityToDelete);
+            return sectorSet.Remove(entityToDelete).Entity;
         }
     }
 }

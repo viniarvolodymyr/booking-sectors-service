@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.EF
@@ -15,7 +17,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
         }
 
         public virtual DbSet<BookingSector> BookingSector { get; set; }
-        public virtual DbSet<Email> Email { get; set; }
         public virtual DbSet<Language> Language { get; set; }
         public virtual DbSet<Sector> Sector { get; set; }
         public virtual DbSet<Setting> Setting { get; set; }
@@ -78,25 +79,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_USER_ID");
-            });
-
-            modelBuilder.Entity<Email>(entity =>
-            {
-                entity.ToTable("EMAIL");
-
-                entity.HasIndex(e => e.UserId)
-                    .HasName("UQ__EMAIL__F3BEEBFE9FCE3036")
-                    .IsUnique();
-
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Email1)
-                    .IsRequired()
-                    .HasColumnName("EMAIL")
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.UserId).HasColumnName("USER_ID");
             });
 
             modelBuilder.Entity<Language>(entity =>
@@ -256,6 +238,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .HasMaxLength(200)
                     .IsUnicode(false);
 
+                entity.Property(e => e.IsBooked).HasColumnName("IS_BOOKED");
+
                 entity.Property(e => e.ModDate)
                     .HasColumnName("MOD_DATE")
                     .HasColumnType("datetime")
@@ -276,6 +260,10 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
             {
                 entity.ToTable("USER");
 
+                entity.HasIndex(e => e.Email)
+                    .HasName("UK_EMAIL")
+                    .IsUnique();
+
                 entity.HasIndex(e => e.Phone)
                     .HasName("UK_PHONE")
                     .IsUnique();
@@ -288,6 +276,12 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.CreateUserId).HasColumnName("CREATE_USER_ID");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasColumnName("EMAIL")
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Firstname)
                     .HasColumnName("FIRSTNAME")

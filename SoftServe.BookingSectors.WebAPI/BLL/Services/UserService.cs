@@ -1,3 +1,4 @@
+using System;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
@@ -11,11 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System;
 using System.IO;
-using System.Web.Helpers;
 using Microsoft.AspNetCore.Http;
-
+using System.Security.Cryptography;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -31,27 +30,29 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             this.mapper = mapper;
             this.logger = logger;
         }
-        public async Task<bool> CheckPasswords(string password, int id)
-        {
-            var entity = await database.UserRepository.GetEntityByIdAsync(id);
-            byte[] passToCheck = SHA256Hash.Compute(password);
-            return entity.Password.SequenceEqual(passToCheck);
-        }
+
+        #region Get
         public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
             var users = await database.UserRepository.GetAllEntitiesAsync();
-            var dtos = mapper.Map<IEnumerable<User>, List<UserDTO>>(users);
-            return dtos;
+
+            return mapper.Map<IEnumerable<User>, List<UserDTO>>(users);
         }
+
         public async Task<UserDTO> GetUserByIdAsync(int id)
         {
             var entity = await database.UserRepository.GetEntityByIdAsync(id);
-
             if (entity == null)
             {
                 return null;
             }
+
             var dto = mapper.Map<User, UserDTO>(entity);
+
+            if (entity.Photo != null)
+            {
+                dto.Photo = Convert.ToBase64String(entity.Photo);
+            }
 
             return dto;
         }
@@ -64,52 +65,92 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             if (user == null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"User with phone number: {phone} not found when trying to get entity.");
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound,
+                    $"User with phone number: {phone} not found when trying to get entity.");
             }
 
-            var dto = mapper.Map<User, UserDTO>(user);
-            return dto;
+            return mapper.Map<User, UserDTO>(user);
         }
 
-
-
-        public async Task<User> UpdateUserById(int id, UserDTO userDTO)
+        public async Task<string> GetUserPhotoById(int id)
         {
-            var user = await database.UserRepository.GetEntityByIdAsync(id);
-            if (user == null)
+            var entity = await database.UserRepository.GetEntityByIdAsync(id);
+            if (entity == null)
             {
                 return null;
             }
 
-            user.Firstname = userDTO.Firstname;
-            user.Lastname = userDTO.Lastname;
-            user.Phone = userDTO.Phone;
+            var b64 = Convert.ToBase64String(entity.Photo);
 
-            database.UserRepository.UpdateEntity(user);
-            bool isSaved = await database.SaveAsync();
+            using (var ms = new MemoryStream(entity.Photo))
+            {
+                File.WriteAllBytes("test.jpg", entity.Photo);
+                var file = new FormFile(ms, 0, ms.Length, "file.jpg", "file")
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = "image/jpeg",
 
-            return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
+                };
+
+                return b64;
+            }
         }
-        public async Task<User> UpdateUserPassById(int id, UserDTO userDTO)
+        #endregion
+
+
+        #region Update
+
+        public async Task<UserDTO> UpdateUserById(int id, UserDTO userDTO)
         {
-            var user = await database.UserRepository.GetEntityByIdAsync(id);
-            if (user == null)
+            var existedUser = await database.UserRepository.GetEntityByIdAsync(id);
+            if (existedUser == null)
             {
                 return null;
             }
 
-            user.Password = SHA256Hash.Compute(userDTO.Password);
+            existedUser.Firstname = userDTO.Firstname;
+            existedUser.Lastname = userDTO.Lastname;
+            existedUser.Phone = userDTO.Phone;
+            existedUser.Email = userDTO.Email;
 
-            database.UserRepository.UpdateEntity(user);
+            //Але сумнівно що можна буде обновити хоч колись за раз email i номер без перепровірок.
+            //сумнівний метод взагалі получається.
+            //і взагалі всі поля треба провіряти на заповненість а не заносити все підряд.
+            //мол
+            // existedUser.Lastname = (userDTO.Lastname == $"String" || userDTO.Lastname == existedUser.Lastname) ? 
+            //    userDTO.Lastname :
+            //    existedUser.Lastname;
+
+            var updatedUser = database.UserRepository.UpdateEntity(existedUser);
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? mapper.Map<UserDTO, User>(userDTO) : null;
+            return isSaved ?
+                mapper.Map<User, UserDTO>(updatedUser) :
+                null;
         }
 
-        public async Task<User> UpdateUserPhotoById(int id, IFormFile formFile)
+        public async Task<UserDTO> UpdateUserPassById(int id, string password)
         {
-            var user = await database.UserRepository.GetEntityByIdAsync(id);
-            if (user == null)
+            var existedUser = await database.UserRepository.GetEntityByIdAsync(id);
+            if (existedUser == null)
+            {
+                return null;
+            }
+
+            existedUser.Password = SHA256Hash.Compute(password);
+
+            var updatedUser = database.UserRepository.UpdateEntity(existedUser);
+            bool isSaved = await database.SaveAsync();
+
+            return isSaved ?
+                mapper.Map<User, UserDTO>(updatedUser) :
+                null;
+        }
+
+        public async Task<UserDTO> UpdateUserPhotoById(int id, IFormFile formFile)
+        {
+            var existedUser = await database.UserRepository.GetEntityByIdAsync(id);
+            if (existedUser == null)
             {
                 return null;
             }
@@ -117,50 +158,28 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             using (var memoryStream = new MemoryStream())
             {
                 await formFile.CopyToAsync(memoryStream);
-           
+
                 // Upload the file if less than 2 MB
                 if (memoryStream.Length < 2097152)
                 {
-                    user.Photo = memoryStream.ToArray();
-                    database.UserRepository.UpdateEntity(user);
+                    existedUser.Photo = memoryStream.ToArray();
+                    var updatedUser = database.UserRepository.UpdateEntity(existedUser);
                     bool isSaved = await database.SaveAsync();
-                    return (isSaved == true) ? user : null;
+
+                    return isSaved ?
+                        mapper.Map<User, UserDTO>(updatedUser) :
+                        null;
                 }
-                else
-                {
-                    return null;
-                  //  ModelState.AddModelError("File", "The file is too large.");
-                }
-            }
-       
 
-      
-        }
 
-        public async Task<IFormFile> GetUserPhotoById(int id)
-        {
-            var entity = await database.UserRepository.GetEntityByIdAsync(id);
-
-            if (entity == null)
-            {
                 return null;
+                //  ModelState.AddModelError("File", "The file is too large.");
             }
-            
-            FormFile file;
-            using (var ms = new MemoryStream(entity.Photo))
-            {
-                File.WriteAllBytes("test.jpg", entity.Photo);
-                file = new FormFile(ms, 0, ms.Length, "file.jpg", "file")
-                {
-                    Headers = new HeaderDictionary(),
-                    ContentType = "image/jpeg",
-                  
-                };
-
-                return file;
-            }        
         }
-        public async Task<User> DeleteUserByIdAsync(int id)
+
+        #endregion
+
+        public async Task<UserDTO> DeleteUserByIdAsync(int id)
         {
             var user = await database.UserRepository.DeleteEntityByIdAsync(id);
             if (user == null)
@@ -169,30 +188,163 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? user.Entity : null;
+
+            return (isSaved) ?
+                mapper.Map<User, UserDTO>(user) :
+                null;
         }
 
-        public async Task<bool> InsertEmailAsync(int id, string email)
+        #region Password
+        public async Task<bool> ResetPassword(UserDTO userDTO)
+        { 
+        //{ byte[] encrypted;
+        //    string x;
+        //    using (AesManaged myAes = new AesManaged())
+        //    {
+        //        // Encrypt the string to an array of bytes.
+        //        encrypted = EncryptStringToBytes_Aes(user.Id.ToString(), myAes.Key, myAes.IV);
+        //        x = Convert.ToBase64String(encrypted);
+        //        byte[] bdec = Convert.FromBase64String(x);
+        //        string result = DecryptStringFromBytes_Aes(bdec, myAes.Key, myAes.IV);
+        //        // Decrypt the bytes to a string.
+        //        string roundtrip = DecryptStringFromBytes_Aes(encrypted, myAes.Key, myAes.IV);
+
+        //        //Display the original data and the decrypted data.
+             
+        //    }
+        //    using (AesManaged myAes = new AesManaged())
+        //    {
+           
+        //        byte[] bdec = Convert.FromBase64String(x);
+        //        string result = DecryptStringFromBytes_Aes(bdec, myAes.Key, myAes.IV);
+        //        // Decrypt the bytes to a string.
+        //        string roundtrip = DecryptStringFromBytes_Aes(encrypted, myAes.Key, myAes.IV);
+
+        //        //Display the original data and the decrypted data.
+        //        // Console.WriteLine("Original:   {0}", user.Id.ToString());
+        //        //Console.WriteLine("Round Trip: {0}", roundtrip);
+        //    }
+            var existedUser = await database.UserRepository.GetEntityByIdAsync(userDTO.Id);
+            if (existedUser == null)
+            {
+                return false;
+            }
+
+            string newPass = RandomNumbers.Generate();
+
+            EmailSender sender = new EmailSender($"Hello, {userDTO.Firstname}." +
+                                             $" Your new password: {Environment.NewLine}" +
+                                             $" {newPass} {Environment.NewLine}. You can change it in your profile. {Environment.NewLine} Have a nice day :) ");
+
+            await sender.SendAsync("Reset password on TridentLake",
+                userDTO.Email,
+                $"{userDTO.Lastname} {userDTO.Firstname}");
+
+            existedUser.Password = SHA256Hash.Compute(newPass);
+
+            var updatedUser = database.UserRepository.UpdateEntity(existedUser);
+            bool isSaved = await database.SaveAsync();
+
+            return isSaved ?
+                true :
+                false;
+            //In the future return Error on problems with tokens
+        }
+
+        public async Task<bool> CheckPasswords(string password, int id)
         {
-            var getEmail = await database.EmailRepository
-                            .GetByCondition(x => x.UserId == id)
-                            .FirstOrDefaultAsync();
+            var entity = await database.UserRepository.GetEntityByIdAsync(id);
+            byte[] passToCheck = SHA256Hash.Compute(password);
+
+            return entity.Password.SequenceEqual(passToCheck);
+        }
+        #endregion
 
 
-            Email emailEntity = new Email { UserId = id, Email1 = email };
+        static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV)
+        {
+            // Check arguments.
+            if (plainText == null || plainText.Length <= 0)
+                throw new ArgumentNullException("plainText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+            byte[] encrypted;
 
-            if (getEmail == null)
+            // Create an AesManaged object
+            // with the specified key and IV.
+            using (AesManaged aesAlg = new AesManaged())
             {
-                await database.EmailRepository.InsertEntityAsync(emailEntity);
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+
+                // Create an encryptor to perform the stream transform.
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for encryption.
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            //Write all data to the stream.
+                            swEncrypt.Write(plainText);
+                        }
+                        encrypted = msEncrypt.ToArray();
+                    }
+                }
             }
-            else
+
+
+            // Return the encrypted bytes from the memory stream.
+            return encrypted;
+
+        }
+
+        static string DecryptStringFromBytes_Aes(byte[] cipherText, byte[] Key, byte[] IV)
+        {
+            // Check arguments.
+            if (cipherText == null || cipherText.Length <= 0)
+                throw new ArgumentNullException("cipherText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+
+            // Declare the string used to hold
+            // the decrypted text.
+            string plaintext = null;
+
+            // Create an AesManaged object
+            // with the specified key and IV.
+            using (AesManaged aesAlg = new AesManaged())
             {
-                emailEntity.Id = getEmail.Id;
-                database.EmailRepository.UpdateEntity(emailEntity);
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+
+                // Create a decryptor to perform the stream transform.
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for decryption.
+                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        {
+
+                            // Read the decrypted bytes from the decrypting stream
+                            // and place them in a string.
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
+
             }
 
-
-            return (await database.SaveAsync()) ? true : false;
+            return plaintext;
 
         }
     }

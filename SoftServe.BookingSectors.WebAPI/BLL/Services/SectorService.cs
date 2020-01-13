@@ -28,7 +28,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var sectors = await database.SectorRepository.GetAllEntitiesAsync();
             var dtos = mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(sectors);
-
+           
             return dtos;
         }
 
@@ -36,7 +36,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var sector = await database.SectorRepository.GetEntityByIdAsync(id);
             var dto = mapper.Map<Sector, SectorDTO>(sector);
-
+            
             return dto;
         }
 
@@ -46,7 +46,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                     .GetByCondition(x => x.Number == number)
                     .Select(x => x.Id)
                     .FirstOrDefaultAsync();
-
             if (sectorId == 0)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Sector with number: {number} not found when trying to get id.");
@@ -59,6 +58,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var sector = mapper.Map<SectorDTO, Sector>(sectorDTO);
             var insertedSector = await database.SectorRepository.InsertEntityAsync(sector);
+            
+            
             bool isSaved = await database.SaveAsync();
             if (isSaved == false)
             {
@@ -66,7 +67,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             else
             {
-                return mapper.Map<Sector, SectorDTO>(insertedSector.Entity);
+                return mapper.Map<Sector, SectorDTO>(insertedSector);
             }
         }
 
@@ -78,17 +79,18 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             sector.CreateUserId = existedSector.CreateUserId;
             sector.CreateDate = existedSector.CreateDate;
             sector.ModDate = DateTime.Now;
-            database.SectorRepository.UpdateEntity(sector);
+            var updatedSector = database.SectorRepository.UpdateEntity(sector);
+            var updatedSectorDTO = mapper.Map<Sector, SectorDTO>(updatedSector);
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? sectorDTO : null;
+            return (isSaved == true) ? updatedSectorDTO : null;
         }
 
         public async Task<SectorDTO> DeleteSectorByIdAsync(int id)
         {
             var deletedSector = await database.SectorRepository.DeleteEntityByIdAsync(id);
             bool isSaved = await database.SaveAsync();
-            var sectorDTO = mapper.Map<Sector, SectorDTO>(deletedSector.Entity);
+            var sectorDTO = mapper.Map<Sector, SectorDTO>(deletedSector);
 
             return (isSaved == true) ? sectorDTO : null;
         }
