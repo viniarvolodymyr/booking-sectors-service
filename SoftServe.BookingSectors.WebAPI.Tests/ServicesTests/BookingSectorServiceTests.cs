@@ -50,26 +50,26 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             },
             new BookingSector()
             {
-                Id = 1,
-                UserId = 1,
-                SectorId = 1,
+                Id = 2,
+                UserId = 2,
+                SectorId = 2,
                 BookingStart = new DateTime(2020, 1, 9),
                 BookingEnd = new DateTime(2020, 1, 10),
-                IsApproved = false,
+                IsApproved = true,
                 CreateDate = new DateTime(2020, 1, 9),
-                CreateUserId = 1,
+                CreateUserId = 2,
                 ModDate = new DateTime(2020, 1, 9)
             },
             new BookingSector()
             {
-                Id = 1,
-                UserId = 1,
-                SectorId = 1,
+                Id = 3,
+                UserId = 3,
+                SectorId = 3,
                 BookingStart = new DateTime(2020, 1, 9),
                 BookingEnd = new DateTime(2020, 1, 10),
                 IsApproved = false,
                 CreateDate = new DateTime(2020, 1, 9),
-                CreateUserId = 1,
+                CreateUserId = 3,
                 ModDate = new DateTime(2020, 1, 9)
             }
         };
@@ -92,7 +92,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             bookingSectorDTOToInsert = bookingSector;
             unitOfWorkMock.Setup(u => u.SaveAsync()).ReturnsAsync(true);
             unitOfWorkMock.Setup(u => u.BookingSectorRepository).Returns(bookingSectorRepositoryMock.Object);
-            bookingSectorRepositoryMock.Setup(b => b.GetAllEntitiesAsync()).ReturnsAsync(bookingsContext);
+            bookingSectorRepositoryMock.Setup(b => b.GetAllEntitiesAsync()).ReturnsAsync(bookingsContext);        
         }
 
         // #TODO: Change method name when booking data property will be moved to diff file
@@ -103,6 +103,25 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<IEnumerable<BookingSectorDTO>>(result);
             Assert.AreEqual(bookingsContext.Count, (result as List<BookingSectorDTO>).Count);
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public async Task GetBookingByIdAsync_InputIsBookingSectorData_GetFoundBookingSectorDTO(int id)
+        {
+            //Arrange
+            bookingSectorRepositoryMock.Setup(b => b.GetEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => bookingsContext
+                    .Find(b => b.Id == id));
+            //Act
+            var result = await bookingSectorService.GetBookingByIdAsync(id);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<BookingSectorDTO>(result);
+            Assert.AreEqual(id, result.Id);
         }
 
         [Test]
