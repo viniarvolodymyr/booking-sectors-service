@@ -19,12 +19,28 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             this.database = database;
             this.mapper = mapper;
         }
-
+        private bool tournamentIsBooked(int id, IEnumerable<BookingSector> bookings, DateTime fromDate)
+        {
+            return bookings.All(b => b.BookingStart >= fromDate && b.TournamentId == id);
+        }
         public async Task<IEnumerable<TournamentDTO>> GetAllTournamentsAsync()
         {
-            var entities = await database.TournamentRepository.GetAllEntitiesAsync();
-            var dtos = mapper.Map<IEnumerable<Tournament>, IEnumerable<TournamentDTO>>(entities);
-            return dtos;
+            var tournaments = await database.TournamentRepository.GetAllEntitiesAsync();
+            var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
+        
+            var entities = tournaments.GroupJoin(bookings,
+                tournament => tournament.Id,
+                booking => booking.SectorId,
+                (tournament, bookings) => new Tournament()
+                {
+                    Id = tournament.Id,
+                    Name = tournament.Name,
+                    Description = tournament.Description,
+                    PreparationTerm = tournament.PreparationTerm,
+                    IsBooked = tournamentIsBooked(tournament.Id, bookings, DateTime.Now),
+                    CreateUserId = tournament.CreateUserId
+                });
+            return mapper.Map<IEnumerable<Sector>, IEnumerable<SectorDTO>>(entities);
         }
 
         public async Task<TournamentDTO> GetTournamentByIdAsync(int id)
