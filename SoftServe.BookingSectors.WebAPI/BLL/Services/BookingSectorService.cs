@@ -63,6 +63,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
             var tourBookings = bookings.Where(b => b.TournamentId==idTour).OrderBy(x => x.SectorId);
             var dto = mapper.Map<IEnumerable<BookingSector>,IEnumerable< BookingSectorDTO>>(tourBookings);
+
             return dto;
         }
 
@@ -109,14 +110,10 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             var insertedSector = await database.BookingSectorRepository.InsertEntityAsync(bookingSector);
             bool isSaved = await database.SaveAsync();
-            if (isSaved == false)
-            {
-                return null;
-            }
-            else
-            {
-                return mapper.Map<BookingSector, BookingSectorDTO>(insertedSector);
-            }
+           
+            return isSaved
+                 ? mapper.Map<BookingSector, BookingSectorDTO>(insertedSector)
+                 : null;
         }
 
         public async Task<BookingSector> UpdateBookingApprovedAsync(int id, bool isApproved)
@@ -130,7 +127,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             database.BookingSectorRepository.UpdateEntity(booking);
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? booking : null;
+            return isSaved ? booking : null;
         }
 
         public async Task<BookingSector> UpdateTournamentBooking(int id, BookingSectorDTO bookingSectorDTO)
@@ -148,7 +145,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             bookedTournament.TournamentId = bookingSectorDTO.TournamentId;
             database.BookingSectorRepository.UpdateEntity(bookedTournament);
             bool isSaved = await database.SaveAsync();
-            return (isSaved == true) ? bookedTournament : null;
+            return isSaved ? bookedTournament : null;
         }
 
         public async Task<BookingSector> DeleteBookingByIdAsync(int id)
@@ -160,7 +157,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
             bool isSaved = await database.SaveAsync();
 
-            return (isSaved == true) ? booking : null;
+            return isSaved ? booking : null;
         }
     }
 }
