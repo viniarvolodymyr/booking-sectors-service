@@ -1,12 +1,29 @@
-﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+﻿using AutoMapper;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System;
 using System.Collections.Generic;
 
-namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data
+namespace SoftServe.BookingSectors.WebAPI.Tests.Data
 {
     public static class TournamentData
     {
+        private static MapperConfiguration mapperConfiguration;
+        private static IMapper mapper;
+        static TournamentData()
+        {
+            mapperConfiguration = new MapperConfiguration(c =>
+            {
+                c.AddProfile<TournamentProfile>();
+            });
+            mapper = mapperConfiguration.CreateMapper();
+        }
+
+        public static List<TournamentDTO> CreateTournamentDTOs()
+        {
+            return mapper.Map<List<Tournament>, List<TournamentDTO>>(CreateTournaments());
+        }
         public static List<Tournament> CreateTournaments()
         {
             return new List<Tournament>()

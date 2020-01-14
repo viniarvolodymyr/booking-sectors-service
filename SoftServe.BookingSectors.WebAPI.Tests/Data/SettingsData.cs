@@ -2,7 +2,7 @@
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 
-namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data
+namespace SoftServe.BookingSectors.WebAPI.Tests.Data
 {
     class SettingsData
     {

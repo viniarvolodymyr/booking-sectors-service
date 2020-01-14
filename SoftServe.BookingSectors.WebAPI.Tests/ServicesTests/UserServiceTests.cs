@@ -13,7 +13,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data;
+using SoftServe.BookingSectors.WebAPI.Tests.Data;
 
 namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
 {

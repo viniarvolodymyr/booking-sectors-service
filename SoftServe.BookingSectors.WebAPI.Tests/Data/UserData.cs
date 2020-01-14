@@ -1,12 +1,30 @@
-﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+﻿using AutoMapper;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System;
 using System.Collections.Generic;
 
-namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data
+namespace SoftServe.BookingSectors.WebAPI.Tests.Data
 {
     public static class UserData
     {
+        private static MapperConfiguration mapperConfiguration;
+        private static IMapper mapper;
+        static UserData()
+        {
+            mapperConfiguration = new MapperConfiguration(c =>
+            {
+                c.AddProfile<UserProfile>();
+            });
+            mapper = mapperConfiguration.CreateMapper();
+        }
+
+        public static List<UserDTO> CreateUserDTOs()
+        {
+            return mapper.Map<List<User>, List<UserDTO>>(CreateUsers());
+        }
+
         public static List<User> CreateUsers()
         {
             return new List<User>()

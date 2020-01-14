@@ -4,7 +4,7 @@ using NUnit.Framework;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.Controllers;
-using SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data;
+using SoftServe.BookingSectors.WebAPI.Tests.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

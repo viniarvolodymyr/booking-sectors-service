@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data
+namespace SoftServe.BookingSectors.WebAPI.Tests.Data
 {
     public static class BookingSectorData
     {
