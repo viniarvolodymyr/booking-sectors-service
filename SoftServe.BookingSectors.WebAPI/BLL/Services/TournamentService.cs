@@ -22,8 +22,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         }
         private bool tournamentIsBooked(int id, IEnumerable<BookingSector> bookings, DateTime fromDate)
         {
-            var n =  bookings.Any(bookings => bookings.TournamentId==id);
-            return n;
+           return  bookings.Any(bookings => bookings.TournamentId==id);
         }
         public async Task<IEnumerable<TournamentDTO>> GetAllTournamentsAsync()
         {
@@ -49,8 +48,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<TournamentDTO> GetTournamentByIdAsync(int id)
         {
             var enity = await database.TournamentRepository.GetEntityByIdAsync(id);
-            var dto = mapper.Map<Tournament, TournamentDTO>(enity);
-            return dto;
+            return mapper.Map<Tournament, TournamentDTO>(enity);
         }
 
         public async Task<TournamentDTO> InsertTournamentAsync(TournamentDTO tournamentDTO)
