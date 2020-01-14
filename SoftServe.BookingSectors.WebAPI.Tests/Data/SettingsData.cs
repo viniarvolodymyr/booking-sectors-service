@@ -1,4 +1,6 @@
-﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+﻿using AutoMapper;
+using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
 
@@ -6,6 +8,22 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.Data
 {
     public static class SettingsData
     {
+        private static MapperConfiguration mapperConfiguration;
+        private static IMapper mapper;
+        static SettingsData()
+        {
+            mapperConfiguration = new MapperConfiguration(c =>
+            {
+                c.AddProfile<SettingProfile>();
+            });
+            mapper = mapperConfiguration.CreateMapper();
+        }
+
+        public static List<SettingsDTO> CreateSettingDTOs()
+        {
+            return mapper.Map<List<Setting>, List<SettingsDTO>>(CreateSettings());
+        }
+
         public static List<Setting> CreateSettings()
         {
             return new List<Setting>()
