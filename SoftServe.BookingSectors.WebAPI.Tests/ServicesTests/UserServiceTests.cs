@@ -9,11 +9,11 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
-using SoftServe.BookingSectors.WebAPI.Tests.Data;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data;
 
 namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
 {
@@ -47,14 +47,13 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             [SetUp]
             public void SetUp()
             {
-                UserData userData = new UserData();
-                usersContext = userData.Users;
-                userDTO = userData.UserDTOToInsert;
-                newPass = userData.newPassword;
-                phone = userData.phone;
+                usersContext = UserData.CreateUsers();
+                userDTO = UserData.CreateUserDTO();
+                //newPass = userData.newPassword; //#TODO: Add this field as static methods to UserData static class
+                //phone = userData.phone;         //#TODO: Add this field as static methods to UserData static class
             }
 
-            [TearDown]
+        [TearDown]
             public void TearDown()
             {
                 usersContext.Clear();

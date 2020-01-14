@@ -39,9 +39,8 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [SetUp]
         public void SetUp()
         {
-            SectorData sectorData = new SectorData();
-            sectorsContext = sectorData.Sectors;
-            sectorDTO = sectorData.SectorDTOToInsert;
+            sectorsContext = SectorData.CreateSectors();
+            sectorDTO = SectorData.CreateSectorDTO();
         }
 
         [TearDown]
