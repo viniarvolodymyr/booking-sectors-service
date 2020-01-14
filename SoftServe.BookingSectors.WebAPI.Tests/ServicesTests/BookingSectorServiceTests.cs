@@ -271,5 +271,35 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             Assert.IsInstanceOf<BookingSectorDTO>(result);
             Assert.AreEqual(bookingsContext[id - 1].Id, result.Id);
         }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        [TestCase(4)]
+        public async Task DeleteBookingByIdAsync_InputIsBookingSectorData_ReturnDeletedBookingSectorDTO(int id)
+        {
+            //Arrange
+            bookingSectorRepositoryMock.Setup(b => b.DeleteEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => 
+                {
+                    var bookingSectorToDelete = bookingsContext.Find(b => b.Id == id);
+                    if (bookingsContext.Remove(bookingSectorToDelete))
+                        return bookingSectorToDelete;
+                    else
+                        return null;
+                });
+
+            int bookingSectorCount = bookingsContext.Count;
+
+            //Act
+            var result = await bookingSectorService.DeleteBookingByIdAsync(id);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<BookingSectorDTO>(result);
+            Assert.AreEqual(id, result.Id);
+            Assert.AreEqual(bookingSectorCount - 1, bookingsContext.Count);
+        }
     }
 }
