@@ -4,10 +4,9 @@ using System.Collections.Generic;
 
 namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data
 {
-    class SettingsData
+    public static class SettingsData
     {
-        public SettingsData() { }
-        public List<Setting> CreateSettings()
+        public static List<Setting> CreateSettings()
         {
             return new List<Setting>()
             {
@@ -27,7 +26,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data
                 }
             };
         }
-        public SettingsDTO CreateSettingDTO()
+        public static SettingsDTO CreateSettingDTO()
         {
             return new SettingsDTO
                 {
