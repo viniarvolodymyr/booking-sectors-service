@@ -16,8 +16,8 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         private BookingSectorController bookingSectorController;
         private Mock<IBookingSectorService> bookingSectorServiceMock;
 
-        private List<BookingSectorDTO> bookingContext;
-
+        private List<BookingSectorDTO> bookingSectorContext;
+        private BookingSectorDTO bookingSectorDTO;
         public BookingSectorControllerTests()
         {
             bookingSectorServiceMock = new Mock<IBookingSectorService>();
@@ -27,7 +27,8 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         [SetUp]
         public void Setup()
         {
-            bookingContext = BookingSectorData.CreateBookingSectorDTOs();
+            bookingSectorContext = BookingSectorData.CreateBookingSectorDTOs();
+            bookingSectorDTO = BookingSectorData.CreateBookingSectorDTO();
         }
 
         [Test]
@@ -35,7 +36,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         {
             //Arrange
             bookingSectorServiceMock.Setup(b => b.GetBookingSectorsAsync())
-                .ReturnsAsync(bookingContext);
+                .ReturnsAsync(bookingSectorContext);
 
             //Act 
             var result = await bookingSectorController.Get() as OkObjectResult;
@@ -56,7 +57,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             bookingSectorServiceMock.Setup(b => b.GetBookingByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((int id) => 
                 {
-                    return bookingContext.Find(b => b.Id == id);
+                    return bookingSectorContext.Find(b => b.Id == id);
                 });
 
             //Act
@@ -65,6 +66,28 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
+        }
+
+        [Test]
+        public async Task InsertBookingSectorDTO_InputIsBookingSectorData_ReturnsCreatedBookingSectorDTO()
+        {
+            //Arrange 
+            bookingSectorServiceMock.Setup(b => b.BookSector(It.IsAny<BookingSectorDTO>()))
+                .ReturnsAsync((BookingSectorDTO bookingDTO) => 
+                {
+                    bookingSectorContext.Add(bookingDTO);
+                    return bookingDTO;
+                });
+
+            var bookingSectorPreviousCount = bookingSectorContext.Count;
+
+            //Act 
+            var result = await bookingSectorController.Post(bookingSectorDTO) as CreatedResult;
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(201, result.StatusCode);
+            Assert.AreEqual(bookingSectorPreviousCount + 1, bookingSectorContext.Count);
         }
     }
 }

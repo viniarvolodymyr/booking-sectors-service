@@ -22,7 +22,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         private Mock<IBaseRepository<Sector>> sectorRepositoryMock;
         private IBookingSectorService bookingSectorService;
         private MapperConfiguration mapperConfiguration;
-        private List<BookingSector> bookingsContext;
+        private List<BookingSector> bookingsSectorContext;
         private List<Sector> sectorsContext;
         private BookingSectorDTO bookingSectorDTO;
 
@@ -43,14 +43,14 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         public void Setup()
         {
             sectorsContext = SectorData.CreateSectors();
-            bookingsContext = BookingSectorData.CreateBookingSectorsList();
+            bookingsSectorContext = BookingSectorData.CreateBookingSectorsList();
             bookingSectorDTO = BookingSectorData.CreateBookingSectorDTO();
             unitOfWorkMock.Setup(u => u.SaveAsync()).ReturnsAsync(true);
             unitOfWorkMock.Setup(u => u.BookingSectorRepository).Returns(bookingSectorRepositoryMock.Object);
             unitOfWorkMock.Setup(u => u.SectorRepository).Returns(sectorRepositoryMock.Object);
-            bookingSectorRepositoryMock.Setup(b => b.GetAllEntitiesAsync()).ReturnsAsync(bookingsContext);
+            bookingSectorRepositoryMock.Setup(b => b.GetAllEntitiesAsync()).ReturnsAsync(bookingsSectorContext);
             bookingSectorRepositoryMock.Setup(b => b.GetEntityByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) => bookingsContext
+                .ReturnsAsync((int id) => bookingsSectorContext
                     .Find(b => b.Id == id));
         }
 
@@ -60,7 +60,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             var result = await bookingSectorService.GetBookingSectorsAsync() as List<BookingSectorDTO>;
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<IEnumerable<BookingSectorDTO>>(result);
-            Assert.AreEqual(bookingsContext.Count, result.Count);
+            Assert.AreEqual(bookingsSectorContext.Count, result.Count);
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                 .ReturnsAsync((BookingSector b) =>
                 {
                     b.Id = bookingSectorDTO.Id;
-                    bookingsContext.Add(b);
+                    bookingsSectorContext.Add(b);
                     return b;
                 });
 
@@ -164,7 +164,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             bookingSectorRepositoryMock.Setup(b => b.UpdateEntity(It.IsAny<BookingSector>()))
                 .Returns((BookingSector booking) =>
                 {
-                    var bookingToUpdate = bookingsContext.Find(b => b.Id == booking.Id);
+                    var bookingToUpdate = bookingsSectorContext.Find(b => b.Id == booking.Id);
                     bookingToUpdate.IsApproved = booking.IsApproved;
                     return bookingToUpdate;
                 });
@@ -175,7 +175,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<BookingSectorDTO>(result);
-            Assert.AreEqual(bookingsContext.Find(b => b.Id == id).IsApproved, result.IsApproved);
+            Assert.AreEqual(bookingsSectorContext.Find(b => b.Id == id).IsApproved, result.IsApproved);
         }
 
         [Test]
@@ -189,7 +189,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             bookingSectorRepositoryMock.Setup(b => b.UpdateEntity(It.IsAny<BookingSector>()))
                 .Returns((BookingSector booking) => 
                 {
-                    bookingsContext[bookingsContext.FindIndex(b => b.Id == booking.Id)] = booking;
+                    bookingsSectorContext[bookingsSectorContext.FindIndex(b => b.Id == booking.Id)] = booking;
                     return booking;
                 });
 
@@ -199,7 +199,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<BookingSectorDTO>(result);
-            Assert.AreEqual(bookingsContext[id - 1].Id, result.Id);
+            Assert.AreEqual(bookingsSectorContext[id - 1].Id, result.Id);
         }
 
         [Test]
@@ -213,14 +213,14 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             bookingSectorRepositoryMock.Setup(b => b.DeleteEntityByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((int id) => 
                 {
-                    var bookingSectorToDelete = bookingsContext.Find(b => b.Id == id);
-                    if (bookingsContext.Remove(bookingSectorToDelete))
+                    var bookingSectorToDelete = bookingsSectorContext.Find(b => b.Id == id);
+                    if (bookingsSectorContext.Remove(bookingSectorToDelete))
                         return bookingSectorToDelete;
                     else
                         return null;
                 });
 
-            int bookingSectorPreviousCount = bookingsContext.Count;
+            int bookingSectorPreviousCount = bookingsSectorContext.Count;
 
             //Act
             var result = await bookingSectorService.DeleteBookingByIdAsync(id);
@@ -229,7 +229,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<BookingSectorDTO>(result);
             Assert.AreEqual(id, result.Id);
-            Assert.AreEqual(bookingSectorPreviousCount - 1, bookingsContext.Count);
+            Assert.AreEqual(bookingSectorPreviousCount - 1, bookingsSectorContext.Count);
         }
     }
 }
