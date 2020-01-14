@@ -9,7 +9,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
     [Authorize]
     [Route("api/authentication")]
     [ApiController]
-    [AllowAnonymous]
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService authenticationService;

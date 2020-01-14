@@ -10,11 +10,13 @@ using SoftServe.BookingSectors.WebAPI.BLL.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/users")]
     [ApiController]
+    [AllowAnonymous]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
