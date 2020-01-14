@@ -31,7 +31,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         }
 
         [Test]
-        public async Task GetAllBookingSectors_InputIsBookingSectorData_ReturnsOk()
+        public async Task GetAllBookingSectorsAsync_InputIsBookingSectorData_ReturnsOk()
         {
             //Arrange
             bookingSectorServiceMock.Setup(b => b.GetBookingSectorsAsync())
@@ -40,6 +40,28 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             //Act 
             var result = await bookingSectorController.Get() as OkObjectResult;
             
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        [TestCase(4)]
+        public async Task GetBookingSectorsByIdAsync_InputIsBookingSectorData_ReturnsOk(int id)
+        {
+            //Arrange
+            bookingSectorServiceMock.Setup(b => b.GetBookingByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => 
+                {
+                    return bookingContext.Find(b => b.Id == id);
+                });
+
+            //Act
+            var result = await bookingSectorController.Get(id) as OkObjectResult;
+
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);

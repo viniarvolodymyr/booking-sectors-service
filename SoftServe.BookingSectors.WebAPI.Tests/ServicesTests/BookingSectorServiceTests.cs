@@ -55,7 +55,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         }
 
         [Test]
-        public async Task GetBookingSectorsAsync_InputIsBookingSectorData_AllReturnedAsync() 
+        public async Task GetBookingSectorsAsync_InputIsBookingSectorData_ReturnsAllBookingSectorDTOs() 
         {
             var result = await bookingSectorService.GetBookingSectorsAsync() as List<BookingSectorDTO>;
             Assert.IsNotNull(result);
@@ -68,7 +68,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [TestCase(2)]
         [TestCase(3)]
         [TestCase(4)]
-        public async Task GetBookingByIdAsync_InputIsBookingSectorData_ReturnedFoundBookingSectorDTO(int id)
+        public async Task GetBookingByIdAsync_InputIsBookingSectorData_ReturnsFoundBookingSectorDTO(int id)
         {
             //Act
             var result = await bookingSectorService.GetBookingByIdAsync(id);
@@ -97,7 +97,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
 
         [Test] 
         [TestCase("2020-1-13", "2020-1-16")]
-        public async Task FilterSectorsByDate_InputIsBookingSectorData_ReturnedUpdatedBookingSectorDTO(DateTime fromDate, DateTime toDate)
+        public async Task FilterSectorsByDateAsync_InputIsBookingSectorData_ReturnsUpdatedBookingSectorDTO(DateTime fromDate, DateTime toDate)
         {
             //Arrange
             sectorRepositoryMock.Setup(s => s.GetAllEntitiesAsync()).ReturnsAsync(sectorsContext);
@@ -112,7 +112,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         }
 
         [Test]
-        public async Task BookSectorAsync_BookingSectorToInsert_ReturnedInsertedBookingSectorDTO()
+        public async Task BookSectorAsync_InputIsBookingSectorData_ReturnsInsertedBookingSectorDTO()
         {
             //Arrange
             bookingSectorRepositoryMock.Setup(b => b.InsertEntityAsync(It.IsAny<BookingSector>()))
@@ -131,7 +131,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         }
 
         [Test]
-        public async Task GetBookingTournamentSectorsAsync_InputIsBookingSectorData_AllReturnedAsync()
+        public async Task GetBookingTournamentSectorsAsync_InputIsBookingSectorData_ReturnsAllBookingSectorDTOs()
         {
             //Act
             var result = await bookingSectorService.GetBookingTournamentSectorsAsync() as List<BookingSectorDTO>;
@@ -144,7 +144,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
 
         [Test]
         [TestCase(2)]
-        public async Task GetBookingTournamentByIdAsync_InputIsBookingSectorData__ReturnedFoundBookingsSectorDTO(int id)
+        public async Task GetBookingTournamentByIdAsync_InputIsBookingSectorData_ReturnsFoundBookingSectorDTOs(int id)
         {
             //Act
             var result = await bookingSectorService.GetBookingTournamentByIdAsync(id) as List<BookingSectorDTO>;
@@ -158,7 +158,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [Test]
         [TestCase(1, true)]
         [TestCase(2, false)]
-        public async Task UpdateBookingApprovedAsync_InputIsBookingSectorData_ReturnUpdatedBookingSectorDTO(int id, bool isAproved)
+        public async Task UpdateBookingIsApprovedAsync_InputIsBookingSectorData_ReturnsUpdatedBookingSectorDTOs(int id, bool isAproved)
         {
             //Arrange
             bookingSectorRepositoryMock.Setup(b => b.UpdateEntity(It.IsAny<BookingSector>()))
@@ -183,7 +183,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [TestCase(2)]
         [TestCase(3)]
         [TestCase(4)]
-        public async Task UpdateTournamentBooking_InputIsBookingSectorData_ReturnUpdatedBookingSectorDTO(int id)
+        public async Task UpdateTournamentBooking_InputIsBookingSectorData_ReturnsUpdatedBookingSectorDTO(int id)
         {
             //Arrange
             bookingSectorRepositoryMock.Setup(b => b.UpdateEntity(It.IsAny<BookingSector>()))
@@ -207,7 +207,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [TestCase(2)]
         [TestCase(3)]
         [TestCase(4)]
-        public async Task DeleteBookingByIdAsync_InputIsBookingSectorData_ReturnDeletedBookingSectorDTO(int id)
+        public async Task DeleteBookingSectorByIdAsync_InputIsBookingSectorData_ReturnsDeletedBookingSectorDTO(int id)
         {
             //Arrange
             bookingSectorRepositoryMock.Setup(b => b.DeleteEntityByIdAsync(It.IsAny<int>()))
