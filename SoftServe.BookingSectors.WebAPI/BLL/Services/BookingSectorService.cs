@@ -1,6 +1,4 @@
-﻿using AttributeRouting.Helpers;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
@@ -116,48 +114,56 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                  : null;
         }
 
-        public async Task<BookingSector> UpdateBookingApprovedAsync(int id, bool isApproved)
+        public async Task<BookingSectorDTO> UpdateBookingApprovedAsync(int id, bool isApproved)
         {
-            var booking = await database.BookingSectorRepository.GetEntityByIdAsync(id);
-            if (booking == null)
+            var bookingToUpdate = await database.BookingSectorRepository.GetEntityByIdAsync(id);
+            if (bookingToUpdate == null)
             {
                 return null;
             }
-            booking.IsApproved = isApproved;
-            database.BookingSectorRepository.UpdateEntity(booking);
+            bookingToUpdate.IsApproved = isApproved;
+            database.BookingSectorRepository.UpdateEntity(bookingToUpdate);
             bool isSaved = await database.SaveAsync();
 
-            return isSaved ? booking : null;
+            return isSaved
+                 ? mapper.Map<BookingSector, BookingSectorDTO>(bookingToUpdate)
+                 : null;
         }
 
-        public async Task<BookingSector> UpdateTournamentBooking(int id, BookingSectorDTO bookingSectorDTO)
+        public async Task<BookingSectorDTO> UpdateTournamentBooking(int id, BookingSectorDTO bookingSectorDTO)
         {
-            var bookedTournament = await database.BookingSectorRepository.GetEntityByIdAsync(id);
-            if (bookedTournament == null)
+            var bookingTournamentToUpdate = await database.BookingSectorRepository.GetEntityByIdAsync(id);
+            if (bookingTournamentToUpdate == null)
             {
                 return null;
             }
-            bookedTournament.Id = id;
-            bookedTournament.BookingStart = bookingSectorDTO.BookingStart;
-            bookedTournament.BookingEnd = bookingSectorDTO.BookingEnd;
-            bookedTournament.IsApproved = bookingSectorDTO.IsApproved;
-            bookedTournament.SectorId = bookingSectorDTO.SectorId;
-            bookedTournament.TournamentId = bookingSectorDTO.TournamentId;
-            database.BookingSectorRepository.UpdateEntity(bookedTournament);
+            bookingTournamentToUpdate.Id = id;
+            bookingTournamentToUpdate.BookingStart = bookingSectorDTO.BookingStart;
+            bookingTournamentToUpdate.BookingEnd = bookingSectorDTO.BookingEnd;
+            bookingTournamentToUpdate.IsApproved = bookingSectorDTO.IsApproved;
+            bookingTournamentToUpdate.SectorId = bookingSectorDTO.SectorId;
+            bookingTournamentToUpdate.TournamentId = bookingSectorDTO.TournamentId;
+            database.BookingSectorRepository.UpdateEntity(bookingTournamentToUpdate);
+
             bool isSaved = await database.SaveAsync();
-            return isSaved ? bookedTournament : null;
+
+            return isSaved
+                 ? mapper.Map<BookingSector, BookingSectorDTO>(bookingTournamentToUpdate)
+                 : null;
         }
 
-        public async Task<BookingSector> DeleteBookingByIdAsync(int id)
+        public async Task<BookingSectorDTO> DeleteBookingByIdAsync(int id)
         {
-            var booking = await database.BookingSectorRepository.DeleteEntityByIdAsync(id);
-            if (booking == null)
+            var bookingToDelete = await database.BookingSectorRepository.DeleteEntityByIdAsync(id);
+            if (bookingToDelete == null)
             {
                 return null;
             }
             bool isSaved = await database.SaveAsync();
 
-            return isSaved ? booking : null;
+            return isSaved
+                 ? mapper.Map<BookingSector, BookingSectorDTO>(bookingToDelete)
+                 : null;
         }
     }
 }

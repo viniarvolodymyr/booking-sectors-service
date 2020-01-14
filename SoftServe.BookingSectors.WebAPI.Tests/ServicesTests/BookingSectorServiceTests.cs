@@ -124,10 +124,10 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [Test]
         public async Task GetBookingSectorsAsync_InputIsBookingSectorData_AllReturnedAsync() 
         {
-            var result = await bookingSectorService.GetBookingSectorsAsync();
+            var result = await bookingSectorService.GetBookingSectorsAsync() as List<BookingSectorDTO>;
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<IEnumerable<BookingSectorDTO>>(result);
-            Assert.AreEqual(bookingsContext.Count, (result as List<BookingSectorDTO>).Count);
+            Assert.AreEqual(bookingsContext.Count, result.Count);
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [TestCase(2)]
         [TestCase(3)]
         [TestCase(4)]
-        public async Task GetBookingByIdAsync_InputIsBookingSectorData_GetFoundBookingSectorDTO(int id)
+        public async Task GetBookingByIdAsync_InputIsBookingSectorData_ReturnedFoundBookingSectorDTO(int id)
         {
             //Act
             var result = await bookingSectorService.GetBookingByIdAsync(id);
@@ -151,7 +151,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [TestCase(2)]
         [TestCase(3)]
         [TestCase(4)]
-        public async Task GetBookingsByUserId_InputIsBookingSectorData_GetFoundBookingsSectorDTO(int id)
+        public async Task GetBookingsByUserId_InputIsBookingSectorData_ReturnedFoundBookingsSectorDTO(int id)
         {        
             //Act
             var result = await bookingSectorService.GetBookingsByUserId(id) as List<BookingSectorDTO>;
@@ -167,7 +167,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [TestCase("2020-1-13", "2020-1-16")]
         [TestCase("2020-1-18", "2020-1-21")]
         [TestCase("2020-1-26", "2020-1-30")]
-        public async Task FilterSectorsByDate_InputIsBookingSectorData_GetUpdatedBookingSectorDTO(DateTime fromDate, DateTime toDate)
+        public async Task FilterSectorsByDate_InputIsBookingSectorData_ReturnedUpdatedBookingSectorDTO(DateTime fromDate, DateTime toDate)
         {
             //Arrange
             sectorRepositoryMock.Setup(s => s.GetAllEntitiesAsync()).ReturnsAsync(sectorsContext);
@@ -178,11 +178,11 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<IEnumerable<SectorDTO>>(result);
-            //Assert.AreEqual(true, result.All(s => s.IsActive == false));
+            Assert.AreEqual(true, result.All(s => s.IsActive == false));
         }
 
         [Test]
-        public async Task BookSectorAsync_BookingSectorToInsert_GetInsertedBooking()
+        public async Task BookSectorAsync_BookingSectorToInsert_ReturnedInsertedBookingSectorDTO()
         {
             //Arrange
             bookingSectorRepositoryMock.Setup(b => b.InsertEntityAsync(It.IsAny<BookingSector>()))
@@ -214,7 +214,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
 
         [Test]
         [TestCase(2)]
-        public async Task GetBookingTournamentByIdAsync(int id)
+        public async Task GetBookingTournamentByIdAsync_InputIsBookingSectorData__ReturnedFoundBookingsSectorDTO(int id)
         {
             //Act
             var result = await bookingSectorService.GetBookingTournamentByIdAsync(id) as List<BookingSectorDTO>;
@@ -223,6 +223,29 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<IEnumerable<BookingSectorDTO>>(result);
             Assert.AreEqual(1, result.Count);
+        } 
+
+        [Test]
+        [TestCase(1, true)]
+        [TestCase(2, false)]
+        public async Task UpdateBookingApprovedAsync_InputIsBookingSectorData_ReturnUpdatedBookingSectorDTO(int id, bool isAproved)
+        {
+            //Arrange
+            bookingSectorRepositoryMock.Setup(b => b.UpdateEntity(It.IsAny<BookingSector>()))
+                .Returns((BookingSector booking) =>
+                {
+                    var bookingToUpdate = bookingsContext.Find(b => b.Id == booking.Id);
+                    bookingToUpdate.IsApproved = booking.IsApproved;
+                    return bookingToUpdate;
+                });
+
+            //Act
+            var result = await bookingSectorService.UpdateBookingApprovedAsync(id, isAproved);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<BookingSectorDTO>(result);
+            Assert.AreEqual(bookingsContext.Find(b => b.Id == id).IsApproved, result.IsApproved);
         }
     }
 }
