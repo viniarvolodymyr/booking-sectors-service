@@ -18,6 +18,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
 
         private List<BookingSectorDTO> bookingSectorContext;
         private BookingSectorDTO bookingSectorDTO;
+
         public BookingSectorControllerTests()
         {
             bookingSectorServiceMock = new Mock<IBookingSectorService>();
@@ -88,6 +89,34 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             Assert.IsNotNull(result);
             Assert.AreEqual(201, result.StatusCode);
             Assert.AreEqual(bookingSectorPreviousCount + 1, bookingSectorContext.Count);
+        }
+
+        [Test]
+        [TestCase(1, true)]
+        [TestCase(2, true)]
+        [TestCase(3, false)]
+        [TestCase(4, false)]
+        public async Task UpdateBookingIsApprovedAsync_InputIsBookingSectorData_ReturnsOk(int id, bool isAproved)
+        {
+            //Arrange
+            bookingSectorServiceMock.Setup(b => b.UpdateBookingIsApprovedAsync(id, isAproved))
+                .ReturnsAsync((int id, bool isAproved) => 
+                {
+                    var bookingToUpdate = bookingSectorContext.Find(b => b.Id == id);
+                    bookingToUpdate.IsApproved = isAproved;
+                    return bookingToUpdate;
+                });
+
+            //Act
+            var result = await bookingSectorController.Put(id, isAproved) as OkObjectResult;
+            var dtoResult = (result.Value as BookingSectorDTO);
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.IsNotNull(dtoResult);
+            Assert.AreEqual(id, dtoResult.Id);
+            Assert.AreEqual(isAproved, dtoResult.IsApproved);
         }
     }
 }

@@ -170,7 +170,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                 });
 
             //Act
-            var result = await bookingSectorService.UpdateBookingApprovedAsync(id, isAproved);
+            var result = await bookingSectorService.UpdateBookingIsApprovedAsync(id, isAproved);
 
             //Assert
             Assert.IsNotNull(result);
