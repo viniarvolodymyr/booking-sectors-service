@@ -8,11 +8,10 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
+using SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
-using SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data;
 
 namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
 {
@@ -39,78 +38,13 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             });
             bookingSectorService = new BookingSectorService(unitOfWorkMock.Object, mapperConfiguration.CreateMapper());
         }
-   
-        private List<BookingSector> bookings = new List<BookingSector>() // #TODO: Move to diff file
-        {
-            new BookingSector()
-            {
-                Id = 1,
-                UserId = 1,
-                SectorId = 1,
-                BookingStart = new DateTime(2020, 1, 9),
-                BookingEnd = new DateTime(2020, 1, 10),
-                IsApproved = false,
-                CreateDate = new DateTime(2020, 1, 9),
-                CreateUserId = 1,
-                ModDate = new DateTime(2020, 1, 9)
-            },
-            new BookingSector()
-            {
-                Id = 2,
-                UserId = 2,
-                SectorId = 2,
-                BookingStart = new DateTime(2020, 1, 13),
-                BookingEnd = new DateTime(2020, 1, 16),
-                IsApproved = true,
-                TournamentId = 2,
-                CreateDate = new DateTime(2020, 1, 13),
-                CreateUserId = 2,
-                ModDate = new DateTime(2020, 1, 13)
-            },
-            new BookingSector()
-            {
-                Id = 3,
-                UserId = 3,
-                SectorId = 3,
-                BookingStart = new DateTime(2020, 1, 18),
-                BookingEnd = new DateTime(2020, 1, 21),
-                IsApproved = false,
-                CreateDate = new DateTime(2020, 1, 18),
-                CreateUserId = 3,
-                ModDate = new DateTime(2020, 1, 18)
-            },
-            new BookingSector()
-            {
-                Id = 4,
-                UserId = 4,
-                SectorId = 4,
-                BookingStart = new DateTime(2020, 1, 26),
-                BookingEnd = new DateTime(2020, 1, 30),
-                IsApproved = true,
-                CreateDate = new DateTime(2020, 1, 26),
-                CreateUserId = 3,
-                ModDate = new DateTime(2020, 1, 26)
-            }
-        };
-
-        private BookingSectorDTO bookingSector { get; } = new BookingSectorDTO() // #TODO: Move to diff file
-        {
-            Id = 10,
-            UserId = 2,
-            SectorId = 2,
-            BookingStart = new DateTime(2020, 1, 9),
-            BookingEnd = new DateTime(2020, 1, 10),
-            IsApproved = false,      
-            CreateUserId = 2         
-        };
 
         [SetUp]
         public void Setup()
         {
-            SectorData sectorData = new SectorData();
-            sectorsContext = sectorData.Sectors;
-            bookingsContext = bookings;
-            bookingSectorDTO = bookingSector;
+            sectorsContext = SectorData.CreateSectors();
+            bookingsContext = BookingSectorData.CreateBookingSectorsList();
+            bookingSectorDTO = BookingSectorData.CreateBookingSectorDTO();
             unitOfWorkMock.Setup(u => u.SaveAsync()).ReturnsAsync(true);
             unitOfWorkMock.Setup(u => u.BookingSectorRepository).Returns(bookingSectorRepositoryMock.Object);
             unitOfWorkMock.Setup(u => u.SectorRepository).Returns(sectorRepositoryMock.Object);
@@ -120,7 +54,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                     .Find(b => b.Id == id));
         }
 
-        // #TODO: Change method name when booking data property will be moved to diff file
         [Test]
         public async Task GetBookingSectorsAsync_InputIsBookingSectorData_AllReturnedAsync() 
         {
@@ -146,39 +79,36 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             Assert.AreEqual(id, result.Id);
         }
 
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        public async Task GetBookingsByUserId_InputIsBookingSectorData_ReturnedFoundBookingsSectorDTO(int id)
-        {        
-            //Act
-            var result = await bookingSectorService.GetBookingsByUserId(id) as List<BookingSectorDTO>;
+        //[Test]
+        //[TestCase(1, true)]
+        //[TestCase(2, false)]
+        //[TestCase(3, true)]
+        //[TestCase(4, false)]
+        //public async Task GetBookingsByUserId_InputIsBookingSectorData_ReturnedFoundBookingsSectorDTO(int id, bool isActual)
+        //{        
+        //    //Act
+        //    var result = await bookingSectorService.GetBookingsByUserId(id, isActual) as List<BookingSectorDTO>;
 
-            //Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<IEnumerable<BookingSectorDTO>>(result);
-            Assert.IsNotNull(result[0].UserId);
-        }
+        //    //Assert
+        //    Assert.IsNotNull(result);
+        //    Assert.IsInstanceOf<IEnumerable<BookingSectorDTO>>(result);
+        //    Assert.IsNotNull(result[0].UserId);
+        //}
 
-        [Test]
-        [TestCase("2020-1-9", "2020-1-10")]
+        [Test] 
         [TestCase("2020-1-13", "2020-1-16")]
-        [TestCase("2020-1-18", "2020-1-21")]
-        [TestCase("2020-1-26", "2020-1-30")]
         public async Task FilterSectorsByDate_InputIsBookingSectorData_ReturnedUpdatedBookingSectorDTO(DateTime fromDate, DateTime toDate)
         {
             //Arrange
             sectorRepositoryMock.Setup(s => s.GetAllEntitiesAsync()).ReturnsAsync(sectorsContext);
 
             //Act
-            var result = await bookingSectorService.FilterSectorsByDate(fromDate, toDate);
+            var result = await bookingSectorService.FilterSectorsByDate(fromDate, toDate) as List<SectorDTO>;
 
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<IEnumerable<SectorDTO>>(result);
-            Assert.AreEqual(true, result.All(s => s.IsActive == false));
+            Assert.AreEqual(false, result.Find(b => b.Id == 2).IsActive);
         }
 
         [Test]
@@ -290,7 +220,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                         return null;
                 });
 
-            int bookingSectorCount = bookingsContext.Count;
+            int bookingSectorPreviousCount = bookingsContext.Count;
 
             //Act
             var result = await bookingSectorService.DeleteBookingByIdAsync(id);
@@ -299,7 +229,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<BookingSectorDTO>(result);
             Assert.AreEqual(id, result.Id);
-            Assert.AreEqual(bookingSectorCount - 1, bookingsContext.Count);
+            Assert.AreEqual(bookingSectorPreviousCount - 1, bookingsContext.Count);
         }
     }
 }
