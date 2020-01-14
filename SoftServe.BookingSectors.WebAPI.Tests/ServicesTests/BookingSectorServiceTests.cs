@@ -62,6 +62,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                 BookingStart = new DateTime(2020, 1, 13),
                 BookingEnd = new DateTime(2020, 1, 16),
                 IsApproved = true,
+                TournamentId = 2,
                 CreateDate = new DateTime(2020, 1, 13),
                 CreateUserId = 2,
                 ModDate = new DateTime(2020, 1, 13)
@@ -121,7 +122,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
 
         // #TODO: Change method name when booking data property will be moved to diff file
         [Test]
-        public async Task GetAllBookingsAsync_Bookings_AllReturnedAsync() 
+        public async Task GetBookingSectorsAsync_InputIsBookingSectorData_AllReturnedAsync() 
         {
             var result = await bookingSectorService.GetBookingSectorsAsync();
             Assert.IsNotNull(result);
@@ -183,6 +184,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [Test]
         public async Task BookSectorAsync_BookingSectorToInsert_GetInsertedBooking()
         {
+            //Arrange
             bookingSectorRepositoryMock.Setup(b => b.InsertEntityAsync(It.IsAny<BookingSector>()))
                 .ReturnsAsync((BookingSector b) =>
                 {
@@ -191,9 +193,22 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                     return b;
                 });
 
+            //Act
             var result = await bookingSectorService.BookSector(bookingSectorDTOToInsert);
 
+            //Assert
             Assert.AreEqual(bookingSectorDTOToInsert.Id, result.Id);
+        }
+
+        [Test]
+        public async Task GetBookingTournamentSectorsAsync_InputIsBookingSectorData_AllReturnedAsync()
+        {
+            //Act
+            var result = await bookingSectorService.GetBookingTournamentSectorsAsync() as List<BookingSectorDTO>;
+
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<IEnumerable<BookingSectorDTO>>(result);
+            Assert.AreEqual(true, result[0].TournamentId.HasValue);
         }
     }
 }

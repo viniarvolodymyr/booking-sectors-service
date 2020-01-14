@@ -34,9 +34,9 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentSectorsAsync()
         {
             var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
-            var tourBookings = bookings.Where(b=>b.TournamentId != null ).OrderBy(x=> x.TournamentId & x.SectorId);
+            var tournamentBookings = bookings.Where(b => b.TournamentId.HasValue).OrderBy(b => b.TournamentId & b.SectorId);
 
-            var dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(tourBookings);
+            var dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(tournamentBookings);
 
             return dtos;
         }
