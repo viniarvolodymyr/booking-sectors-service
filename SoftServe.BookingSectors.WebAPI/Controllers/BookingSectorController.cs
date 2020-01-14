@@ -66,10 +66,10 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("byUserId/{id}")]
-        public async Task<IActionResult> GetByUserId([FromRoute]int id)
+        [Route("byUserId/{id}/{isActual}")]
+        public async Task<IActionResult> GetByUserId([FromRoute]int id, [FromRoute]bool isActual)
         {
-            var dtos = await bookingSectorService.GetBookingsByUserId(id);
+            var dtos = await bookingSectorService.GetBookingsByUserId(id, isActual);
             if(dtos.Any())
             {
                 return Ok(dtos);

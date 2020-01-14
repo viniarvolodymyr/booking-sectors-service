@@ -9,192 +9,141 @@ using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+using SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data;
+using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
 {
     [TestFixture]
     class TournamentServiceTests
     {
-        [OneTimeSetUp]
-        [Obsolete]
-        public void Setup()
+        private readonly ITournamentService tournamentService;
+        private readonly Mock<IUnitOfWork> unitOfWorkMock;
+        private readonly Mock<IBaseRepository<Tournament>> tournamentRepositoryMock;
+        List<Tournament> tournamentsContext;
+        TournamentDTO tournamentDTO;
+
+
+        public TournamentServiceTests()
         {
-            /*    tournaments = SetUpTournaments();
-
-                tournamentRepository= SetUpTournamentRepository();
-
-
-                var config = new MapperConfiguration(opts =>
-                {
-                    opts.AddProfile<MappingProfile>();
-                });
-
-                var mapper = config.CreateMapper();
-                tournamentService = new TournamentService(unitOfWork, mapper);
-
-                */
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<TournamentProfile>();
+            });
+            tournamentRepositoryMock = new Mock<IBaseRepository<Tournament>>();
+            unitOfWorkMock = new Mock<IUnitOfWork>();
+            unitOfWorkMock.Setup(uow => uow.SaveAsync()).ReturnsAsync(true);
+            unitOfWorkMock.Setup(uow => uow.TournamentRepository).Returns(tournamentRepositoryMock.Object);
+            tournamentService = new TournamentService(unitOfWorkMock.Object, config.CreateMapper());
         }
+
 
         [SetUp]
-        public void ReInitializeTest()
+        public void SetUp()
         {
-
+            TournamentData tournamentData = new TournamentData();
+            tournamentsContext = tournamentData.Tournaments;
+            tournamentDTO = tournamentData.TournamentDTOToInsert;
         }
 
-        /// ////////////////////////////////////////////////////////////
-        private static List<Tournament> SetUpTournaments()
+        [TearDown]
+        public void TearDown()
         {
-            var tournaments = new List<Tournament>
-                               {
-                                   new Tournament()
-                                   {
-                                       Id = 1,
-                                       Name = "Tour",
-                                  Description="CNBJABC",
-                                     PreparationTerm=0,
-                                     CreateUserId=1,
-                                     ModUserId = 0
-                                   },
-                                     new Tournament()
-                                   {
-                                       Id = 2,
-                                       Name = "tournament6",
-                                      Description="CNBJABC",
-                                     PreparationTerm=3,
-                                       CreateUserId=0,
-                                       ModUserId = 0
-                                   },
-                                       new Tournament()
-                                   {
-                                       Id = 3,
-                                       Name = "tiurnament6",
-                                      Description="CNBJABC",
-                                     PreparationTerm=2,
-                                       CreateUserId=1,
-                                   },
-                                         new Tournament()
-                                   {
-                                       Id = 4,
-                                       Name = "tournament7",
-                               Description="CNBJABC",
-                                     PreparationTerm=1,
-                                       CreateUserId=3,
-                                   },
-                                           new Tournament()
-                                   {
-                                       Id = 5,
-                                       Name = "Tournament9",
-                                       Description="CNBJABC",
-                                     PreparationTerm=4,
-                                       CreateUserId=2,
-                                   },
-                                           new Tournament()
-                                   {
-                                       Id = 6,
-                                       Name = "Tournament12",
-                                    Description="CNBJABC",
-                                     PreparationTerm=2,
-                                       CreateUserId=4,
-                                   },
-                                                new Tournament()
-                                   {
-                                       Id = 7,
-                                       Name = "Tournament12",
-                                      Description="CNBJABC",
-                                     PreparationTerm=2,
-                                       CreateUserId=4,
-                                   },
-                               };
-            return tournaments;
+            tournamentsContext.Clear();
         }
-        /*
-                private IBaseRepository<Tournament> SetUpTournamentRepository()
-                {
-                    var mockRepo = new Mock<IBaseRepository<Tournament>>(MockBehavior.Default, unitOfWork);
 
-                    mockRepo.Setup(p => p.GetAllEntitiesAsync()).ReturnsAsync(tournaments);
-
-                    mockRepo.Setup(p => p.GetEntityByIdAsync(It.IsAny<int>()))
-                        .ReturnsAsync(new Func<int, Tournament>(
-                                     id => tournaments.Find(p => p.Id.Equals(id))));
-                    /*
-                    mockRepo.Setup(p => p.InsertEntityAsync((It.IsAny<Tournament>())))
-                        .Callback(new Action<Tournament>(newTournament =>
-                        {
-                            dynamic maxProductID = tournaments.Last().Id;
-                            dynamic nextProductID = maxProductID + 1;
-                            newTournament.Id = nextProductID;
-                            tournaments.Add(newTournament);
-                        }));
-
-                    mockRepo.Setup(p => p.UpdateEntity(It.IsAny<Tournament>()))
-                        .Callback(new Action<Tournament>(prod =>
-                        {
-                            var oldProduct = tournaments.Find(a => a.Id == prod.Id);
-                            oldProduct = prod;
-                        }));
-
-                    mockRepo.Setup(p => p.DeleteEntityByIdAsync(It.IsAny<int>()))
-                        .Callback(new Action<Tournament>(prod =>
-                        {
-                            var productToRemove =
-                                tournaments.Find(a => a.Id == prod.Id);
-
-                            if (productToRemove != null)
-                                tournaments.Remove(productToRemove);
-                        }));
-
-                    return mockRepo.Object;
-                }
-                */
-        /////////////////////////
         [Test]
-        public void GetAllTestAsync()
+        public async Task GetAllTournaments_InputIsTournamentData_AllTournamentsReturned()
         {
-            List<Tournament> tournaments = SetUpTournaments();
-            List<TournamentDTO> tournamentsDTO = new List<TournamentDTO>();
-            Mock<IBaseRepository<Tournament>> repositoryMock = new Mock<IBaseRepository<Tournament>>();
-
-            repositoryMock.Setup(r => r.GetAllEntitiesAsync()).ReturnsAsync(tournaments);
-
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(uow => uow.TournamentRepository).Returns(repositoryMock.Object);
-
-            var config = new MapperConfiguration(opts =>
-            {
-                opts.AddProfile<TournamentProfile>();
-            });
-            var mapper = config.CreateMapper();
-
-            var sut = new TournamentService(mockUnitOfWork.Object, mapper);
-
+            //Arrange
+            tournamentRepositoryMock.Setup(tournamentRepository => tournamentRepository.GetAllEntitiesAsync()).ReturnsAsync(tournamentsContext);
             //Act
+            var resultTournamentDTOs = (await tournamentService.GetAllTournamentsAsync()) as List<TournamentDTO>;
+            //Assert
+            Assert.IsNotNull(resultTournamentDTOs);
+            Assert.AreEqual(tournamentsContext.Count, resultTournamentDTOs.Count);
+        }
 
-            var result = sut.GetAllTournamentsAsync().Result;
-            Console.WriteLine(result);
-            Assert.IsNotNull(result);
-
-            /*
-            var result = sut.GetAllTournamentsAsync().Result;
-            tournamentsDTO =  mapper.Map<List<Tournament>, List<TournamentDTO>>(tournaments);
-            //  Assert.AreNotEqual(tournamentsDTO.Count(),result.Count());
-            */
-
-            /*
-           if (model.Count() > 0)
-
-               Assert.NotNull(model);
-
-               var expected = model?.FirstOrDefault().Title;
-               var actual = schedules?.FirstOrDefault().Title;
-
-               Assert.Equal(expected: expected, actual: actual);
-           }
-           &+*/
-
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public async Task GetTournamentById_InputIsTournamentData_OneTournamentReturned(int id)
+        {
+            //Arrange
+            tournamentRepositoryMock.Setup(tournamentRepository => tournamentRepository.GetEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => tournamentsContext.Find(tournament => tournament.Id == id));
+            //Act
+            var resultTournamentDTO = (await tournamentService.GetTournamentByIdAsync(id)) as TournamentDTO;
+            //Assert
+            Assert.IsNotNull(resultTournamentDTO);
+            Assert.AreEqual(tournamentsContext[id - 1].Id, resultTournamentDTO.Id);
         }
 
 
+        [Test]
+        public async Task InsertTournament_InputIsTournamentData_OneTournamentInserted()
+        {
+            //Arrange
+            tournamentRepositoryMock.Setup(tournamentRepository => tournamentRepository.InsertEntityAsync(It.IsAny<Tournament>()))
+                .ReturnsAsync((Tournament tournament) =>
+                {
+                    tournament.Id = tournamentDTO.Id;
+                    tournamentsContext.Add(tournament);
+                    return tournament;
+                });
+            int tournamentContextLength = tournamentsContext.Count;
+            //Act
+            var resultTournamentDTO = (await tournamentService.InsertTournamentAsync(tournamentDTO)) as TournamentDTO;
+            //Assert
+            Assert.IsNotNull(resultTournamentDTO);
+            Assert.AreEqual(tournamentDTO.Id, resultTournamentDTO.Id);
+            Assert.AreEqual(tournamentContextLength + 1, tournamentsContext.Count);
+        }
 
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public async Task UpdateTournament_InputIsTournamentData_OneTournamentUpdated(int id)
+        {
+            //Arrange
+            tournamentRepositoryMock.Setup(tournamentRepository => tournamentRepository.GetEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => tournamentsContext.Find(tournament => tournament.Id == id));
+            tournamentRepositoryMock.Setup(tournamentRepository => tournamentRepository.UpdateEntity(It.IsAny<Tournament>()))
+                .Returns((Tournament tournament) =>
+                {
+                    tournamentsContext[tournamentsContext.FindIndex(i => i.Id == tournament.Id)] = tournament;
+                    return tournament;
+                });
+            //Act
+            var resultTournamentDTO = (await tournamentService.UpdateTournamentAsync(id, tournamentDTO)) as TournamentDTO;
+            //Assert
+            Assert.IsNotNull(resultTournamentDTO);
+            Assert.AreEqual(tournamentsContext[id - 1].Id, resultTournamentDTO.Id);
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public async Task DeleteTournament_InputIsTournamentData_OneTournamentDeleted(int id)
+        {
+            //Arrange
+            tournamentRepositoryMock.Setup(tournamentRepository => tournamentRepository.DeleteEntityByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) =>
+                {
+                    var foundTournament = tournamentsContext.Find(tournament => tournament.Id == id);
+                    tournamentsContext.Remove(foundTournament);
+                    return foundTournament;
+                });
+            int tournamentContextLength = tournamentsContext.Count;
+            //Act
+            var resultTournamentDTO = (await tournamentService.DeleteTournamentByIdAsync(id)) as TournamentDTO;
+            //Assert
+            Assert.IsNotNull(resultTournamentDTO);
+            Assert.AreEqual(tournamentContextLength - 1, tournamentsContext.Count);
+        }
     }
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SoftServe.BookingSectors.WebAPI.BLL.Mapping;
 using SoftServe.BookingSectors.WebAPI.BLL.Services;
@@ -6,11 +7,21 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using SoftServe.BookingSectors.WebAPI.BLL.Filters;
+using SoftServe.BookingSectors.WebAPI.DAL.EF;
+using Microsoft.Extensions.Configuration;
 
 namespace SoftServe.BookingSectors.WebAPI.Extensions
 {
     public static class ServiceExtension
     {
+       
+        public static void ConfigureDatabase(this IServiceCollection services, IConfiguration config)
+        {
+           
+            services.AddDbContext<BookingSectorContext>(options =>
+                options.UseSqlServer(@config["AzureConnectionString"]));
+        }
+
         public static void ConfigureAutoMapper(this IServiceCollection services)
         {
             services.AddSingleton(new MapperConfiguration(mc =>
@@ -23,6 +34,11 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
             }).CreateMapper());
         }
 
+        public static void ConfigureModelRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+        }
+
         public static void ConfigureDataAccessServices(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
@@ -32,14 +48,8 @@ namespace SoftServe.BookingSectors.WebAPI.Extensions
             services.AddScoped<ITournamentService, TournamentService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
-
         }
 
-        public static void ConfigureModelRepositories(this IServiceCollection services)
-        {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-        }
         public static void ConfigureLoggerService(this IServiceCollection services)
         {
             services.AddSingleton<ILoggerManager, LoggerManager>();

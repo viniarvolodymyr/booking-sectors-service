@@ -18,6 +18,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
         public DateTime ModDate { get; set; }
         public int? ModUserId { get; set; }
         public string Description { get; set; }
+        public bool IsBooked { get; set; }
 
         public virtual ICollection<BookingSector> BookingSector { get; set; }
     }

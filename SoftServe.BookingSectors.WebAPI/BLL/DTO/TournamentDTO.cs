@@ -8,5 +8,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
         public string Name { get; set; }
         public string Description { get; set; }
         public int PreparationTerm { get; set; }
+        public bool IsBooked { get; set; }
     }
 }
