@@ -109,14 +109,46 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
 
             //Act
             var result = await bookingSectorController.Put(id, isAproved) as OkObjectResult;
-            var dtoResult = (result.Value as BookingSectorDTO);
+            var resultDTO = result.Value as BookingSectorDTO;
 
             //Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
-            Assert.IsNotNull(dtoResult);
-            Assert.AreEqual(id, dtoResult.Id);
-            Assert.AreEqual(isAproved, dtoResult.IsApproved);
+            Assert.IsNotNull(resultDTO);
+            Assert.AreEqual(id, resultDTO.Id);
+            Assert.AreEqual(isAproved, resultDTO.IsApproved);
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        [TestCase(4)]
+        public async Task DeleteBookingSectorByIdAsync_InputIsBookingSectorData_ReturnsOk(int id)
+        {
+            //Arrange
+            bookingSectorServiceMock.Setup(b => b.DeleteBookingByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => 
+                {
+                    var bookingSectorToDelete = bookingSectorContext.Find(b => b.Id == id);
+                    if (bookingSectorContext.Remove(bookingSectorToDelete))
+                        return bookingSectorToDelete;
+                    else
+                        return null;
+                });
+
+            var bookingSectorPreviousCount = bookingSectorContext.Count;
+
+            //Act
+            var result = await bookingSectorController.Delete(id) as OkObjectResult;
+            var resultDTO = result.Value as BookingSectorDTO;
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.IsNotNull(resultDTO);
+            Assert.AreEqual(id, resultDTO.Id);
+            Assert.AreEqual(bookingSectorPreviousCount - 1, bookingSectorContext.Count);
         }
     }
 }
