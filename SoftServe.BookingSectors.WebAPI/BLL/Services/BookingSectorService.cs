@@ -58,11 +58,11 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dtos;
         }
 
-        public async Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentByIdAsync(int idTour)
+        public async Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentByIdAsync(int id)
         {
             var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
-            var tourBookings = bookings.Where(b => b.TournamentId==idTour).OrderBy(x => x.SectorId);
-            var dto = mapper.Map<IEnumerable<BookingSector>,IEnumerable< BookingSectorDTO>>(tourBookings);
+            var tournamentBookings = bookings.Where(b => b.TournamentId == id).OrderBy(b => b.SectorId);
+            var dto = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(tournamentBookings);
 
             return dto;
         }

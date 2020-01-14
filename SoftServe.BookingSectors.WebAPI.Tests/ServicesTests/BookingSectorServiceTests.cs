@@ -206,9 +206,23 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             //Act
             var result = await bookingSectorService.GetBookingTournamentSectorsAsync() as List<BookingSectorDTO>;
 
+            //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<IEnumerable<BookingSectorDTO>>(result);
             Assert.AreEqual(true, result[0].TournamentId.HasValue);
+        }
+
+        [Test]
+        [TestCase(2)]
+        public async Task GetBookingTournamentByIdAsync(int id)
+        {
+            //Act
+            var result = await bookingSectorService.GetBookingTournamentByIdAsync(id) as List<BookingSectorDTO>;
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOf<IEnumerable<BookingSectorDTO>>(result);
+            Assert.AreEqual(1, result.Count);
         }
     }
 }
