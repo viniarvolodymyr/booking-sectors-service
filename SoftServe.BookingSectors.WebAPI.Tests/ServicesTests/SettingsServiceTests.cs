@@ -40,8 +40,8 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         public void Setup()
         {
             SettingsData settingsData = new SettingsData();
-            settingsContext = settingsData.Settings;
-            settingsDTO = settingsData.settingToInsert;
+            settingsContext = settingsData.CreateSettings();
+            settingsDTO = settingsData.CreateSettingDTO();
         }
         [TearDown]
         public void TearDown()

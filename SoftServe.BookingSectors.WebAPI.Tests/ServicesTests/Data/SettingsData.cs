@@ -7,29 +7,35 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data
     class SettingsData
     {
         public SettingsData() { }
-        public List<Setting> Settings { get; } = new List<Setting>()
+        public List<Setting> CreateSettings()
         {
-            new Setting
+            return new List<Setting>()
             {
-                Id = 1,
-                Name = "Max Booking Days",
-                Value = 4,
-                ModUserId = 1
-            },
-            new Setting
-            {
-                Id = 2,
-                Name = "Max Booking Settings",
-                Value = 3,
-                ModUserId = 1
-            }
-        };
-        public SettingsDTO settingToInsert = new SettingsDTO()
+                new Setting
+                {
+                    Id = 1,
+                    Name = "Max Booking Days",
+                    Value = 4,
+                    ModUserId = 1
+                },
+                new Setting
+                {
+                    Id = 2,
+                    Name = "Max Booking Settings",
+                    Value = 3,
+                    ModUserId = 1
+                }
+            };
+        }
+        public SettingsDTO CreateSettingDTO()
         {
-            Id = 1,
-            Name = "Max Booking Days",
-            Value = 2,
-            ModUserId = 2
-        };
+            return new SettingsDTO
+                {
+                    Id = 1,
+                    Name = "Max Booking Days",
+                    Value = 2,
+                    ModUserId = 2
+                };
+        }
     }
 }
