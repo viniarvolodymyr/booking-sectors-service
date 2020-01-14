@@ -7,5 +7,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
     {
         Task<UserDTO> InsertUserAsync(UserDTO userDTO);
         Task<UserDTO> GetUserByEmailAsync(string email);
+        Task<bool> ResetPasswordAsync(UserDTO userDTO);
+        Task<UserDTO> SetNewPassword(UserDTO userDTO, string Hash);
+
     }
 }

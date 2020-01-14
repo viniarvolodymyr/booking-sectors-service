@@ -80,6 +80,23 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             return mapper.Map<User, UserDTO>(user);
         }
+        
+        public async Task<bool> ResetPasswordAsync(UserDTO userDTO){
+            string value =  
+            + userDTO.Id + "#"
+            + userDTO.Password.ToString();
+
+            var d = value;
+
+
+            return true;
+        }
+        public async Task<UserDTO> SetNewPassword(UserDTO userDTO, string Hash){
+            return new UserDTO();
+        }
+    }
+    public static class ResetPasswordLink{
 
     }
+
 }
