@@ -27,14 +27,17 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok(dtos);
+            else
+            {
+                return Ok(dtos);
+            }
         }
 
         [HttpGet]
-        [Route("{tourId}")]
-        public async Task<ActionResult> GetTournament(int tourId)
+        [Route("{id}")]
+        public async Task<ActionResult> GetTournament(int id)
         {
-            var dto = await tournamentService.GetTournamentByIdAsync(tourId);
+            var dto = await tournamentService.GetTournamentByIdAsync(id);
             if (dto == null)
             {
                 return NotFound();
@@ -60,10 +63,10 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpPut]
-        [Route("{tourId}")]
-        public async Task<IActionResult> Put([FromRoute]int tourId, [FromBody] TournamentDTO tournamentDTO)
+        [Route("{id}")]
+        public async Task<IActionResult> Put([FromRoute]int id, [FromBody] TournamentDTO tournamentDTO)
         {
-            var tournament = await tournamentService.UpdateTournament(tourId, tournamentDTO);
+            var tournament = await tournamentService.UpdateTournamentAsync(id, tournamentDTO);
             if (tournament == null)
             {
                 return NotFound();
@@ -75,10 +78,10 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("{tourId}")]
-        public async Task<ActionResult> Delete(int tourId)
+        [Route("{id}")]
+        public async Task<ActionResult> Delete(int id)
         {
-            var tournament = await tournamentService.DeleteTournamentByIdAsync(tourId);
+            var tournament = await tournamentService.DeleteTournamentByIdAsync(id);
             if (tournament == null)
             {
                 return NotFound();
