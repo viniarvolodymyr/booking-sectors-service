@@ -112,7 +112,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromQuery]bool isApproved)
         {
-            var booking = await bookingSectorService.UpdateBookingApprovedAsync(id, isApproved);
+            var booking = await bookingSectorService.UpdateBookingIsApprovedAsync(id, isApproved);
             if (booking != null)
             {
                 return Ok(booking);
