@@ -108,7 +108,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<IEnumerable<SectorDTO>>(result);
-            Assert.AreEqual(false, result.Find(b => b.Id == 2).IsActive);
+            Assert.IsFalse(result.Find(b => b.Id == 2).IsActive);
         }
 
         [Test]
@@ -158,7 +158,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [Test]
         [TestCase(1, true)]
         [TestCase(2, false)]
-        public async Task UpdateBookingIsApprovedAsync_InputIsBookingSectorData_ReturnsUpdatedBookingSectorDTOs(int id, bool isAproved)
+        public async Task UpdateBookingIsApprovedAsync_InputIsBookingSectorData_ReturnsUpdatedBookingSectorDTOs(int id, bool? isAproved)
         {
             //Arrange
             bookingSectorRepositoryMock.Setup(b => b.UpdateEntity(It.IsAny<BookingSector>()))
@@ -194,7 +194,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                 });
 
             //Act
-            var result = await bookingSectorService.UpdateTournamentBooking(id, bookingSectorDTO);
+            var result = await bookingSectorService.UpdateBookingTournament(id, bookingSectorDTO);
 
             //Assert
             Assert.IsNotNull(result);
