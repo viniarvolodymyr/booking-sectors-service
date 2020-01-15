@@ -1,11 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories;
 using System;
+using System.Data;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
@@ -55,8 +59,16 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork
             }
             catch (DbUpdateException e)
             {
+                var sqlExc = e.GetBaseException() as SqlException;
+
+              
+                if (sqlExc?.Number == 547)
+                {        
+                    logger.LogError($"Number of sql exception: {sqlExc.Number.ToString()}");
+                    throw new ConstraintException("There are dependencies for selected entity, delete them firstly.", sqlExc.InnerException);                    
+                }
                 logger.LogError($"{e}, {nameof(SaveAsync)}, {e.Entries}");
-                return false;
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError, e.InnerException);
             }
             catch (Exception e)
             {
