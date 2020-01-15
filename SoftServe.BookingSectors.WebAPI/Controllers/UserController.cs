@@ -102,47 +102,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         //    else return photo;
         //}
 
-
-        #region Voisovych Reset Password
-        [HttpGet]
-        [Route("reset/vois/{email}")]
-        public async Task<IActionResult> ResetPassword2([FromRoute]string email)
-        {
-            var selectedUser = await registrationService.GetUserByEmailAsync(email);
-
-            if (selectedUser == null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound,
-                    $"User with email: {email} not found when trying to get entity.");
-            }
-
-            bool isReset = await registrationService.ResetPasswordAsync(selectedUser);
-
-            return isReset ?
-                (IActionResult)Ok() :
-                Conflict();
-        }
-
-        [HttpGet]
-        [Route("reset/vois/{email}/{hash}")]
-        public async Task<IActionResult> SetPassword([FromRoute]string email, [FromRoute]string hash)
-        {
-            var selectedUser = await registrationService.GetUserByEmailAsync(email);
-
-            if (selectedUser == null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound,
-                    $"User with email: {email} not found when trying to get entity.");
-            }
-
-            await registrationService.SetNewPassword(selectedUser, hash);
-
-            return Ok();
-        }
-
-        #endregion
-
-
         [HttpGet]
         [Route("reset/{email}")]
         public async Task<IActionResult> ResetPassword([FromRoute]string email)
