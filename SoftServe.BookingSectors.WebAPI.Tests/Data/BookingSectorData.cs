@@ -63,6 +63,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.Data
                     BookingEnd = new DateTime(2020, 1, 21),
                     IsApproved = false,
                     CreateDate = new DateTime(2020, 1, 18),
+                    TournamentId = 1,
                     CreateUserId = 3,
                     ModDate = new DateTime(2020, 1, 18)
                 },
@@ -75,6 +76,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.Data
                     BookingEnd = new DateTime(2020, 1, 30),
                     IsApproved = true,
                     CreateDate = new DateTime(2020, 1, 26),
+                    TournamentId = 1,
                     CreateUserId = 3,
                     ModDate = new DateTime(2020, 1, 26)
                 }

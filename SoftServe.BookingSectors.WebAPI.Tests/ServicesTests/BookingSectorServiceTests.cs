@@ -108,7 +108,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             //Assert
             Assert.IsNotNull(result);
             Assert.IsInstanceOf<IEnumerable<SectorDTO>>(result);
-            Assert.AreEqual(false, result.Find(b => b.Id == 2).IsActive);
+            Assert.IsFalse(result.Find(b => b.Id == 2).IsActive);
         }
 
         [Test]

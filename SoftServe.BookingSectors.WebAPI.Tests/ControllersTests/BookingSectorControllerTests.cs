@@ -6,6 +6,8 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.Controllers;
 using SoftServe.BookingSectors.WebAPI.Tests.Data;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
@@ -45,7 +47,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
 
             //Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(200, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
             Assert.IsNotNull(resultDTOs);
             Assert.AreEqual(bookingSectorContext.Count, resultDTOs.Count);
         }
@@ -70,7 +72,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
 
             //Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(200, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
             Assert.IsNotNull(resultDTO);
             Assert.AreEqual(id, resultDTO.Id);
         }
@@ -93,7 +95,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
 
             //Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(201, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Created, (HttpStatusCode)result.StatusCode);
             Assert.AreEqual(bookingSectorPreviousCount + 1, bookingSectorContext.Count);
         }
 
@@ -119,7 +121,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
 
             //Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(200, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
             Assert.IsNotNull(resultDTO);
             Assert.AreEqual(id, resultDTO.Id);
             Assert.AreEqual(isAproved, resultDTO.IsApproved);
@@ -151,14 +153,14 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
 
             //Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(200, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
             Assert.IsNotNull(resultDTO);
             Assert.AreEqual(id, resultDTO.Id);
             Assert.AreEqual(bookingSectorPreviousCount - 1, bookingSectorContext.Count);
         }
 
         [Test]
-        public async Task GetTournaments_InputIsBookingSectorData_ReturnsOk()
+        public async Task GetAllBookingTournamentsAsync_InputIsBookingSectorData_ReturnsOk()
         {
             //Arrange
             bookingSectorServiceMock.Setup(b => b.GetBookingTournamentSectorsAsync())
@@ -169,7 +171,30 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
 
             //Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(200, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBookingTournamentByIdAsync_InputIsBookingSectorData_ReturnsOk(int id)
+        {
+            //Arrange
+            bookingSectorServiceMock.Setup(b => b.GetBookingTournamentByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => 
+                {
+                    return bookingSectorContext.Where(b => b.TournamentId == id).ToList();
+                });
+
+            //Act
+            var result = await bookingSectorController.GetTournament(id) as OkObjectResult;
+            var resultDTOs = result.Value as List<BookingSectorDTO>;
+
+            //Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
+            Assert.IsNotNull(resultDTOs);
+            Assert.IsTrue(resultDTOs.All(b => b.TournamentId.HasValue));
         }
     }
 }

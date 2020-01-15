@@ -83,10 +83,10 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [Route("tournaments/{id}")]
         public async Task<IActionResult> GetTournament([FromRoute]int id)
         {
-            var dto = await bookingSectorService.GetBookingTournamentByIdAsync(id);
-            if (dto != null)
+            var dtos = await bookingSectorService.GetBookingTournamentByIdAsync(id);
+            if (dtos != null)
             {
-                return Ok(dto);
+                return Ok(dtos);
             }
             else
             {
