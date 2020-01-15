@@ -67,15 +67,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             return dto;
         }
 
-        public async Task<IEnumerable<BookingSectorDTO>> GetBookingsByUserId(int id)
-        {
-            var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
-            var bookingsByUserId = bookings.Where(b => b.UserId == id);
-            var dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(bookingsByUserId);
-
-            return dtos;
-        }
-
         public async Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentByIdAsync(int id)
         {
             var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
@@ -134,7 +125,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                  : null;
         }
 
-        public async Task<BookingSectorDTO> UpdateBookingApprovedAsync(int id, bool isApproved)
+        public async Task<BookingSectorDTO> UpdateBookingIsApprovedAsync(int id, bool? isApproved)
         {
             var bookingToUpdate = await database.BookingSectorRepository.GetEntityByIdAsync(id);
             if (bookingToUpdate == null)
@@ -150,7 +141,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                  : null;
         }
 
-        public async Task<BookingSectorDTO> UpdateTournamentBooking(int id, BookingSectorDTO bookingSectorDTO)
+        public async Task<BookingSectorDTO> UpdateBookingTournament(int id, BookingSectorDTO bookingSectorDTO)
         {
             var bookingTournamentToUpdate = await database.BookingSectorRepository.GetEntityByIdAsync(id);
             if (bookingTournamentToUpdate == null)
