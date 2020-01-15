@@ -158,7 +158,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [Test]
         [TestCase(1, true)]
         [TestCase(2, false)]
-        public async Task UpdateBookingIsApprovedAsync_InputIsBookingSectorData_ReturnsUpdatedBookingSectorDTOs(int id, bool isAproved)
+        public async Task UpdateBookingIsApprovedAsync_InputIsBookingSectorData_ReturnsUpdatedBookingSectorDTOs(int id, bool? isAproved)
         {
             //Arrange
             bookingSectorRepositoryMock.Setup(b => b.UpdateEntity(It.IsAny<BookingSector>()))
