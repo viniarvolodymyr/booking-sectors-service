@@ -196,5 +196,33 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             Assert.IsNotNull(resultDTOs);
             Assert.IsTrue(resultDTOs.All(b => b.TournamentId.HasValue));
         }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        [TestCase(4)]
+        public async Task UpdateBookingTournamentByIdAsync_InputIsBookingSectorData_ReturnsOk(int id)
+        {
+            //Arrange
+            bookingSectorServiceMock.Setup(b => b.UpdateBookingTournament(It.IsAny<int>(), It.IsAny<BookingSectorDTO>()))
+                .ReturnsAsync((int id, BookingSectorDTO bookingSectorDTO) => 
+                {
+                    bookingSectorContext[bookingSectorContext.FindIndex(b => b.Id == id)] = bookingSectorDTO;
+                    return bookingSectorDTO;
+                });
+
+            //Act
+            var result = await bookingSectorController.Put(id, bookingSectorDTO) as OkObjectResult;
+            var resultDTO = result.Value as BookingSectorDTO;
+            id = resultDTO.Id;
+
+            //Assest
+            Assert.IsNotNull(result);
+            Assert.AreEqual(HttpStatusCode.OK, (HttpStatusCode)result.StatusCode);
+            Assert.IsNotNull(resultDTO);
+            Assert.AreEqual(bookingSectorDTO.Id, resultDTO.Id);
+            Assert.IsTrue(bookingSectorContext[bookingSectorContext.FindIndex(b => b.Id == id)].Equals(resultDTO));
+        }
     }
 }

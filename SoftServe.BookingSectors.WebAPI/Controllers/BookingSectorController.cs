@@ -127,10 +127,10 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [Route("tournaments/{id}")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromBody] BookingSectorDTO bookingSectorDTO)
         {
-            var tournament = await bookingSectorService.UpdateTournamentBooking(id, bookingSectorDTO);
-            if (tournament != null)
+            var bookingTournament = await bookingSectorService.UpdateBookingTournament(id, bookingSectorDTO);
+            if (bookingTournament != null)
             {
-                return Ok(tournament);
+                return Ok(bookingTournament);
             }
             else
             {

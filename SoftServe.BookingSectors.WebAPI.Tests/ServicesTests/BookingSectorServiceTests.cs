@@ -194,7 +194,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                 });
 
             //Act
-            var result = await bookingSectorService.UpdateTournamentBooking(id, bookingSectorDTO);
+            var result = await bookingSectorService.UpdateBookingTournament(id, bookingSectorDTO);
 
             //Assert
             Assert.IsNotNull(result);
