@@ -8,7 +8,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.Repositories;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
-using SoftServe.BookingSectors.WebAPI.Tests.ServicesTests.Data;
+using SoftServe.BookingSectors.WebAPI.Tests.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -39,9 +39,8 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         [SetUp]
         public void SetUp()
         {
-            SectorData sectorData = new SectorData();
-            sectorsContext = sectorData.Sectors;
-            sectorDTO = sectorData.SectorDTOToInsert;
+            sectorsContext = SectorData.CreateSectors();
+            sectorDTO = SectorData.CreateSectorDTO();
         }
 
         [TearDown]

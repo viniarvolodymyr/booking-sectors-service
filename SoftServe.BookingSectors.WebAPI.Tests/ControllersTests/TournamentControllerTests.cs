@@ -4,7 +4,7 @@ using NUnit.Framework;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.Controllers;
-using SoftServe.BookingSectors.WebAPI.Tests.ControllersTests.Data;
+using SoftServe.BookingSectors.WebAPI.Tests.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,9 +30,8 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         [SetUp]
         public void SetUp()
         {
-            TournamentDTOData tournamentData = new TournamentDTOData();
-            tournamentsContext = tournamentData.Tournaments;
-            tournamentDTO = tournamentData.TournamentDTOToInsert;
+            tournamentsContext = TournamentData.CreateTournamentDTOs();
+            tournamentDTO = TournamentData.CreateTournamentDTO();
         }
 
         [TearDown]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Models
 {
-    public sealed partial class User
+    public partial class User
     {
         public User()
         {
