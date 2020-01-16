@@ -75,7 +75,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers.Jwt
             new[]
             {
                 new Claim(nameof(login), login),
-                new Claim(ClaimTypes.Role, role),
+                new Claim("role", role),
                 new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, _jwtOptions.JtiGenerator),
                 new Claim(JwtRegisteredClaimNames.Iat,

@@ -20,9 +20,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpPost("authenticate")]
-        public async Task<ActionResult<TokenDTO>> SignIn(string phone, string password)
+        public async Task<ActionResult<TokenDTO>> SignIn([FromBody]SignInDTO credentials )
         {
-            var result = await authenticationService.SignInAsync(phone, password);
+            var result = await authenticationService.SignInAsync(credentials.Phone, credentials.Password);
             if (result == null)
                 return BadRequest();
             
