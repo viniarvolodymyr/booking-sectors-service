@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoftServe.BookingSectors.WebAPI.DAL.EF;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Collections.Generic;
@@ -7,11 +6,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System;
 using System.Threading.Tasks;
-
+using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
+using System.Net;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationRepositories
 {
-    public class TournamentRepository: IBaseRepository<Tournament>
+    public class TournamentRepository : IBaseRepository<Tournament>
     {
         private readonly BookingSectorContext context;
         private readonly DbSet<Tournament> tournamentSet;
@@ -22,14 +22,19 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             tournamentSet = context.Set<Tournament>();
         }
 
-        public  Task<List<Tournament>> GetAllEntitiesAsync()
+        public Task<List<Tournament>> GetAllEntitiesAsync()
         {
             return tournamentSet.AsNoTracking().ToListAsync();
         }
 
-        public async Task<Tournament>  GetEntityByIdAsync(int id)
+        public Task<Tournament> GetEntityByIdAsync(int id)
         {
-            return await tournamentSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            var result = tournamentSet.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync();
+            if (result.Result == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Tournament with id: {id} not found when trying to get tournament.");
+            }
+            return result;
         }
 
         public IQueryable<Tournament> GetByCondition(Expression<Func<Tournament, bool>> expression)
@@ -49,9 +54,14 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
 
         public async Task<Tournament> DeleteEntityByIdAsync(int id)
         {
-            Tournament tournamentToDelete = await tournamentSet.FindAsync(id);
-            return tournamentSet.Remove(tournamentToDelete).Entity;
+            Tournament entityToDelete = await tournamentSet.FindAsync(id);
+            if (entityToDelete == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Tournament with id: {id} not found when trying to delete tournament. Tournament wasn't deleted.");
+            }
+             return tournamentSet.Remove(entityToDelete).Entity; 
+            }
         }
-
     }
 }
+
