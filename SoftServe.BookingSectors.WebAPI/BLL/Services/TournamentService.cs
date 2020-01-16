@@ -20,37 +20,17 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             this.database = database;
             this.mapper = mapper;
         }
-        private bool tournamentIsBooked(int id, IEnumerable<BookingSector> bookings, DateTime fromDate)
-        {
-            var n =  bookings.Any(bookings => bookings.TournamentId==id);
-            return n;
-        }
+
         public async Task<IEnumerable<TournamentDTO>> GetAllTournamentsAsync()
         {
-            var tournaments = await database.TournamentRepository.GetAllEntitiesAsync();
-            var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
-            var tournamentBookings = bookings.Where(b => b.TournamentId != null);
-
-            var entities = tournaments.GroupJoin(tournamentBookings,
-                tournament => tournament.Id,
-                tournamentBookings => tournamentBookings.TournamentId,
-                (tournament, tournamentBookings) => new Tournament()
-                {
-                    Id = tournament.Id,
-                    Name = tournament.Name,
-                    Description = tournament.Description,
-                    PreparationTerm = tournament.PreparationTerm,
-                    IsBooked = tournamentIsBooked(tournament.Id, tournamentBookings, DateTime.Now),
-                    CreateUserId = tournament.CreateUserId
-                });
+            var entities = await database.TournamentRepository.GetAllEntitiesAsync();
             return mapper.Map<IEnumerable<Tournament>, IEnumerable<TournamentDTO>>(entities);
         }
 
         public async Task<TournamentDTO> GetTournamentByIdAsync(int id)
         {
-            var enity = await database.TournamentRepository.GetEntityByIdAsync(id);
-            var dto = mapper.Map<Tournament, TournamentDTO>(enity);
-            return dto;
+            var entity = await database.TournamentRepository.GetEntityByIdAsync(id);        
+            return mapper.Map<Tournament, TournamentDTO>(entity);
         }
 
         public async Task<TournamentDTO> InsertTournamentAsync(TournamentDTO tournamentDTO)
@@ -72,19 +52,15 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<TournamentDTO> UpdateTournamentAsync(int id, TournamentDTO tournamentDTO)
         {
             var existedTournament = await database.TournamentRepository.GetEntityByIdAsync(id);
-            if (existedTournament == null)
-            {
-                return null;
-            }
             var tournament = mapper.Map<TournamentDTO, Tournament>(tournamentDTO);
             tournament.Id = id;
-            tournament.Name = tournamentDTO.Name;
-            tournament.Description = tournamentDTO.Description;
-            tournament.PreparationTerm = tournamentDTO.PreparationTerm;
+            tournament.CreateUserId = existedTournament.CreateUserId;
+            tournament.CreateDate = existedTournament.CreateDate;
             tournament.ModDate = DateTime.Now;
             var updatedTournament = database.TournamentRepository.UpdateEntity(tournament);
             var updatedTournamentDTO = mapper.Map<Tournament, TournamentDTO>(updatedTournament);
             bool isSaved = await database.SaveAsync();
+
             return (isSaved == true) ? updatedTournamentDTO : null;
         }
 

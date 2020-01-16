@@ -10,7 +10,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/sectors")]
     [ApiController]
-
     public class SectorController : ControllerBase
     {
         private readonly ISectorService sectorService;
@@ -41,6 +40,21 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         {
             var dto = await sectorService.GetSectorByIdAsync(id);
             if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
+        }
+
+        [HttpGet]
+        [Route("byNumber/{number}")]
+        public async Task<IActionResult> GetSectorIdByNumber([FromRoute]int number)
+        {
+            var dto = await sectorService.GetSectorIdByNumberAsync(number);
+            if(dto == 0)
             {
                 return NotFound();
             }

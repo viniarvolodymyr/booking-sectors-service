@@ -18,7 +18,8 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             this.bookingSectorService = bookingSectorService;
         }
 
-        [HttpGet]   
+        [Authorize("Admin")]
+        [HttpGet] 
         public async Task<IActionResult> Get()
         {
             var dtos = await bookingSectorService.GetBookingSectorsAsync();
@@ -69,7 +70,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> GetByUserId([FromRoute]int id, [FromRoute]bool isActual)
         {
             var dtos = await bookingSectorService.GetBookingsByUserId(id, isActual);
-            if(dtos.Any())
+            if (dtos.Any())
             {
                 return Ok(dtos);
             }
@@ -83,10 +84,10 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [Route("tournaments/{id}")]
         public async Task<IActionResult> GetTournament([FromRoute]int id)
         {
-            var dto = await bookingSectorService.GetBookingTournamentByIdAsync(id);
-            if (dto != null)
+            var dtos = await bookingSectorService.GetBookingTournamentByIdAsync(id);
+            if (dtos != null)
             {
-                return Ok(dto);
+                return Ok(dtos);
             }
             else
             {
@@ -110,9 +111,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> Put([FromRoute]int id, [FromQuery]bool isApproved)
+        public async Task<IActionResult> Put([FromRoute]int id, [FromQuery]bool? isApproved)
         {
-            var booking = await bookingSectorService.UpdateBookingApprovedAsync(id, isApproved);
+            var booking = await bookingSectorService.UpdateBookingIsApprovedAsync(id, isApproved);
             if (booking != null)
             {
                 return Ok(booking);
@@ -127,10 +128,10 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         [Route("tournaments/{id}")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromBody] BookingSectorDTO bookingSectorDTO)
         {
-            var tournament = await bookingSectorService.UpdateTournamentBooking(id, bookingSectorDTO);
-            if (tournament != null)
+            var bookingTournament = await bookingSectorService.UpdateBookingTournament(id, bookingSectorDTO);
+            if (bookingTournament != null)
             {
-                return Ok(tournament);
+                return Ok(bookingTournament);
             }
             else
             {
