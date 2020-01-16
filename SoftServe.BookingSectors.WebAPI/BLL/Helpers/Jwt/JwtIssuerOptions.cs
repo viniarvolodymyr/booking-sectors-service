@@ -4,7 +4,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers.Jwt
 {
     public class JwtIssuerOptions
     {
-        public const string Role = "role";
+        public string Role { get; set; }
         public string Issuer { get; set; }
         public string Subject { get; set; }
         public string Audience { get; set; }

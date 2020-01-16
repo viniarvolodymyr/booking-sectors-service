@@ -18,7 +18,8 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             this.bookingSectorService = bookingSectorService;
         }
 
-        [HttpGet]   
+        [Authorize("Admin")]
+        [HttpGet] 
         public async Task<IActionResult> Get()
         {
             var dtos = await bookingSectorService.GetBookingSectorsAsync();
@@ -69,7 +70,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> GetByUserId([FromRoute]int id, [FromRoute]bool isActual)
         {
             var dtos = await bookingSectorService.GetBookingsByUserId(id, isActual);
-            if(dtos.Any())
+            if (dtos.Any())
             {
                 return Ok(dtos);
             }
