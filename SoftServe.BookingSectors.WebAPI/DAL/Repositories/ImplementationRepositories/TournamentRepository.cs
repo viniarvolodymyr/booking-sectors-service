@@ -59,8 +59,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
             {
                 throw new HttpStatusCodeException(HttpStatusCode.NotFound, $"Tournament with id: {id} not found when trying to delete tournament. Tournament wasn't deleted.");
             }
-             return tournamentSet.Remove(entityToDelete).Entity; 
-            }
+            return tournamentSet.Remove(entityToDelete).Entity;
         }
     }
 }
