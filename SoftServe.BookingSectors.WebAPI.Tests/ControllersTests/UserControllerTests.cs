@@ -4,7 +4,7 @@ using NUnit.Framework;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.Controllers;
-using SoftServe.BookingSectors.WebAPI.Tests.ControllersTests.Data;
+using SoftServe.BookingSectors.WebAPI.Tests.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -31,11 +31,10 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         [SetUp]
         public void SetUp()
         {
-            UserData userData = new UserData();
-            usersContext = userData.Users;
-            userDTO = userData.UserDTOToInsert;
-            newPass = userData.newPassword;
-            phones = userData.phones;
+            usersContext = UserData.CreateUserDTOs();
+            userDTO = UserData.CreateUserDTO();
+            //newPass = userData.newPassword; //#TODO: Add this field as static methods to UserData static class
+            //phones = userData.phones;       //#TODO: Add this field as static methods to UserData static class
         }
 
         [TearDown]

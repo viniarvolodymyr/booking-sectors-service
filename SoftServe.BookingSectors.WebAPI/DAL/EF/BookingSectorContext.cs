@@ -238,8 +238,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .HasMaxLength(200)
                     .IsUnicode(false);
 
-                entity.Property(e => e.IsBooked).HasColumnName("IS_BOOKED");
-
                 entity.Property(e => e.ModDate)
                     .HasColumnName("MOD_DATE")
                     .HasColumnType("datetime")
@@ -254,6 +252,14 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .IsUnicode(false);
 
                 entity.Property(e => e.PreparationTerm).HasColumnName("PREPARATION_TERM");
+
+                entity.Property(e => e.TournamentEnd)
+                    .HasColumnName("TOURNAMENT_END")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.TournamentStart)
+                    .HasColumnName("TOURNAMENT_START")
+                    .HasColumnType("date");
             });
 
             modelBuilder.Entity<User>(entity =>

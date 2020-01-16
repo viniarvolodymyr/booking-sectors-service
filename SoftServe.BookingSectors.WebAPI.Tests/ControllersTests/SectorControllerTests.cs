@@ -4,7 +4,7 @@ using NUnit.Framework;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.Controllers;
-using SoftServe.BookingSectors.WebAPI.Tests.ControllersTests.Data;
+using SoftServe.BookingSectors.WebAPI.Tests.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -30,10 +30,9 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         [SetUp]
         public void SetUp()
         {
-            SectorData sectorData = new SectorData();
-            sectorsContext = sectorData.Sectors;
-            sectorDTO = sectorData.SectorDTOToInsert;
-            freeSectorsDTO = sectorData.FreeSectors;
+            sectorsContext = SectorData.CreateSectorDTOs();
+            sectorDTO = SectorData.CreateSectorDTO();
+            freeSectorsDTO = SectorData.CreateSectorDTOs();
         }
 
         [TearDown]
