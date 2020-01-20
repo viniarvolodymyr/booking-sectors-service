@@ -52,11 +52,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             );
 
             bool IsSave = await database.SaveAsync();
-<<<<<<< HEAD
-            return  IsSave
-=======
             return IsSave
->>>>>>> feae6652abe510a8df38f222190f0b9d10907cbb
                 ? token
                 : null;
 
@@ -82,20 +78,12 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             await database.TokenRepository.InsertEntityAsync(new Token
             {
-<<<<<<< HEAD
-                RefreshToken = newToken.RefreshToken,               
-=======
                 RefreshToken = newToken.RefreshToken,
->>>>>>> feae6652abe510a8df38f222190f0b9d10907cbb
             });
             bool IsSave = await database.SaveAsync();
             return IsSave
                 ? newToken
                 : null;
-<<<<<<< HEAD
-
-=======
->>>>>>> feae6652abe510a8df38f222190f0b9d10907cbb
         }
     }
 }

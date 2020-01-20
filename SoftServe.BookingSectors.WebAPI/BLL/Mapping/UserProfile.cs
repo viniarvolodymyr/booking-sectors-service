@@ -10,13 +10,13 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Mapping
         {
             CreateMap<User, UserDTO>()
                 .ForMember(m => m.RoleName, x => x.MapFrom(src => src.Role.Role))
-               // .ForMember(m=>m.Photo, x =>x.MapFrom(src=> Convert.ToBase64String(src.Photo)))
                 .ForMember(m => m.Photo, opt => opt.Ignore());
                 
             CreateMap<UserDTO, User>()
                 .ForMember(m => m.Id, opt => opt.Ignore())
                 .ForMember(m => m.Role, opt => opt.Ignore())
                 .ForMember(m => m.Password, opt => opt.Ignore())
+                .ForMember(m => m.IsEmailValid, opt => opt.Ignore())
                 .ForMember(m => m.Photo, opt => opt.Ignore()); 
             
         }
