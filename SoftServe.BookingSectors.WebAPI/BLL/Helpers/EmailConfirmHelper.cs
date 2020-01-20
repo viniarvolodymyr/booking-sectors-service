@@ -1,4 +1,6 @@
-﻿namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
+﻿using System.Linq;
+
+namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
 {
     /// <summary>
     /// Class for determining data during email verification 
@@ -15,8 +17,11 @@
         public static string GetHash(int id, bool emailValid, string email)
         {
             string lineForHash = $"{id}#{emailValid.ToString()}#{email}";
+            string firstHashPass = SHA256Hash.ComputeString(lineForHash);
+            string reverseHash =  new string(firstHashPass.ToCharArray().Reverse().ToArray());
+            string secondHashPass = SHA256Hash.ComputeString(reverseHash);
 
-            return SHA256Hash.ComputeString(lineForHash);
+            return secondHashPass;
         }
 
         /// <summary>
