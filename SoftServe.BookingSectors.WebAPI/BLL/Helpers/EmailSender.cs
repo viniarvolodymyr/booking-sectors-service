@@ -67,7 +67,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Helpers
             using var message = new MailMessage(fromAddressData, toAddressData)
             {
                 Subject = SubjectMessage,
-                Body = BodyMessage
+                Body = BodyMessage,
+                IsBodyHtml = true
             };
 
             {
