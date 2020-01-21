@@ -1,4 +1,5 @@
 ﻿using SoftServe.BookingSectors.WebAPI.BLL.DTO;
+using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using System.Threading.Tasks;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
@@ -19,5 +20,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         /// <param name="token">Old tokens</param>
         /// <returns>New tokens</returns>
         Task<TokenDTO> TokenAsync(TokenDTO token);
+
+        bool IsPasswordTheSame(User user, string password);
     }
 }

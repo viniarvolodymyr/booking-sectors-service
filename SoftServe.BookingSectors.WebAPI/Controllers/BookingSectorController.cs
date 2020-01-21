@@ -18,7 +18,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             this.bookingSectorService = bookingSectorService;
         }
 
-        [Authorize("Admin")]
         [HttpGet] 
         public async Task<IActionResult> Get()
         {
