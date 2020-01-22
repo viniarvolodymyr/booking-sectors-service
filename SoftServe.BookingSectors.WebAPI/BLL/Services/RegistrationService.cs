@@ -56,7 +56,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             //Generate hash data for confirm email
             string hashConfirmData = EmailConfirmHelper.GetHash(insertedUser.Id, insertUser.IsEmailValid, insertUser.Email);
             string linkConfirm =
-                EmailConfirmHelper.GetLink("http://localhost:4200", insertUser.Email, hashConfirmData);
+                EmailConfirmHelper.GetLink("https://bookingsectors.azurewebsites.net", insertUser.Email, hashConfirmData);
 
             //Send email
 
