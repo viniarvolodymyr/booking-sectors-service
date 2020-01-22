@@ -58,7 +58,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
         }
 
-        private bool IsPasswordTheSame(User user, string password)
+        public bool IsPasswordTheSame(User user, string password)
         {
             if (user == null) return false;
             var hashedPassword = SHA256Hash.Compute(password);

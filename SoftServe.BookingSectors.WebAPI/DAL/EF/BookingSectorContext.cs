@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.EF
@@ -24,6 +22,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
         public virtual DbSet<Tournament> Tournament { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -293,6 +292,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                     .HasColumnName("FIRSTNAME")
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.IsEmailValid).HasColumnName("IS_EMAIL_VALID");
 
                 entity.Property(e => e.Lastname)
                     .HasColumnName("LASTNAME")
