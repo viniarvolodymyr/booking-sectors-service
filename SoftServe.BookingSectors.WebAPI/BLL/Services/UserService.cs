@@ -196,7 +196,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                                              $" Your new password: {Environment.NewLine}" +
                                              $" {newPass} {Environment.NewLine}. You can change it in your profile. {Environment.NewLine} Have a nice day :) ");
 
-            await sender.SendAsync("Reset password on TridentLake",
+            await sender.SendAsync("Reset password on BookingSector",
                 userDTO.Email,
                 $"{userDTO.Lastname} {userDTO.Firstname}");
 
