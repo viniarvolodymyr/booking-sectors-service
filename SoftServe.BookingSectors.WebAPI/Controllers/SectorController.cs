@@ -50,21 +50,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("byNumber/{number}")]
-        public async Task<IActionResult> GetSectorIdByNumber([FromRoute]int number)
-        {
-            var dto = await sectorService.GetSectorIdByNumberAsync(number);
-            if(dto == 0)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(dto);
-            }
-        }
-
-        [HttpGet]
         [Route("free")]
         public async Task<IActionResult> Get([FromQuery]DateTime fromDate, [FromQuery]DateTime toDate)
         {
