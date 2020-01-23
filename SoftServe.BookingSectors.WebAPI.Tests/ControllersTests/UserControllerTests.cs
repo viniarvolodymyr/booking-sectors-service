@@ -147,7 +147,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         public async Task UpdateUserPass_InputIsUserData_ReturnsOk(int id)
         {
             //Arrange
-            userServiceMock.Setup(userService => userService.UpdateUserPassById(It.IsAny<int>(), It.IsAny<string>()))
+            userServiceMock.Setup(userService => userService.UpdateUserPassById(It.IsAny<int>(), It.IsAny<UserDTO>()))
                 .ReturnsAsync((int id, string newPass) =>
                 {
                     userDTO = usersContext[usersContext.FindIndex(i => i.Id == id)];
@@ -155,7 +155,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
                     return userDTO;
                 });
             //Act
-            var okResult = (await userController.UpdateUserPass(id, newPass)) as OkObjectResult;
+            var okResult = (await userController.UpdateUserPass(id, userDTO )) as OkObjectResult;
             //Assert
             Assert.IsNotNull(okResult);
             Assert.AreEqual(200, okResult.StatusCode);
