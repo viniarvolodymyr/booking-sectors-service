@@ -2,7 +2,6 @@ using System;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
-using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers;
 using SoftServe.BookingSectors.WebAPI.BLL.Helpers.LoggerManager;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
@@ -10,11 +9,10 @@ using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.AspNetCore.Http;
-using System.Security.Cryptography;
+
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 {
@@ -76,29 +74,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             }
 
             return dto;
-        }
-
-        public async Task<string> GetUserPhotoById(int id)
-        {
-            var entity = await database.UserRepository.GetEntityByIdAsync(id);
-            if (entity == null)
-            {
-                return null;
-            }
-
-            var b64 = Convert.ToBase64String(entity.Photo);
-
-            using (var ms = new MemoryStream(entity.Photo))
-            {
-               var file = new FormFile(ms, 0, ms.Length, "file.jpg", "file")
-                {
-                    Headers = new HeaderDictionary(),
-                    ContentType = "image/jpeg",
-
-                };
-
-                return b64;
-            }
         }
         #endregion
 
@@ -169,6 +144,24 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
                 return null;
             }
+        }
+
+        public async Task<UserDTO> DeleteUserPhotoById(int id)
+        {
+            var existedUser = await database.UserRepository.GetEntityByIdAsync(id);
+            if (existedUser == null)
+            {
+                return null;
+            }
+
+            existedUser.Photo = null;
+
+            var updatedUser = database.UserRepository.UpdateEntity(existedUser);
+            bool isSaved = await database.SaveAsync();
+
+            return isSaved ?
+                mapper.Map<User, UserDTO>(updatedUser) :
+                null;
         }
 
         #endregion

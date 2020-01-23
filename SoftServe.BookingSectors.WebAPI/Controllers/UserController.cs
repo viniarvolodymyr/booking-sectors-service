@@ -26,8 +26,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             this.registrationService = registrationService;
         }
 
-
-
         [HttpGet]
         public async Task<ActionResult> Get()
         {
@@ -90,18 +88,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dto);
         }
 
-        //[HttpGet]
-        //[Route("UserPhoto/{id}")]
-        //public async Task<string> GetPhotoById([FromRoute]int id)
-        //{
-        //    var photo = await userService.GetUserPhotoById(id);
-        //    if (photo == null)
-        //    {
-        //        return null;
-        //    }
-        //    else return photo;
-        //}
-
         [HttpGet]
         [Route("reset/{email}")]
         public async Task<IActionResult> ResetPassword([FromRoute]string email)
@@ -128,8 +114,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             var result = await userService.CheckPasswords(password, id);
             return Ok(result);
         }
-
-
 
 
         [HttpPost]
@@ -215,6 +199,21 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("deletePhoto/{id}")]
+        public async Task<IActionResult> DeleteUserPhoto([FromRoute]int id)
+        {
+            var dto = await userService.DeleteUserPhotoById(id);
+
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
+        }
 
         [HttpDelete]
         [Route("{id}")]
