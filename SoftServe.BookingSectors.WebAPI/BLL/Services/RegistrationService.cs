@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Net;
 using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
@@ -54,11 +52,18 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             {
                 return null;
             }
+            
+            //Generate hash data for confirm email
+            string hashConfirmData = EmailConfirmHelper.GetHash(insertedUser.Id, insertUser.IsEmailValid, insertUser.Email);
+            string linkConfirm =
+                EmailConfirmHelper.GetLink("http://localhost:4200", insertUser.Email, hashConfirmData);
 
-            EmailSender sender = new EmailSender($"Hello, {insertUser.Lastname}." +
-                                                 $" You write a site for Booking Fishing sectors. {Environment.NewLine}" +
-                                                 $" Your login: {insertedUser.Phone} {Environment.NewLine}" +
-                                                 $" Your password: {inputPassword} {Environment.NewLine} Have a nice day :) ");
+            //Send email
+
+            string emailMessage =
+                EmailBody.Registration.GetBodyMessage(insertUser.Lastname, insertedUser.Phone, linkConfirm);
+
+            EmailSender sender = new EmailSender(emailMessage);
 
             await sender.SendAsync("Registration in Booking Fishing Sectors",
                          inputEmail,
@@ -73,13 +78,32 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 .GetByCondition(x => x.Email == email)
                 .FirstOrDefaultAsync();
 
-            if (user == null)
-            {
-                return null;
-            }
-
-            return mapper.Map<User, UserDTO>(user);
+            return user == null 
+                ? null 
+                : mapper.Map<User, UserDTO>(user);
         }
 
+        public async Task<bool> ConfirmEmailAsync(UserDTO userDTO, string hash)
+        {
+            string hashConfirmData = EmailConfirmHelper.GetHash(userDTO.Id, userDTO.IsEmailValid, userDTO.Email);
+            bool isHashEqual = EmailConfirmHelper.EqualHash(hash, hashConfirmData);
+
+
+            if(isHashEqual)
+            {
+                var existedUser = await database.UserRepository.GetEntityByIdAsync(userDTO.Id);
+                
+                existedUser.IsEmailValid = true;
+                var updatedUser = database.UserRepository.UpdateEntity(existedUser);
+                bool isSave = await database.SaveAsync();
+
+
+                return isSave;
+
+            }
+
+            return false;
+        }
+        
     }
 }

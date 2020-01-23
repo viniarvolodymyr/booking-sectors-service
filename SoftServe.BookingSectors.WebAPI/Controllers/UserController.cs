@@ -138,12 +138,34 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         {
             var dto = await registrationService.InsertUserAsync(userDTO);
 
-            return dto == null ?
-                (IActionResult)BadRequest() :
-                Created($"api/users/{dto.Id}", dto);
+            return dto == null 
+                ? (IActionResult)BadRequest() 
+                : Created($"api/users/{dto.Id}", dto);
         }
 
+        [HttpPut]
+        [Route("confirm/{email}/{hash}")]
+        public async Task<IActionResult> ConfirmEmail([FromRoute]string email, [FromRoute]string hash)
+        {
+            var existedUser = await registrationService.GetUserByEmailAsync(email);
+            
+            if (existedUser == null)
+            {
+                return NotFound();
+            }
 
+            if(existedUser.IsEmailValid){
+                 return Conflict(existedUser.Email);
+            }
+
+            var isConfirm = await registrationService.ConfirmEmailAsync(existedUser, hash);
+
+
+            return isConfirm
+                ? (IActionResult)Ok(existedUser.Email)
+                : BadRequest ();
+
+        }
 
         [HttpPut]
         [Route("{id}")]
