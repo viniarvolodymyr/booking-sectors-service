@@ -11,7 +11,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         Task<UserDTO> GetUserByIdAsync(int id);
         Task<UserDTO> GetUserByPhoneAsync(string phone);
         Task<UserDTO> UpdateUserById(int id, UserDTO userDTO);
-        Task<UserDTO> UpdateUserPassById(int id, string password);
+        Task<UserDTO> UpdateUserPassById(int id, UserDTO userDTO);
         Task<UserDTO> DeleteUserByIdAsync(int id);
         Task<bool> CheckPasswords(string password, int id);
         Task<UserDTO> UpdateUserPhotoById(int id, IFormFile image);

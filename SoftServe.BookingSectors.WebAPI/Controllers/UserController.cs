@@ -126,11 +126,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> PasswordCheck([FromRoute]string password, [FromRoute]int id)
         {
             var result = await userService.CheckPasswords(password, id);
-            if (result == false)
-            {
-                return NotFound();
-            }
-            else return Ok(result);
+            return Ok(result);
         }
 
 
@@ -167,9 +163,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("password/{id}")]
-        public async Task<IActionResult> UpdateUserPass([FromRoute]int id, [BindRequired, FromQuery] string password)
+        public async Task<IActionResult> UpdateUserPass([FromRoute]int id, [FromBody] UserDTO userDTO)
         {
-            var dto = await userService.UpdateUserPassById(id, password);
+            var dto = await userService.UpdateUserPassById(id, userDTO);
 
             if (dto == null)
             {
