@@ -26,8 +26,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             this.registrationService = registrationService;
         }
 
-
-
         [HttpGet]
         public async Task<ActionResult> Get()
         {
@@ -90,18 +88,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(dto);
         }
 
-        //[HttpGet]
-        //[Route("UserPhoto/{id}")]
-        //public async Task<string> GetPhotoById([FromRoute]int id)
-        //{
-        //    var photo = await userService.GetUserPhotoById(id);
-        //    if (photo == null)
-        //    {
-        //        return null;
-        //    }
-        //    else return photo;
-        //}
-
         [HttpGet]
         [Route("reset/{email}")]
         public async Task<IActionResult> ResetPassword([FromRoute]string email)
@@ -126,14 +112,8 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> PasswordCheck([FromRoute]string password, [FromRoute]int id)
         {
             var result = await userService.CheckPasswords(password, id);
-            if (result == false)
-            {
-                return NotFound();
-            }
-            else return Ok(result);
+            return Ok(result);
         }
-
-
 
 
         [HttpPost]
@@ -189,9 +169,9 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("password/{id}")]
-        public async Task<IActionResult> UpdateUserPass([FromRoute]int id, [BindRequired, FromQuery] string password)
+        public async Task<IActionResult> UpdateUserPass([FromRoute]int id, [FromBody] UserDTO userDTO)
         {
-            var dto = await userService.UpdateUserPassById(id, password);
+            var dto = await userService.UpdateUserPassById(id, userDTO);
 
             if (dto == null)
             {
@@ -219,6 +199,21 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("deletePhoto/{id}")]
+        public async Task<IActionResult> DeleteUserPhoto([FromRoute]int id)
+        {
+            var dto = await userService.DeleteUserPhotoById(id);
+
+            if (dto == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(dto);
+            }
+        }
 
         [HttpDelete]
         [Route("{id}")]
