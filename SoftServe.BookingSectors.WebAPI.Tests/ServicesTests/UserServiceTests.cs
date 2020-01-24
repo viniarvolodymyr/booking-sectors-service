@@ -88,25 +88,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                 Assert.AreEqual(usersContext[id - 1].Id, result.Id);
             }
 
-            
-            [Test]
-            public async Task InsertUser_InputIsUserData_OneUserInserted()
-            {
-                //Arrange
-                userRepositoryMock.Setup(r => r.InsertEntityAsync(It.IsAny<User>()))
-                    .ReturnsAsync((User u) =>
-                    {
-                        u.Id = userDTO.Id;
-                        usersContext.Add(u);
-                        return u;
-                    });
-                //Act
-             //   var result = await userService.InsertUserAsync(userDTO);
-                //Assert
-              //  Assert.IsNotNull(result);
-                //Assert.AreEqual(userDTO.Id, result.Id);
-            }
-
             [Test]
             [TestCase(1)]
             [TestCase(2)]
