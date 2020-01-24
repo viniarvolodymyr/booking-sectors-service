@@ -27,8 +27,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
 
         List<User> usersContext;
         UserDTO userDTO;
-        string newPass;
-        string phone;
 
             public UserServiceTests()
             {
@@ -49,8 +47,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             {
                 usersContext = UserData.CreateUsers();
                 userDTO = UserData.CreateUserDTO();
-                //newPass = userData.newPassword; //#TODO: Add this field as static methods to UserData static class
-                //phone = userData.phone;         //#TODO: Add this field as static methods to UserData static class
             }
 
         [TearDown]
