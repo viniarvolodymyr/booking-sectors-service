@@ -33,8 +33,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         {
             usersContext = UserData.CreateUserDTOs();
             userDTO = UserData.CreateUserDTO();
-            //newPass = userData.newPassword; //#TODO: Add this field as static methods to UserData static class
-            //phones = userData.phones;       //#TODO: Add this field as static methods to UserData static class
         }
 
         [TearDown]
@@ -85,40 +83,8 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             Assert.IsNotNull(okResult);
             Assert.AreEqual(200, okResult.StatusCode);
         }
-        //[Test]
-        //public async Task InsertSector_InputIsSectorData_ReturnsCreated()
-        //{
-        //    //Arrange
-        //    sectorServiceMock.Setup(sectorService => sectorService.InsertSectorAsync(It.IsAny<SectorDTO>()))
-        //        .ReturnsAsync((SectorDTO sectorDTO) =>
-        //        {
-        //            sectorsContext.Add(sectorDTO);
-        //            return sectorDTO;
-        //        });
-        //    int sectorContextLength = sectorsContext.Count;
-        //    //Act
-        //    var createdResult = (await sectorController.Post(sectorDTO)) as CreatedResult;
-        //    //Assert
-        //    Assert.IsNotNull(createdResult);
-        //    Assert.AreEqual(201, createdResult.StatusCode);
-        //    Assert.AreEqual(sectorContextLength + 1, sectorsContext.Count);
-        //}
+      
 
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        [TestCase(3)]
-        public async Task ResetPassword_InputIsUserData_ReturnsOk(int id)
-        {
-            //Arrange
-            userServiceMock.Setup(userService => userService.GetUserByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) => usersContext.Find(user => user.Id == id));
-            //Act
-            var okResult = (await userController.ResetPassword(usersContext[id-1].Email)) as OkObjectResult;
-            //Assert
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(200, okResult.StatusCode);
-        }
         [Test]
         [TestCase(1)]
         [TestCase(2)]
@@ -140,26 +106,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
             Assert.AreEqual(200, okResult.StatusCode);
         }
 
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        [TestCase(3)]
-        public async Task UpdateUserPass_InputIsUserData_ReturnsOk(int id)
-        {
-            //Arrange
-            userServiceMock.Setup(userService => userService.UpdateUserPassById(It.IsAny<int>(), It.IsAny<UserDTO>()))
-                .ReturnsAsync((int id, string newPass) =>
-                {
-                    userDTO = usersContext[usersContext.FindIndex(i => i.Id == id)];
-                    userDTO.Password = newPass;
-                    return userDTO;
-                });
-            //Act
-            var okResult = (await userController.UpdateUserPass(id, userDTO )) as OkObjectResult;
-            //Assert
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(200, okResult.StatusCode);
-        }
 
         [Test]
         [TestCase(1)]
