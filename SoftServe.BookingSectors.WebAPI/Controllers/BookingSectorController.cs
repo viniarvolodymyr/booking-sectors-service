@@ -94,6 +94,21 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("byCondition")]
+        public async Task<IActionResult> GetBookingsByCondition([FromQuery]bool isExpired, [FromQuery]bool? isApproved)
+        {
+            var dtos = await bookingSectorService.GetBookingsByCondition(isApproved, isExpired);
+            if(dtos != null)
+            {
+                return Ok(dtos);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]BookingSectorDTO bookingDTO)
         {

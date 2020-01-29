@@ -10,6 +10,7 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         Task<IEnumerable<BookingSectorDTO>> GetBookingSectorsAsync();
         Task<BookingSectorDTO> GetBookingByIdAsync(int id);
         Task<IEnumerable<BookingSectorDTO>> GetBookingsByUserId(int id, bool isActual);
+        Task<IEnumerable<BookingSectorDTO>> GetBookingsByCondition(bool? isApproved, bool isExpired);
         Task<BookingSectorDTO> BookSector(BookingSectorDTO bookingSectorDTO);
         Task<BookingSectorDTO> UpdateBookingIsApprovedAsync(int id, bool? isApproved);
         Task<IEnumerable<SectorDTO>> FilterSectorsByDate(DateTime fromDate, DateTime toDate);

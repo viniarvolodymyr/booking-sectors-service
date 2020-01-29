@@ -176,5 +176,26 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                  ? mapper.Map<BookingSector, BookingSectorDTO>(bookingToDelete)
                  : null;
         }
+
+        public async Task<IEnumerable<BookingSectorDTO>> GetBookingsByCondition(bool? isApproved, bool isExpired)
+        {
+            DateTime date = DateTime.Now.AddDays(-1);
+            var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
+            IEnumerable<BookingSector> conditionalBookings = new List<BookingSector>();
+            if (!isExpired)
+            {
+                 conditionalBookings = from booking in bookings
+                                    where booking.IsApproved == isApproved
+                                    select booking;
+            }
+            else if (isExpired)
+            {
+                conditionalBookings = from booking in bookings
+                               where booking.BookingStart < date
+                               select booking;
+            }
+            var dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(conditionalBookings);
+            return dtos;
+        }
     }
 }
