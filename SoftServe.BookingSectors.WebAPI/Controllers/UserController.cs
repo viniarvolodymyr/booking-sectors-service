@@ -9,12 +9,13 @@ using SoftServe.BookingSectors.WebAPI.BLL.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/users")]
     [ApiController]
+    [AllowAnonymous]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
@@ -153,6 +154,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody]UserDTO userDTO)
         {
             var dto = await userService.UpdateUserById(id, userDTO);
@@ -169,6 +171,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("password/{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> UpdateUserPass([FromRoute]int id, [FromBody] UserDTO userDTO)
         {
             var dto = await userService.UpdateUserPassById(id, userDTO);
@@ -185,6 +188,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("photo/{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> UpdateUserPhoto([FromRoute]int id, [FromForm] IFormFile file)
         {
             var dto = await userService.UpdateUserPhotoById(id, file);
@@ -201,6 +205,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("deletePhoto/{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> DeleteUserPhoto([FromRoute]int id)
         {
             var dto = await userService.DeleteUserPhotoById(id);
@@ -217,6 +222,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
             var user = await userService.DeleteUserByIdAsync(id);
