@@ -27,8 +27,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
 
         List<User> usersContext;
         UserDTO userDTO;
-        string newPass;
-        string phone;
 
             public UserServiceTests()
             {
@@ -49,8 +47,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             {
                 usersContext = UserData.CreateUsers();
                 userDTO = UserData.CreateUserDTO();
-                //newPass = userData.newPassword; //#TODO: Add this field as static methods to UserData static class
-                //phone = userData.phone;         //#TODO: Add this field as static methods to UserData static class
             }
 
         [TearDown]
@@ -90,25 +86,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                 //Assert
                 Assert.IsNotNull(result);
                 Assert.AreEqual(usersContext[id - 1].Id, result.Id);
-            }
-
-            
-            [Test]
-            public async Task InsertUser_InputIsUserData_OneUserInserted()
-            {
-                //Arrange
-                userRepositoryMock.Setup(r => r.InsertEntityAsync(It.IsAny<User>()))
-                    .ReturnsAsync((User u) =>
-                    {
-                        u.Id = userDTO.Id;
-                        usersContext.Add(u);
-                        return u;
-                    });
-                //Act
-             //   var result = await userService.InsertUserAsync(userDTO);
-                //Assert
-              //  Assert.IsNotNull(result);
-                //Assert.AreEqual(userDTO.Id, result.Id);
             }
 
             [Test]

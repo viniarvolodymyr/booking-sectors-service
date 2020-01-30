@@ -6,7 +6,6 @@ using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
-    [Authorize]
     [Route("api/authentication")]
     [ApiController]
     [AllowAnonymous]

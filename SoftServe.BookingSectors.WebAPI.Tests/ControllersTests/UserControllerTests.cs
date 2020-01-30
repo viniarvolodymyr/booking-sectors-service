@@ -18,8 +18,7 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ControllersTests
         private readonly UserController userController;
         List<UserDTO> usersContext;
         UserDTO userDTO;
-        string newPass;
-        string[] phones;
+
 
         public UserControllerTests()
         {
