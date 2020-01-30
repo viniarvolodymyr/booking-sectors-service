@@ -78,9 +78,11 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
         public async Task UpdateSetting_InputIsSettingData_OneSettingUpdated(int id)
         {
             //Arrange
-            settingsRepositoryMock.Setup(sectorRepository => sectorRepository.GetEntityByIdAsync(It.IsAny<int>()))
+            settingsRepositoryMock.Setup(settingRepository => settingRepository
+                .GetEntityByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync((int id) => settingsContext.Find(setting => setting.Id == id));
-            settingsRepositoryMock.Setup(sectorRepository => sectorRepository.UpdateEntity(It.IsAny<Setting>()))
+            //Act
+            settingsRepositoryMock.Setup(settingRepository => settingRepository.UpdateEntity(It.IsAny<Setting>()))
                 .Returns((Setting setting) =>
                 {
                     settingsContext[settingsContext.FindIndex(i => i.Id == setting.Id)] = setting;

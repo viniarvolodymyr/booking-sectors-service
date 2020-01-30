@@ -27,8 +27,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
 
         List<User> usersContext;
         UserDTO userDTO;
-        string newPass;
-        string phone;
 
             public UserServiceTests()
             {
@@ -49,8 +47,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             {
                 usersContext = UserData.CreateUsers();
                 userDTO = UserData.CreateUserDTO();
-                //newPass = userData.newPassword; //#TODO: Add this field as static methods to UserData static class
-                //phone = userData.phone;         //#TODO: Add this field as static methods to UserData static class
             }
 
         [TearDown]
@@ -96,45 +92,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
             [TestCase(1)]
             [TestCase(2)]
             [TestCase(3)]
-            public async Task GetUserByPhone_InputIsUserData_OneUserReturned(int id)
-            {
-                //Arrange
-                userRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
-                    .ReturnsAsync((int id) => usersContext.Find(s => s.Id == id));
-                //Act
-                var result = await userService.GetUserByPhoneAsync(phone);
-                if (result == null)
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.NotFound,
-                        $"User with phone: {id} not found when trying to get user.");
-                }
-                //Assert
-                Assert.IsNotNull(result);
-                Assert.AreEqual(usersContext[id - 1], result.Id);
-            }
-
-            [Test]
-            public async Task InsertUser_InputIsUserData_OneUserInserted()
-            {
-                //Arrange
-                userRepositoryMock.Setup(r => r.InsertEntityAsync(It.IsAny<User>()))
-                    .ReturnsAsync((User u) =>
-                    {
-                        u.Id = userDTO.Id;
-                        usersContext.Add(u);
-                        return u;
-                    });
-                //Act
-             //   var result = await userService.InsertUserAsync(userDTO);
-                //Assert
-              //  Assert.IsNotNull(result);
-                //Assert.AreEqual(userDTO.Id, result.Id);
-            }
-
-            [Test]
-            [TestCase(1)]
-            [TestCase(2)]
-            [TestCase(3)]
             public async Task UpdateUser_InputIsUserData_OneUserUpdated(int id)
             {
                 //Arrange
@@ -152,46 +109,6 @@ namespace SoftServe.BookingSectors.WebAPI.Tests.ServicesTests
                 Assert.IsNotNull(result);
                 Assert.AreEqual(usersContext[id - 1].Id, result.Id);
             }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        [TestCase(3)]
-        public async Task UpdateUserPass_InputIsUserData_OneUserUpdated(int id)
-        {
-            //Arrange
-            userRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) => usersContext.Find(u => u.Id == id));
-            userRepositoryMock.Setup(r => r.UpdateEntity(It.IsAny<User>()))
-                .Returns((User u) =>
-                {
-                    usersContext[usersContext.FindIndex(i => i.Id == u.Id)] = u;
-                    return u;
-                });
-            //Act
-            var result = await userService.UpdateUserPassById(id, newPass);
-            //Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(usersContext[id - 1].Id, result.Id);
-        }
-
-        [Test]
-        public async Task CheckPassword_InputIsUserData(int id)
-        {
-            //Arrange
-            userRepositoryMock.Setup(r => r.GetEntityByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) => usersContext.Find(s => s.Id == id));
-            //Act
-            var result = await userService.CheckPasswords(newPass, id);
-            if (result == null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound,
-                    $"User with id: {id} not found when trying to get user.");
-            }
-            //Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(true, result);
-        }
 
         [Test]
             [TestCase(1)]
