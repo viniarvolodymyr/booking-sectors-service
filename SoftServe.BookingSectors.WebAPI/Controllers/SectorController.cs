@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using System;
@@ -78,6 +79,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Post([FromBody] SectorDTO sectorDTO)
         {
             var sector = await sectorService.InsertSectorAsync(sectorDTO);
@@ -93,6 +95,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromBody] SectorDTO sectorDTO)
         {
             var sector = await sectorService.UpdateSectorAsync(id, sectorDTO);
@@ -108,6 +111,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
             var sector = await sectorService.DeleteSectorByIdAsync(id);
