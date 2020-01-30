@@ -15,6 +15,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/users")]
     [ApiController]
+    [AllowAnonymous]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;

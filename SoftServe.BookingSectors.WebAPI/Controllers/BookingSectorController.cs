@@ -9,6 +9,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/bookings")]
     [ApiController]
+    [AllowAnonymous]
     public class BookingSectorController : ControllerBase
     {
         private readonly IBookingSectorService bookingSectorService;

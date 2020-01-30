@@ -9,7 +9,6 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/settings")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
     public class SettingsController : ControllerBase
     {
         private readonly ISettingsService settingService;
@@ -48,6 +47,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromBody]SettingsDTO settingsDTO)
         {
             var setting = await settingService.UpdateSettingsAsync(id, settingsDTO);
