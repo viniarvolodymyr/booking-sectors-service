@@ -9,6 +9,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/bookings")]
     [ApiController]
+    [AllowAnonymous]
     public class BookingSectorController : ControllerBase
     {
         private readonly IBookingSectorService bookingSectorService;
@@ -151,6 +152,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromQuery]bool? isApproved)
         {
             var booking = await bookingSectorService.UpdateBookingIsApprovedAsync(id, isApproved);
@@ -166,6 +168,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("tournaments/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromBody] BookingSectorDTO bookingSectorDTO)
         {
             var bookingTournament = await bookingSectorService.UpdateBookingTournament(id, bookingSectorDTO);
@@ -181,6 +184,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
             var booking = await bookingSectorService.DeleteBookingByIdAsync(id);

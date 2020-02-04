@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.Models
 {
-    public sealed partial class User
+    public partial class User
     {
         public User()
         {
@@ -23,9 +23,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
         public byte[] Photo { get; set; }
         public bool IsEmailValid { get; set; }
 
-        public UserRole Role { get; set; }
-        public ICollection<BookingSector> BookingSector { get; set; } = new HashSet<BookingSector>();
-        public ICollection<Token> TokenCreate { get; set; } = new HashSet<Token>();
-        public ICollection<Token> TokenMod { get; set; } = new HashSet<Token>();
+        public virtual UserRole Role { get; set; }
+        public virtual ICollection<BookingSector> BookingSector { get; set; } = new HashSet<BookingSector>();
+        public virtual ICollection<Token> TokenCreate { get; set; } = new HashSet<Token>();
+        public virtual ICollection<Token> TokenMod { get; set; } =  new HashSet<Token>();
     }
 }

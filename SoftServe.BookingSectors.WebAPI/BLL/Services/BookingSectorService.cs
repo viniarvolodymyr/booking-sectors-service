@@ -35,15 +35,14 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             IEnumerable<BookingSectorDTO> dtos;
             var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
             var bookingsByUserId = bookings.Where(b => b.UserId == id);
-            var actualBookings = bookingsByUserId.Where(b => DateTime.Compare(b.BookingEnd, DateTime.Now) > 0);
-            var historyBookings = bookingsByUserId.Where(b => DateTime.Compare(b.BookingEnd, DateTime.Now) < 0);
             if (isActual)
             {
+                var actualBookings = bookingsByUserId.Where(b => DateTime.Compare(b.BookingEnd, DateTime.Now.AddDays(-1)) > 0);
                 dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(actualBookings);
             }
             else
             {
-
+                var historyBookings = bookingsByUserId.Where(b => DateTime.Compare(b.BookingEnd, DateTime.Now.AddDays(-1)) < 0);
                 dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(historyBookings);
             }
            

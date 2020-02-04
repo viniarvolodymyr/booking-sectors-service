@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using System.Linq;
@@ -46,6 +47,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromBody]SettingsDTO settingsDTO)
         {
             var setting = await settingService.UpdateSettingsAsync(id, settingsDTO);

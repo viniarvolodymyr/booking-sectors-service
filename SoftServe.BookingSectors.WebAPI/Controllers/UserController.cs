@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.BLL.Filters;
 using Microsoft.AspNetCore.Http;
 using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/users")]
     [ApiController]
+    [AllowAnonymous]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;
@@ -133,6 +134,17 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
                 : Created($"api/users/{dto.Id}", dto);
         }
 
+        [HttpPost]
+        [Route("booking")]
+        public async Task<IActionResult> BookingRegistration([FromBody] UserDTO userDTO)
+        {
+            var dto = await registrationService.InsertGuestUserAsync(userDTO);
+
+            return dto == null 
+                ? (IActionResult)BadRequest() 
+                : Created($"api/users/{dto.Id}", dto);
+        }
+
         [HttpPut]
         [Route("confirm/{email}/{hash}")]
         public async Task<IActionResult> ConfirmEmail([FromRoute]string email, [FromRoute]string hash)
@@ -159,6 +171,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> UpdateUser([FromRoute]int id, [FromBody]UserDTO userDTO)
         {
             var dto = await userService.UpdateUserById(id, userDTO);
@@ -175,6 +188,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("password/{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> UpdateUserPass([FromRoute]int id, [FromBody] UserDTO userDTO)
         {
             var dto = await userService.UpdateUserPassById(id, userDTO);
@@ -191,6 +205,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("photo/{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> UpdateUserPhoto([FromRoute]int id, [FromForm] IFormFile file)
         {
             var dto = await userService.UpdateUserPhotoById(id, file);
@@ -207,6 +222,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("deletePhoto/{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> DeleteUserPhoto([FromRoute]int id)
         {
             var dto = await userService.DeleteUserPhotoById(id);
@@ -223,6 +239,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Delete([FromRoute]int id)
         {
             var user = await userService.DeleteUserByIdAsync(id);

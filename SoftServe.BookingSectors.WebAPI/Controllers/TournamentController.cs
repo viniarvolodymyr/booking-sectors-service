@@ -9,7 +9,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 {
     [Route("api/tournaments")]
     [ApiController]
- //   [Authorize(Roles = "Admin")]
+    [AllowAnonymous]
     public class TournamentController : ControllerBase
     {
         readonly ITournamentService tournamentService;
@@ -49,6 +49,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Post([FromBody] TournamentDTO tournamentDTO)
         {
             var dto = await tournamentService.InsertTournamentAsync(tournamentDTO);
@@ -64,6 +65,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Put([FromRoute]int id, [FromBody] TournamentDTO tournamentDTO)
         {
             var tournament = await tournamentService.UpdateTournamentAsync(id, tournamentDTO);
@@ -79,6 +81,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             var tournament = await tournamentService.DeleteTournamentByIdAsync(id);
