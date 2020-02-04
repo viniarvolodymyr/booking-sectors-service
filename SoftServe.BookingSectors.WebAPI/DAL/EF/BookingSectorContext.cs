@@ -23,7 +23,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BookingSector>(entity =>
@@ -283,7 +282,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                 entity.Property(e => e.CreateUserId).HasColumnName("CREATE_USER_ID");
 
                 entity.Property(e => e.Email)
-                    .IsRequired()
                     .HasColumnName("EMAIL")
                     .HasMaxLength(255)
                     .IsUnicode(false);
@@ -308,7 +306,6 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                 entity.Property(e => e.ModUserId).HasColumnName("MOD_USER_ID");
 
                 entity.Property(e => e.Password)
-                    .IsRequired()
                     .HasColumnName("PASSWORD")
                     .HasMaxLength(32)
                     .IsFixedLength();

@@ -18,10 +18,35 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         private readonly IUnitOfWork database;
         private readonly IMapper mapper;
 
-        public RegistrationService(IUnitOfWork database, IMapper mapper, ILoggerManager logger)
+        private readonly IUserService userService;
+
+        public RegistrationService(IUnitOfWork database, IMapper mapper, ILoggerManager logger, IUserService userService)
         {
             this.database = database;
             this.mapper = mapper;
+            this.userService = userService;
+        }
+        
+
+        public async Task<UserDTO> UpdateUserById(int id, UserDTO userDTO)
+        {
+            var existedUser = await database.UserRepository.GetEntityByIdAsync(id);
+            if (existedUser == null)
+            {
+                return null;
+            }
+
+            existedUser.Firstname = userDTO.Firstname;
+            existedUser.Lastname = userDTO.Lastname;
+            existedUser.Phone = userDTO.Phone;
+            existedUser.Email = userDTO.Email;
+
+            var updatedUser = database.UserRepository.UpdateEntity(existedUser);
+            bool isSaved = await database.SaveAsync();
+
+            return isSaved ?
+                mapper.Map<User, UserDTO>(updatedUser) :
+                null;
         }
 
         public async Task<UserDTO> InsertUserAsync(UserDTO userDTO)
@@ -42,6 +67,17 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
 
             var insertUser = mapper.Map<UserDTO, User>(userDTO);
+
+
+            var existingUser = await userService.GetUserByPhoneAsync(userDTO.Phone);
+            if( existingUser != null 
+                && existingUser.RoleId == (int)UserRolesEnum.Guest )
+            {
+                  existingUser.Email = userDTO.Email;
+                  existingUser.RoleId = (int)UserRolesEnum.User;
+                  
+            }
+
             insertUser.Password = SHA256Hash.Compute(inputPassword);
             insertUser.RoleId = 2;
 
@@ -70,6 +106,19 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                          $"{insertUser.Lastname} {insertUser.Firstname}");
 
             return mapper.Map<User, UserDTO>(insertedUser);
+        }
+
+        public async Task<UserDTO> InsertGuestUserAsync(UserDTO userDTO)
+        {
+            var insertUser = mapper.Map<UserDTO, User>(userDTO);
+            insertUser.RoleId = 3;
+
+            var insertedUser = await database.UserRepository.InsertEntityAsync(insertUser);
+            bool isSaved = await database.SaveAsync();
+
+            return isSaved
+                ? mapper.Map<User, UserDTO>(insertedUser)
+                : null;
         }
 
         public async Task<UserDTO> GetUserByEmailAsync(string email)

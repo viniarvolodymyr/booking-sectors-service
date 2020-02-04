@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 
 namespace SoftServe.BookingSectors.WebAPI.BLL.DTO
 {
