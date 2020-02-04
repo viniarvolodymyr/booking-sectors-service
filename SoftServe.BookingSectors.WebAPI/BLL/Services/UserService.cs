@@ -75,6 +75,19 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             return dto;
         }
+        public async Task<UserDetailsDTO> GetUserDetailsAsync(int id)
+        {
+            var userDetail = await database.UserRepository.GetEntityByIdAsync(id);
+
+            if(userDetail == null)
+            {
+                return null;
+            }
+
+            var dto = mapper.Map<User, UserDetailsDTO>(userDetail);
+
+            return dto;
+        }
         #endregion
 
 

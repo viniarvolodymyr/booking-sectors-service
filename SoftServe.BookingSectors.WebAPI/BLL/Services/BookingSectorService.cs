@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.QueryParams;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
 using SoftServe.BookingSectors.WebAPI.DAL.UnitOfWork;
 using System;
@@ -70,10 +71,35 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         public async Task<IEnumerable<BookingSectorDTO>> GetBookingTournamentByIdAsync(int id)
         {
             var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
-            var tournamentBookings = bookings.Where(b => b.TournamentId == id).OrderBy(b => b.SectorId);
+            var tournamentBookings = bookings.Where(b => b.TournamentId == id).OrderBy(b => b.TournamentId & b.SectorId);
             var dto = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(tournamentBookings);
 
             return dto;
+        }
+        public async Task<PagedBookingsList<BookingSectorDTO>> GetTournamentBookingsPagedList(BookingTableParams bookingParams)
+        {
+            DateTime date = DateTime.Now.AddDays(-1);
+
+            var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
+
+            var tournamentBookings = bookings.Where(b => b.TournamentId.HasValue).OrderBy(b => b.TournamentId & b.SectorId);
+            IEnumerable<BookingSector> pagedBookings = new List<BookingSector>();
+            if (!bookingParams.isExpired)
+            {
+                pagedBookings = from booking in tournamentBookings
+                                where booking.IsApproved == bookingParams.isApproved
+                                      select booking;
+            }
+            else if (bookingParams.isExpired)
+            {
+                pagedBookings = from booking in tournamentBookings
+                                where booking.BookingStart < date
+                                      select booking;
+            }
+            var dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(pagedBookings);
+
+
+            return PagedBookingsList<BookingSectorDTO>.toPagedList(dtos, bookingParams.pageIndex, bookingParams.pageSize);
         }
 
         private bool? sectorIsFree(Sector sector, IEnumerable<BookingSector> bookings, DateTime fromDate, DateTime toDate)
@@ -177,25 +203,30 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                  : null;
         }
 
-        public async Task<IEnumerable<BookingSectorDTO>> GetBookingsByCondition(bool? isApproved, bool isExpired)
+        public async Task<PagedBookingsList<BookingSectorDTO>> GetBookingsPagedList(BookingTableParams bookingParams)
         {
+
             DateTime date = DateTime.Now.AddDays(-1);
             var bookings = await database.BookingSectorRepository.GetAllEntitiesAsync();
             IEnumerable<BookingSector> conditionalBookings = new List<BookingSector>();
-            if (!isExpired)
+            if (!bookingParams.isExpired)
             {
                  conditionalBookings = from booking in bookings
-                                    where booking.IsApproved == isApproved
-                                    select booking;
+                                       where booking.IsApproved == bookingParams.isApproved
+                                       where booking.TournamentId == null
+                                       select booking;
             }
-            else if (isExpired)
+            else if (bookingParams.isExpired)
             {
                 conditionalBookings = from booking in bookings
-                               where booking.BookingStart < date
-                               select booking;
+                                      where booking.BookingStart < date
+                                      where booking.TournamentId == null
+                                      select booking;
             }
             var dtos = mapper.Map<IEnumerable<BookingSector>, IEnumerable<BookingSectorDTO>>(conditionalBookings);
-            return dtos;
+
+
+            return PagedBookingsList<BookingSectorDTO>.toPagedList(dtos, bookingParams.pageIndex, bookingParams.pageSize);                ;
         }
     }
 }

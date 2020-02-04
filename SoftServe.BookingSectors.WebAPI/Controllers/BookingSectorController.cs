@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
+using SoftServe.BookingSectors.WebAPI.BLL.Services.QueryParams;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -95,13 +95,39 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Route("byCondition")]
-        public async Task<IActionResult> GetBookingsByCondition([FromQuery]bool isExpired, [FromQuery]bool? isApproved)
+        [Route("bookingPagedList")]
+        public async Task<IActionResult> GetBookingsPagedList([FromQuery]BookingTableParams bookingParams)
         {
-            var dtos = await bookingSectorService.GetBookingsByCondition(isApproved, isExpired);
+            var dtos = await bookingSectorService.GetBookingsPagedList(bookingParams);
             if(dtos != null)
             {
-                return Ok(dtos);
+                var data = new
+                {
+                    dtos,
+                    dtos.totalCount
+                };
+
+                return Ok(data);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        [HttpGet]
+        [Route("tournamentsPagedList")]
+        public async Task<IActionResult> GetTournamentBookingsPagedList([FromQuery]BookingTableParams bookingParams)
+        {
+            var dtos = await bookingSectorService.GetTournamentBookingsPagedList(bookingParams);
+            if (dtos != null)
+            {
+                var data = new
+                {
+                    dtos,
+                    dtos.totalCount
+                };
+
+                return Ok(data);
             }
             else
             {

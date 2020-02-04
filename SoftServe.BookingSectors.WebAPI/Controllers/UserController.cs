@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.BLL.Filters;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 
 
@@ -112,6 +110,14 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> PasswordCheck([FromRoute]string password, [FromRoute]int id)
         {
             var result = await userService.CheckPasswords(password, id);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("details")]
+        public async Task<IActionResult> GetUserDetails([FromQuery]int id)
+        {
+            var result = await userService.GetUserDetailsAsync(id);
             return Ok(result);
         }
 
