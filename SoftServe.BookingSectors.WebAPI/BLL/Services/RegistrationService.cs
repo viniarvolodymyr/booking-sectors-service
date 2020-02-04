@@ -69,14 +69,18 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             var insertUser = mapper.Map<UserDTO, User>(userDTO);
 
 
-            var existingUser = await userService.GetUserByPhoneAsync(userDTO.Phone);
-            if( existingUser != null 
-                && existingUser.RoleId == (int)UserRolesEnum.Guest )
-            {
-                  existingUser.Email = userDTO.Email;
-                  existingUser.RoleId = (int)UserRolesEnum.User;
-                  
-            }
+            // var existingUser = await userService.GetUserByPhoneAsync(userDTO.Phone);
+           
+            // if( existingUser != null 
+            //     && existingUser.RoleId == (int)UserRolesEnum.Guest )
+            // {
+            //       existingUser.Email = userDTO.Email;
+            //       existingUser.RoleId = (int)UserRolesEnum.User;
+            //       existingUser.Password = SHA256Hash.ComputeString(inputPassword);
+
+
+            // }
+
 
             insertUser.Password = SHA256Hash.Compute(inputPassword);
             insertUser.RoleId = 2;
