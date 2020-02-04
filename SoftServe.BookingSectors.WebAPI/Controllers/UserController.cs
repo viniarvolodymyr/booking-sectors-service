@@ -128,6 +128,17 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
                 : Created($"api/users/{dto.Id}", dto);
         }
 
+        [HttpPost]
+        [Route("booking")]
+        public async Task<IActionResult> BookingRegistration([FromBody] UserDTO userDTO)
+        {
+            var dto = await registrationService.InsertGuestUserAsync(userDTO);
+
+            return dto == null 
+                ? (IActionResult)BadRequest() 
+                : Created($"api/users/{dto.Id}", dto);
+        }
+
         [HttpPut]
         [Route("confirm/{email}/{hash}")]
         public async Task<IActionResult> ConfirmEmail([FromRoute]string email, [FromRoute]string hash)
