@@ -18,39 +18,16 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         private readonly IUnitOfWork database;
         private readonly IMapper mapper;
 
-        private readonly IUserService userService;
-
-        public RegistrationService(IUnitOfWork database, IMapper mapper, ILoggerManager logger, IUserService userService)
+        public RegistrationService(IUnitOfWork database, IMapper mapper, ILoggerManager logger)
         {
             this.database = database;
             this.mapper = mapper;
-            this.userService = userService;
         }
-        
 
-        public async Task<UserDTO> UpdateUserById(int id, UserDTO userDTO)
-        {
-            var existedUser = await database.UserRepository.GetEntityByIdAsync(id);
-            if (existedUser == null)
-            {
-                return null;
-            }
-
-            existedUser.Firstname = userDTO.Firstname;
-            existedUser.Lastname = userDTO.Lastname;
-            existedUser.Phone = userDTO.Phone;
-            existedUser.Email = userDTO.Email;
-
-            var updatedUser = database.UserRepository.UpdateEntity(existedUser);
-            bool isSaved = await database.SaveAsync();
-
-            return isSaved ?
-                mapper.Map<User, UserDTO>(updatedUser) :
-                null;
-        }
 
         public async Task<UserDTO> InsertUserAsync(UserDTO userDTO)
         {
+            // Check email
             string inputEmail = userDTO.Email.Trim();
             var existingEmail = await GetUserByEmailAsync(inputEmail);
 
@@ -60,62 +37,77 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                     $"User with email: {inputEmail}, Already exists.");
             }
 
-
+            // Password generate
             string inputPassword = (IsNullOrEmpty(userDTO.Password)) ?
                                     RandomNumbers.Generate() :
                                     userDTO.Password;
 
 
+            // Get data
             var insertUser = mapper.Map<UserDTO, User>(userDTO);
-
-
-            // var existingUser = await userService.GetUserByPhoneAsync(userDTO.Phone);
-           
-            // if( existingUser != null 
-            //     && existingUser.RoleId == (int)UserRolesEnum.Guest )
-            // {
-            //       existingUser.Email = userDTO.Email;
-            //       existingUser.RoleId = (int)UserRolesEnum.User;
-            //       existingUser.Password = SHA256Hash.ComputeString(inputPassword);
-
-
-            // }
-
-
             insertUser.Password = SHA256Hash.Compute(inputPassword);
-            insertUser.RoleId = 2;
 
-            var insertedUser = await database.UserRepository.InsertEntityAsync(insertUser);
+            // Update user (from guest)
+            var existingUser =  await database.UserRepository
+                .GetByCondition(x=>x.Phone == userDTO.Phone)
+                .FirstOrDefaultAsync();
+
+            // User data after update/insert
+            User insertedUser = new User();
+
+            if (existingUser != null
+                && existingUser.RoleId == (int)UserRolesEnum.Guest)
+            {
+                existingUser.Email = userDTO.Email;
+                existingUser.Role.Id = (int)UserRolesEnum.User;
+                existingUser.Password = insertUser.Password;
+
+                insertedUser = database.UserRepository.UpdateEntity(existingUser);
+            }
+            else
+            {
+                insertUser.RoleId = (int)UserRolesEnum.User;
+                insertedUser = await database.UserRepository.InsertEntityAsync(insertUser);
+            }
+
             bool isSaved = await database.SaveAsync();
 
             if (!isSaved)
             {
                 return null;
             }
-            
-            //Generate hash data for confirm email
-            string hashConfirmData = EmailConfirmHelper.GetHash(insertedUser.Id, insertUser.IsEmailValid, insertUser.Email);
-            string linkConfirm =
-                EmailConfirmHelper.GetLink("https://bookingsectors.azurewebsites.net", insertUser.Email, hashConfirmData);
 
-            //Send email
+            // Send email
+            await SendEmail(insertedUser, insertUser, inputEmail);
 
-            string emailMessage =
-                EmailBody.Registration.GetBodyMessage(insertUser.Lastname, insertedUser.Phone, linkConfirm);
-
-            EmailSender sender = new EmailSender(emailMessage);
-
-            await sender.SendAsync("Registration in Booking Fishing Sectors",
-                         inputEmail,
-                         $"{insertUser.Lastname} {insertUser.Firstname}");
 
             return mapper.Map<User, UserDTO>(insertedUser);
         }
 
+        public async Task SendEmail(User beforeInsertUserData, User afterInsertUserData, string email){
+             //Generate hash data for confirm email
+            string hashConfirmData =
+                EmailConfirmHelper.GetHash(beforeInsertUserData.Id, afterInsertUserData.IsEmailValid, afterInsertUserData.Email);
+            string linkConfirm =
+                EmailConfirmHelper.GetLink("https://bookingsectors.azurewebsites.net", afterInsertUserData.Email, hashConfirmData);
+
+            //Send email
+            string emailMessage =
+                EmailBody.Registration.GetBodyMessage(afterInsertUserData.Lastname, beforeInsertUserData.Phone, linkConfirm);
+
+            EmailSender sender = new EmailSender(emailMessage);
+
+            await sender.SendAsync("Registration in Booking Fishing Sectors",
+                         email,
+                         $"{afterInsertUserData.Lastname} {afterInsertUserData.Firstname}");
+
+        }
+        
+       
         public async Task<UserDTO> InsertGuestUserAsync(UserDTO userDTO)
         {
             var insertUser = mapper.Map<UserDTO, User>(userDTO);
-            insertUser.RoleId = 3;
+            insertUser.RoleId = (int)UserRolesEnum.Guest;
 
             var insertedUser = await database.UserRepository.InsertEntityAsync(insertUser);
             bool isSaved = await database.SaveAsync();
@@ -131,8 +123,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 .GetByCondition(x => x.Email == email)
                 .FirstOrDefaultAsync();
 
-            return user == null 
-                ? null 
+            return user == null
+                ? null
                 : mapper.Map<User, UserDTO>(user);
         }
 
@@ -142,10 +134,10 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
             bool isHashEqual = EmailConfirmHelper.EqualHash(hash, hashConfirmData);
 
 
-            if(isHashEqual)
+            if (isHashEqual)
             {
                 var existedUser = await database.UserRepository.GetEntityByIdAsync(userDTO.Id);
-                
+
                 existedUser.IsEmailValid = true;
                 var updatedUser = database.UserRepository.UpdateEntity(existedUser);
                 bool isSave = await database.SaveAsync();
@@ -157,6 +149,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
 
             return false;
         }
-        
+
     }
 }

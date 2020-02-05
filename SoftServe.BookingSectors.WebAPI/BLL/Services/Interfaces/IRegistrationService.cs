@@ -10,5 +10,6 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces
         Task<UserDTO> GetUserByEmailAsync(string email);
         Task<bool> ConfirmEmailAsync(UserDTO userDTO, string hash);
 
+
     }
 }

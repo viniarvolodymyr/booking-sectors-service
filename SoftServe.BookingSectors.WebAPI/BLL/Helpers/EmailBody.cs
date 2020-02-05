@@ -12,7 +12,7 @@
                 return 
                     $"Hello, {userName}. <br> " +
                     $"You write a site for Booking Fishing sectors. <br>" +
-                    $" Your login: {login} <br> " +
+                    $" Your login: <b>{login}</b> <br> " +
                     $"Confirm your email: " +
                     $"<a href=\"{confirmEmailLink}\">Confirm<a> <br>" +
                     $"Have a nice day :)";

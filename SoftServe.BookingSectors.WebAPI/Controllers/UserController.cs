@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using SoftServe.BookingSectors.WebAPI.BLL.DTO;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using SoftServe.BookingSectors.WebAPI.BLL.Filters;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SoftServe.BookingSectors.WebAPI.BLL.ErrorHandling;
 using Microsoft.AspNetCore.Authorization;
 
@@ -123,8 +121,8 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         {
             var dto = await registrationService.InsertUserAsync(userDTO);
 
-            return dto == null 
-                ? (IActionResult)BadRequest() 
+            return dto == null
+                ? (IActionResult)BadRequest()
                 : Created($"api/users/{dto.Id}", dto);
         }
 
@@ -134,8 +132,8 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         {
             var dto = await registrationService.InsertGuestUserAsync(userDTO);
 
-            return dto == null 
-                ? (IActionResult)BadRequest() 
+            return dto == null
+                ? (IActionResult)BadRequest()
                 : Created($"api/users/{dto.Id}", dto);
         }
 
@@ -144,14 +142,15 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
         public async Task<IActionResult> ConfirmEmail([FromRoute]string email, [FromRoute]string hash)
         {
             var existedUser = await registrationService.GetUserByEmailAsync(email);
-            
+
             if (existedUser == null)
             {
                 return NotFound();
             }
 
-            if(existedUser.IsEmailValid){
-                 return Conflict(existedUser.Email);
+            if (existedUser.IsEmailValid)
+            {
+                return Conflict(existedUser.Email);
             }
 
             var isConfirm = await registrationService.ConfirmEmailAsync(existedUser, hash);
@@ -159,7 +158,7 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
 
             return isConfirm
                 ? (IActionResult)Ok(existedUser.Email)
-                : BadRequest ();
+                : BadRequest();
 
         }
 
