@@ -114,6 +114,14 @@ namespace SoftServe.BookingSectors.WebAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        [Route("details")]
+        public async Task<IActionResult> GetUserDetails([FromQuery]int id)
+        {
+            var result = await userService.GetUserDetailsAsync(id);
+            return Ok(result);
+        }
+
 
         [HttpPost]
         [ServiceFilter(typeof(ValidateModelState))]
