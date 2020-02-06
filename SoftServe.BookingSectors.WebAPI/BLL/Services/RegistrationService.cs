@@ -59,7 +59,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
                 && existingUser.RoleId == (int)UserRolesEnum.Guest)
             {
                 existingUser.Email = userDTO.Email;
-                existingUser.Role.Id = (int)UserRolesEnum.User;
+               existingUser.Role = null;
+                existingUser.RoleId = (int)UserRolesEnum.User;
                 existingUser.Password = insertUser.Password;
 
                 insertedUser = database.UserRepository.UpdateEntity(existingUser);
