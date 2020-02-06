@@ -4,6 +4,7 @@ using SoftServe.BookingSectors.WebAPI.BLL.Services.Interfaces;
 using SoftServe.BookingSectors.WebAPI.BLL.Services.QueryParams;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SoftServe.BookingSectors.WebAPI.Controllers
 {

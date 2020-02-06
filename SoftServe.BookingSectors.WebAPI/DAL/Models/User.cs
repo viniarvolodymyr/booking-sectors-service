@@ -7,6 +7,9 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
     {
         public User()
         {
+            BookingSector = new HashSet<BookingSector>();
+            TokenCreate = new HashSet<Token>();
+            TokenMod = new HashSet<Token>();
         }
 
         public int Id { get; set; }
@@ -24,8 +27,8 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Models
         public bool IsEmailValid { get; set; }
 
         public virtual UserRole Role { get; set; }
-        public virtual ICollection<BookingSector> BookingSector { get; set; } = new HashSet<BookingSector>();
-        public virtual ICollection<Token> TokenCreate { get; set; } = new HashSet<Token>();
-        public virtual ICollection<Token> TokenMod { get; set; } =  new HashSet<Token>();
+        public virtual ICollection<BookingSector> BookingSector { get; set; }
+        public virtual ICollection<Token> TokenCreate { get; set; }
+        public virtual ICollection<Token> TokenMod { get; set; }
     }
 }

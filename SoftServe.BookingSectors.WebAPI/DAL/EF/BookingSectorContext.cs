@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using SoftServe.BookingSectors.WebAPI.DAL.Models;
+
 
 namespace SoftServe.BookingSectors.WebAPI.DAL.EF
 {
@@ -265,8 +267,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.EF
                 entity.ToTable("USER");
 
                 entity.HasIndex(e => e.Email)
-                    .HasName("UK_EMAIL")
-                    .IsUnique();
+                    .HasName("UK_EMAIL");
 
                 entity.HasIndex(e => e.Phone)
                     .HasName("UK_PHONE")

@@ -108,6 +108,8 @@ namespace SoftServe.BookingSectors.WebAPI.BLL.Services
         {
             var insertUser = mapper.Map<UserDTO, User>(userDTO);
             insertUser.RoleId = (int)UserRolesEnum.Guest;
+            insertUser.Email = null;
+            insertUser.Password = null;
 
             var insertedUser = await database.UserRepository.InsertEntityAsync(insertUser);
             bool isSaved = await database.SaveAsync();

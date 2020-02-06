@@ -51,6 +51,7 @@ namespace SoftServe.BookingSectors.WebAPI.DAL.Repositories.ImplementationReposit
         public User UpdateEntity(User entityToUpdate)
         {
             return userSet.Update(entityToUpdate).Entity;
+            
         }
 
         public async Task<User> DeleteEntityByIdAsync(int id)
