@@ -4,7 +4,7 @@ The main aim of the project is to make it possible for fishermen to book their f
 ## Part of the project: 
   - **back-end**, ASP.NET Core with Entity Framework Core.
   - **front-end**: https://github.com/OlehSluzhala/booking-angular
- \Connected front-end with back-end using CORS.
+  Connected front-end with back-end using CORS.
 
 ## Details:
   - **Customer:** SoftServe
