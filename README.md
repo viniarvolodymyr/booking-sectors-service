@@ -15,8 +15,8 @@ The main aim of the project is to make it possible for fishermen to book their f
   Asp.Net Core / Web API, MS SQL Server, Entity Framework Core, LINQ, Azure Cloud Services (Azure SQL Database, Azure Key Vault, Azure App Services), Git, Swagger, JIRA, Confluence, Visual Studio 2019, VS Code, NUnit, Moq.
 
 ## Links:
-  - **Presentation:** bit.ly/2Tim1Ml
-  - **Database architecture:** bit.ly/2v64UoX
+  - **Presentation:** https://bit.ly/2Tim1Ml
+  - **Database architecture:** https://bit.ly/2v64UoX
   
 ## Worked on it:
   - **Andrii Voisovych** - https://www.linkedin.com/in/voisovych/
