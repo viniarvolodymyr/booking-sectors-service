@@ -4,9 +4,9 @@ The main aim of the project is to make it possible for fishermen to book their f
 ## Part of the project: 
   - **back-end**, ASP.NET Core with Entity Framework Core.
   - **front-end**: https://github.com/OlehSluzhala/booking-angular
-  Connected front-end with back-end using CORS.
+ \Connected front-end with back-end using CORS.
 
-### Details:
+## Details:
   - **Customer:** SoftServe
   - **Involvement Duration:** 3 month
   - **Project team size:** team of eight members
@@ -14,11 +14,11 @@ The main aim of the project is to make it possible for fishermen to book their f
   - **Tools & Technologies:** 
   Asp.Net Core / Web API, MS SQL Server, Entity Framework Core, LINQ, Azure Cloud Services (Azure SQL Database, Azure Key Vault, Azure App Services), Git, Swagger, JIRA, Confluence, Visual Studio 2019, VS Code, NUnit, Moq.
 
-### Links:
+## Links:
   - **Presentation:** bit.ly/2Tim1Ml
   - **Database architecture:** bit.ly/2v64UoX
   
-### Worked on it:
+## Worked on it:
   - **Andrii Voisovych** - https://www.linkedin.com/in/voisovych/
   - **Denys Shevchuk** - https://www.linkedin.com/in/denys-shevchuk-227a8a186/
   - **Volodymyr Viniar** - https://www.linkedin.com/in/volodymyr-viniar/
